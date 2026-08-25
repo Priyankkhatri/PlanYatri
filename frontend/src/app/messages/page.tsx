@@ -251,8 +251,8 @@ export default function Messages() {
           .order('created_at', { ascending: true })
 
         if (data && data.length > 0 && !error) {
-          const remoteGrouped = {}
-          data.forEach((row) => {
+          const remoteGrouped: Record<string, any> = {}
+          data.forEach((row: any) => {
             const cid = parseInt(row.contact_id) || row.contact_id
             if (!remoteGrouped[cid]) remoteGrouped[cid] = []
             remoteGrouped[cid].push({
