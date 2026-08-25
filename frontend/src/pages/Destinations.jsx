@@ -821,43 +821,95 @@ export default function Destinations() {
 
         {/* Content Scrollable Area */}
         <div className="dest-content-scroll">
-          {/* ── AI PROMPT BANNER (Powered by Groq AI) ── */}
-          <div className={`ai-gemini-banner ${chatHistory.length > 0 ? 'chat-mode' : ''}`}>
+          {/* ── LUXURY AI EXPEDITION STUDIO HERO ── */}
+          <div className={`ai-luxury-studio-hero ${chatHistory.length > 0 ? 'chat-mode' : ''}`}>
+            <div className="ai-hero-ambient-glow" />
+            <div className="ai-hero-ambient-orb" />
+
             {chatHistory.length === 0 ? (
-              <>
-                <div className="ai-banner-left">
-                  <div className="ai-badge">✨ PLANYATRI AI TRAVEL CURATOR</div>
-                  <h3 className="ai-banner-title">Describe your dream journey in India or worldwide</h3>
-                  <p className="ai-banner-sub">
-                    Ask PlanYatri AI to generate personalized, safe solo or group escapes with pricing in {currency}, certified homestays, and curated itineraries.
+              <div className="ai-hero-main-layout">
+                <div className="ai-hero-top-row">
+                  <div className="ai-hero-badge-container">
+                    <span className="ai-luxury-badge">
+                      <span className="ai-pulsing-dot" />
+                      ✨ PLANYATRI AI INTELLIGENCE • BESPOKE CURATOR
+                    </span>
+                    <span className="ai-sub-badge">GEMINI 2.0 & GROQ ENGINE</span>
+                  </div>
+
+                  <h2 className="ai-hero-headline">
+                    Describe Your Dream Journey in India or Worldwide
+                  </h2>
+                  <p className="ai-hero-description">
+                    Ask PlanYatri AI to design personalized, solo-safe and group escapes with live pricing in {currency}, certified boutique stays, and curated day-wise itineraries.
                   </p>
                 </div>
 
-                <form className="ai-banner-form" onSubmit={handleGenerateAI}>
-                  <div className="ai-input-wrap">
+                <form className="ai-hero-search-box" onSubmit={handleGenerateAI}>
+                  <div className="ai-search-inner-wrapper">
+                    <div className="ai-search-icon-box">
+                      <SparkleIcon size={20} color="#D4A843" />
+                    </div>
                     <input
                       type="text"
-                      className="ai-banner-input"
-                      placeholder="e.g., Jaipur for 4 days, 4 people, budget 50000rs..."
+                      className="ai-hero-text-input"
+                      placeholder="e.g., 5-day luxury royal Udaipur palace escape with private lake boat cruise and heritage dining..."
                       value={aiPrompt}
                       onChange={(e) => setAiPrompt(e.target.value)}
                       disabled={isGeneratingAI}
                     />
-                    <button type="submit" className="ai-banner-submit" disabled={isGeneratingAI || !aiPrompt.trim()}>
+                    <button
+                      type="submit"
+                      className="ai-hero-generate-btn"
+                      disabled={isGeneratingAI || !aiPrompt.trim()}
+                    >
                       {isGeneratingAI ? (
-                        <span className="ai-loading-spinner"></span>
+                        <div className="ai-btn-generating-state">
+                          <span className="ai-spinner-gold" />
+                          <span>Curating Itinerary...</span>
+                        </div>
                       ) : (
-                        <span>GENERATE WITH AI →</span>
+                        <>
+                          <span>Curate With AI</span>
+                          <span className="ai-btn-arrow">→</span>
+                        </>
                       )}
                     </button>
                   </div>
+
+                  {/* ── Interactive Quick Inspiration Pills ── */}
+                  <div className="ai-hero-quick-prompts">
+                    <span className="ai-qp-label">⚡ Trending Inspirations:</span>
+                    <div className="ai-qp-chips-row">
+                      {[
+                        { label: '🏰 Royal Udaipur & Lake Palace', query: '4-day royal Udaipur luxury palace escape with private boat cruise on Lake Pichola for 2 people' },
+                        { label: '🏔️ Leh High-Pass & Pangong Oasis', query: '6-day Leh Ladakh high-pass and Pangong Tso stargazing adventure for 4 friends, budget 55000' },
+                        { label: '🌿 Kerala Backwaters Houseboat', query: '5-day Alleppey luxury houseboat and Munnar tea plantation retreat, relaxing pace' },
+                        { label: '🏖️ Goa Private Villa & Yacht', query: '4-day South Goa secluded private beach villa and sunset catamaran cruise' },
+                        { label: '🌸 Kashmir Dal Lake & Sonamarg', query: '7-day Srinagar heritage cedar houseboat and Sonamarg glacier expedition' },
+                        { label: '🐪 Jaisalmer Golden Dunes Safari', query: '4-day Thar desert luxury Swiss tent camp, camel safari and stargazing' },
+                      ].map((item, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          className="ai-qp-chip"
+                          onClick={() => {
+                            setAiPrompt(item.query)
+                          }}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </form>
-              </>
+              </div>
             ) : (
               <div className="ai-chat-thread-container">
                 <div className="ai-chat-header">
-                  <span className="ai-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                    <SparkleIcon size={12} color="#D4A843" /> CONCIERGE TRAVEL ASSISTANT
+                  <span className="ai-luxury-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <SparkleIcon size={13} color="#D4A843" />
+                    <span>PLANYATRI CONCIERGE CHAT STREAM</span>
                   </span>
                   <button
                     className="ai-chat-reset-btn"
@@ -865,9 +917,10 @@ export default function Destinations() {
                       setChatHistory([])
                       setAiSpotlight(null)
                       setAiSearchTag('')
+                      setAiPrompt('')
                     }}
                   >
-                    + New Plan
+                    + Start New AI Plan
                   </button>
                 </div>
 
@@ -875,28 +928,41 @@ export default function Destinations() {
                   {chatHistory.map((msg) => (
                     <div key={msg.id} className={`ai-chat-bubble ${msg.sender}`}>
                       <span className="chat-bubble-sender">
-                        {msg.sender === 'user' ? 'YOU' : 'PLANYATRI AI CONCIERGE'}
+                        {msg.sender === 'user' ? '👤 YOU' : '✨ PLANYATRI AI CONCIERGE'}
                       </span>
                       <p className="chat-bubble-text">{msg.text}</p>
                     </div>
                   ))}
                 </div>
 
-                <form className="ai-banner-form" onSubmit={handleGenerateAI}>
-                  <div className="ai-input-wrap">
+                <form className="ai-hero-search-box refinement-mode" onSubmit={handleGenerateAI}>
+                  <div className="ai-search-inner-wrapper">
+                    <div className="ai-search-icon-box">
+                      <SparkleIcon size={18} color="#D4A843" />
+                    </div>
                     <input
                       type="text"
-                      className="ai-banner-input"
-                      placeholder="Ask to refine (e.g. 'Add hot air ballooning', 'Change budget to ₹40k', 'Include 5-star palace stay')..."
+                      className="ai-hero-text-input"
+                      placeholder="Ask AI to refine (e.g. 'Add hot air ballooning', 'Change budget to ₹40k', 'Include 5-star palace stay')..."
                       value={aiPrompt}
                       onChange={(e) => setAiPrompt(e.target.value)}
                       disabled={isGeneratingAI}
                     />
-                    <button type="submit" className="ai-banner-submit" disabled={isGeneratingAI || !aiPrompt.trim()}>
+                    <button
+                      type="submit"
+                      className="ai-hero-generate-btn"
+                      disabled={isGeneratingAI || !aiPrompt.trim()}
+                    >
                       {isGeneratingAI ? (
-                        <span className="ai-loading-spinner"></span>
+                        <div className="ai-btn-generating-state">
+                          <span className="ai-spinner-gold" />
+                          <span>Refining...</span>
+                        </div>
                       ) : (
-                        <span>REFINE WITH AI →</span>
+                        <>
+                          <span>Refine Plan</span>
+                          <span className="ai-btn-arrow">→</span>
+                        </>
                       )}
                     </button>
                   </div>
