@@ -842,7 +842,7 @@ export default function Trips() {
                     </button>
                   </div>
 
-                  {(selectedItineraryTrip.daysPlan || []).map((day, dayIdx) => (
+                  {(selectedItineraryTrip.daysPlan || []).map((day: any, dayIdx: any) => (
                     <div key={dayIdx} className="day-schedule-card">
                       <div className="day-number-badge">0{day.dayNumber || dayIdx + 1}</div>
 
