@@ -23,7 +23,7 @@ const cardEnter = {
 }
 const spotlightEnter = {
   initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeInOut' } },
   exit:    { opacity: 0, y: -16, transition: { duration: 0.22 } },
 }
 
@@ -1038,7 +1038,7 @@ export default function Destinations() {
               {/* ── AI SPOTLIGHT HERO SHOWCASE (When AI generates tailored itinerary) ── */}
               <AnimatePresence>
               {aiSpotlight && (
-                <motion.section className="ai-spotlight-card" variants={spotlightEnter} initial="initial" animate="animate" exit="exit">
+                <motion.section className="ai-spotlight-card" variants={spotlightEnter as any} initial="initial" animate="animate" exit="exit">
                   <div className="asc-img-wrap">
                     <img src={aiSpotlight.img} alt={aiSpotlight.name} className="asc-img" />
                     <div className="asc-badge-floating">
@@ -1154,7 +1154,7 @@ export default function Destinations() {
               {/* Destination Cards 3-Column Grid */}
               <motion.div
                 className="curated-grid"
-                variants={staggerGrid}
+                variants={staggerGrid as any}
                 initial="animate"
                 animate="animate"
                 key={activeCategory + activeTags.join('') + sortOption}
@@ -1162,7 +1162,7 @@ export default function Destinations() {
                 {visibleDestinations.map((dest) => {
                   const isHearted = isFavorite(dest.id) || liked[dest.id]
                   return (
-                    <motion.article key={dest.id} className="escape-card" variants={cardEnter} whileHover={{ y: -7, scale: 1.015 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 340, damping: 22 }} onClick={() => setSelectedModalDest(dest)}>
+                    <motion.article key={dest.id} className="escape-card" variants={cardEnter as any} whileHover={{ y: -7, scale: 1.015 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 340, damping: 22 }} onClick={() => setSelectedModalDest(dest)}>
                       {/* Image Frame */}
                       <div className="escape-img-container">
                         <img

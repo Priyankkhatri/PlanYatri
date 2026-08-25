@@ -49,7 +49,7 @@ const cardEnter = {
 }
 const headerEnter = {
   initial: { opacity: 0, y: -16 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeInOut' } },
 }
 
 export default function Experiences() {
@@ -89,7 +89,7 @@ export default function Experiences() {
     <div className={`pg-root ${mounted ? 'pg-on' : ''}`}>
       <Sidebar />
       <div className="pg-main">
-        <motion.header className="pg-header" variants={headerEnter} initial="initial" animate="animate">
+        <motion.header className="pg-header" variants={headerEnter as any} initial="initial" animate="animate">
           <div>
             <h1 className="pg-title">Experiences</h1>
             <p className="pg-sub">Handpicked moments to make your journey unforgettable</p>
@@ -126,7 +126,7 @@ export default function Experiences() {
               className="exp-grid"
               style={{ marginTop:16 }}
               key={cat}
-              variants={staggerGrid}
+              variants={staggerGrid as any}
               initial="initial"
               animate="animate"
               exit={{ opacity: 0, transition: { duration: 0.15 } }}
@@ -137,7 +137,7 @@ export default function Experiences() {
                   <motion.div
                     className="exp-card"
                     key={exp.name}
-                    variants={cardEnter}
+                    variants={cardEnter as any}
                     whileHover={{ y: -8, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ type: 'spring', stiffness: 350, damping: 22 }}

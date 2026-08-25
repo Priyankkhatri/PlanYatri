@@ -15,7 +15,7 @@ import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon } from '@/c
 /* ── Animation Variants ── */
 const fadeUp = {
   initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.48, ease: [0.25, 0.46, 0.45, 0.94] } },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.48, ease: 'easeInOut' } },
 }
 const staggerContainer = {
   animate: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
@@ -26,7 +26,7 @@ const cardVariant = {
 }
 const heroTextVariant = {
   initial: { opacity: 0, x: -28 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.55, ease: [0.25, 0.46, 0.45, 0.94] } },
+  animate: { opacity: 1, x: 0, transition: { duration: 0.55, ease: 'easeInOut' } },
 }
 
 export default function Dashboard() {
@@ -130,12 +130,12 @@ export default function Dashboard() {
       {/* ── SCROLLABLE DASHBOARD BODY ── */}
         <motion.div
           className="db-scroll-body"
-          variants={staggerContainer}
+          variants={staggerContainer as any}
           initial="initial"
           animate="animate"
         >
           {/* 1. HERO SECTION */}
-          <motion.section className="db-hero-section" variants={fadeUp}>
+          <motion.section className="db-hero-section" variants={fadeUp as any}>
             <div className="db-hero-content">
               <div className="db-hero-text">
                 <h1 className="db-hero-h1">
@@ -171,7 +171,7 @@ export default function Dashboard() {
         </motion.section>
 
           {/* 2. LOCATION & NEXT TRIP BAR */}
-          <motion.section className="db-widget-bar" variants={fadeUp}>
+          <motion.section className="db-widget-bar" variants={fadeUp as any}>
             <div className="widget-loc-item">
               <div className="widget-icon-box orange">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -225,7 +225,7 @@ export default function Dashboard() {
           </motion.section>
 
           {/* 3. RECOMMENDED FOR YOU */}
-          <motion.section className="db-section" variants={fadeUp}>
+          <motion.section className="db-section" variants={fadeUp as any}>
             <div className="db-section-hdr">
               <h2 className="db-section-title">Recommended For You</h2>
               <button className="db-view-all" onClick={() => router.push('/destinations')}>
@@ -233,9 +233,9 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <motion.div className="db-rec-grid" variants={staggerContainer} initial="initial" animate="animate">
+            <motion.div className="db-rec-grid" variants={staggerContainer as any} initial="initial" animate="animate">
               {/* Card 1: Maldives */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant as any} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['maldives']} alt="Maldives" />
                   <button className={`rec-heart-btn ${liked['maldives'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'maldives')}>
@@ -252,7 +252,7 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 2: Switzerland */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant as any} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['switzerland']} alt="Switzerland" />
                   <button className={`rec-heart-btn ${liked['swiss'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'swiss')}>
@@ -269,7 +269,7 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 3: Greece */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant as any} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['greece']} alt="Greece" />
                   <button className={`rec-heart-btn ${liked['greece'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'greece')}>
@@ -286,7 +286,7 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 4: Bali */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant as any} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
                   <button className={`rec-heart-btn ${liked['bali'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'bali')}>
@@ -305,7 +305,7 @@ export default function Dashboard() {
           </motion.section>
 
           {/* 4. PLAN YOUR NEXT ADVENTURE */}
-          <motion.section className="db-section" variants={fadeUp}>
+          <motion.section className="db-section" variants={fadeUp as any}>
             <h2 className="db-section-title">Plan Your Next Adventure</h2>
 
             <div className="db-adv-grid">
@@ -377,7 +377,7 @@ export default function Dashboard() {
           </motion.section>
 
           {/* 5. YOUR UPCOMING TRIPS */}
-          <motion.section className="db-section" variants={fadeUp}>
+          <motion.section className="db-section" variants={fadeUp as any}>
             <div className="db-section-hdr">
               <h2 className="db-section-title">Your Upcoming Trips</h2>
               <button className="db-view-all" onClick={() => router.push('/trips')}>
@@ -451,7 +451,7 @@ export default function Dashboard() {
           </motion.section>
 
           {/* 6. TRAVEL INSPIRATION */}
-          <motion.section className="db-section" variants={fadeUp}>
+          <motion.section className="db-section" variants={fadeUp as any}>
             <div className="db-section-hdr">
               <h2 className="db-section-title">Travel Inspiration</h2>
               <button className="db-view-all" onClick={() => router.push('/experiences')}>
@@ -490,7 +490,7 @@ export default function Dashboard() {
           </motion.section>
 
           {/* 7. NEWSLETTER BANNER */}
-          <motion.section className="db-newsletter-box" variants={fadeUp}>
+          <motion.section className="db-newsletter-box" variants={fadeUp as any}>
             <div className="nl-stamp-left">
               <div className="vintage-postmark">
                 <span>PASSPORT</span>

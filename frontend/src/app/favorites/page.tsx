@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useMemo } from 'react'
 
@@ -36,7 +37,7 @@ export default function Favorites() {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
       ['Name,Country,Category']
-        .concat(favorites.map((f: any) => `"${f.name}","${f.country}","${f.category}"`))
+        .concat(favorites.map((f) => `"${f.name}","${f.country}","${f.category}"`))
         .join('\n')
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
@@ -116,7 +117,7 @@ export default function Favorites() {
                   <div
                     key={item.id}
                     className={`fav-card-editorial ${isFirst ? 'fav-card-large' : ''}`}
-                    onClick={() => router.push(`/destinations?search=item.name`)}
+                    onClick={() => router.push('/destinations', { state: { search: item.name } })}
                   >
                     <img src={item.img} alt={item.name} className="fav-card-bg-img" />
                     <div className="fav-card-gradient-overlay" />
@@ -153,7 +154,7 @@ export default function Favorites() {
                           className="fav-book-stay-btn"
                           onClick={(e: any) => {
                             e.stopPropagation()
-                            router.push('/trips') })
+                            router.push('/trips', { state: { initialDest: item.name, initialImg: item.img } })
                           }}
                         >
                           <span>Book Stay</span>
