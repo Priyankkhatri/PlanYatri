@@ -967,7 +967,7 @@ export default function Trips() {
                         </div>
                         <div className="bw-line">
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                            <CompassIcon size={14} color="#D4A843" /> Activities ({selectedItineraryTrip.daysPlan?.reduce((acc, d) => acc + (d.activities?.length || 0), 0)})
+                            <CompassIcon size={14} color="#D4A843" /> Activities ({selectedItineraryTrip.daysPlan?.reduce((acc: any, d: any) => acc + (d.activities?.length || 0), 0)})
                           </span>
                           <span>₹{liveBudgetCalculation.activitiesCost.toLocaleString('en-IN')}</span>
                         </div>
