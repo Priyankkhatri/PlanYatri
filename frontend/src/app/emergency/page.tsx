@@ -1030,7 +1030,7 @@ export default function Emergency() {
                         <div key={p.id} className={`em-proto-item ${isOpen ? 'open' : ''}`}>
                           <button
                             className="em-proto-header-btn"
-                            onClick={() => setExpandedProtocol(isOpen ? null : p.id)}
+                            onClick={() => setExpandedProtocol(isOpen ? '' : p.id)}
                           >
                             <div className="em-proto-left">
                               <div className="em-proto-icon-frame">
