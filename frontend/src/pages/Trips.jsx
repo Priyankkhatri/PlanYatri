@@ -8,6 +8,9 @@ import { useToast } from '../context/ToastContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
 import InteractiveMap from '../components/InteractiveMap'
+import GroupExpenseSplitter from '../components/GroupExpenseSplitter'
+import TripInviteModal from '../components/TripInviteModal'
+import PackingChecklistModal from '../components/PackingChecklistModal'
 import { CalendarIcon, UsersIcon, MapPinIcon, PlaneIcon, SparkleIcon, TrashIcon, UtensilsIcon, HotelIcon, CompassIcon, CheckCircleIcon, FlameIcon, BookIcon, ShareIcon, CultureIcon, MountainIcon } from '../components/icons/LuxuryIcons'
 import './Trips.css'
 
@@ -172,6 +175,8 @@ export default function Trips() {
   const [showAddCityModal, setShowAddCityModal] = useState(false)
   const [showAddActivityModal, setShowAddActivityModal] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
+  const [showInviteQRModal, setShowInviteQRModal] = useState(false)
+  const [showPackingModal, setShowPackingModal] = useState(false)
   const [menuOpenId, setMenuOpenId] = useState(null)
 
   // AI Optimizer State
@@ -765,6 +770,30 @@ export default function Trips() {
 
                 <button
                   className="itin-pill-share-btn"
+                  onClick={() => setShowInviteQRModal(true)}
+                  style={{ background: 'rgba(212, 168, 67, 0.15)', borderColor: 'rgba(212, 168, 67, 0.4)', color: '#D4A843' }}
+                >
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <UsersIcon size={13} color="#D4A843" /> 👥 Invite Group (QR)
+                  </span>
+                </button>
+
+                <button
+                  className="itin-pill-city-btn"
+                  onClick={() => setShowPackingModal(true)}
+                >
+                  <span>🎒 Packing Checklist</span>
+                </button>
+
+                <button
+                  className="itin-pill-city-btn"
+                  onClick={() => window.print()}
+                >
+                  <span>📄 Print / PDF</span>
+                </button>
+
+                <button
+                  className="itin-pill-share-btn"
                   onClick={() => setShowShareModal(true)}
                 >
                   <span>Share Trip</span>
@@ -833,6 +862,12 @@ export default function Trips() {
                     <span>+ Add Activity to Plan</span>
                   </button>
 
+                  <button className="glass-btn-outline" onClick={() => setShowInviteQRModal(true)}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <UsersIcon size={13} color="#D4A843" /> 👥 Invite / QR
+                    </span>
+                  </button>
+
                   <button className="glass-btn-outline" onClick={() => setShowAIOptimizerModal(true)}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                       <SparkleIcon size={13} color="#D4A843" /> Optimize Route
@@ -844,7 +879,7 @@ export default function Trips() {
 
             {/* 2. Interactive Navigation Tabs for Itinerary */}
             <div className="itin-tabs-nav-bar">
-              {['Daily Schedule', 'Calendar & Timeline', 'Automatic Budget Breakdown'].map((tab) => (
+              {['Daily Schedule', 'Calendar & Timeline', 'Automatic Budget Breakdown', 'Group Expenses'].map((tab) => (
                 <button
                   key={tab}
                   className={`itin-tab-item ${activeItineraryTab === tab ? 'active' : ''}`}
@@ -853,6 +888,7 @@ export default function Trips() {
                   {tab === 'Daily Schedule' && 'Day-Wise Itinerary'}
                   {tab === 'Calendar & Timeline' && 'Calendar & Timeline'}
                   {tab === 'Automatic Budget Breakdown' && 'Automatic Budget Breakdown'}
+                  {tab === 'Group Expenses' && '💸 Group Expenses'}
                 </button>
               ))}
             </div>
@@ -1201,6 +1237,16 @@ export default function Trips() {
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* ── TAB 4: GROUP EXPENSES SPLITTER ── */}
+            {activeItineraryTab === 'Group Expenses' && (
+              <div className="itin-group-expenses-view">
+                <GroupExpenseSplitter
+                  tripName={selectedItineraryTrip?.dest || 'Trip'}
+                  members={['You', 'Aarav', 'Priya']}
+                />
               </div>
             )}
           </div>
@@ -1762,6 +1808,27 @@ export default function Trips() {
               </button>
             </div>
           </div>
+        )}
+
+        {/* ═════════════════════════════════════════════════════════════
+            MODAL 7: QR GROUP INVITE MODAL
+        ═════════════════════════════════════════════════════════════ */}
+        {showInviteQRModal && selectedItineraryTrip && (
+          <TripInviteModal
+            trip={selectedItineraryTrip}
+            userId={userInfo?.id}
+            onClose={() => setShowInviteQRModal(false)}
+          />
+        )}
+
+        {/* ═════════════════════════════════════════════════════════════
+            MODAL 8: SMART PACKING CHECKLIST MODAL
+        ═════════════════════════════════════════════════════════════ */}
+        {showPackingModal && selectedItineraryTrip && (
+          <PackingChecklistModal
+            trip={selectedItineraryTrip}
+            onClose={() => setShowPackingModal(false)}
+          />
         )}
       </main>
     </div>

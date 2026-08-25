@@ -1464,3 +1464,15 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* -------------------------------------------------------------------
+   PRINT / OFFLINE PDF STYLES
+   ------------------------------------------------------------------- */
+@media print {
+  aside, .sb-root, .itin-top-action-pills, .glass-actions-row, .custom-modal-backdrop, .itin-tabs-nav-bar { display: none !important; }
+  .trips-main-scroll { padding: 0 !important; overflow: visible !important; height: auto !important; }
+  body, .trips-container-root { background: #fff !important; color: #000 !important; }
+  .itinerary-view-container { max-width: 100% !important; margin: 0 !important; }
+  .itinerary-hero-banner { height: 180px !important; }
+  .itin-day-card, .itin-activity-item { page-break-inside: avoid; border: 1px solid #ddd !important; }
+}

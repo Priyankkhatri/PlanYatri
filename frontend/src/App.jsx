@@ -23,6 +23,7 @@ const TravelStyle  = lazy(() => import('./pages/TravelStyle'))
 const Settings     = lazy(() => import('./pages/Settings'))
 const Profile      = lazy(() => import('./pages/Profile'))
 const Emergency    = lazy(() => import('./pages/Emergency'))
+const JoinTrip     = lazy(() => import('./pages/JoinTrip'))
 
 import { FavoritesProvider } from './context/FavoritesContext'
 
@@ -74,6 +75,7 @@ function AppContent() {
             <Route path="/settings"     element={<Wrap><Settings /></Wrap>} />
             <Route path="/profile"      element={<Wrap><Profile /></Wrap>} />
             <Route path="/emergency"    element={<Wrap><Emergency /></Wrap>} />
+            <Route path="/join/:token"  element={<JoinTrip />} />
             <Route path="*"             element={<Navigate to="/" replace />} />
           </Routes>
         </AnimatePresence>
