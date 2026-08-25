@@ -232,6 +232,14 @@ export default function Trips() {
 
   useEffect(() => {
     dispatch(fetchTrips())
+    if (location.state?.selectedTripId) {
+      const match = journeys.find(
+        (j) => j._id === location.state.selectedTripId || j.id === location.state.selectedTripId
+      )
+      if (match) {
+        setSelectedItineraryTrip(match)
+      }
+    }
     if (location.state?.initialDest) {
       const incomingDays = Number(location.state.initialDays) || 4
       const incomingBudget = Number(location.state.initialBudget) || 50000
@@ -307,7 +315,7 @@ export default function Trips() {
       toast.success(`✨ Opened custom itinerary builder for ${location.state.initialDest}!`)
       window.history.replaceState({}, document.title)
     }
-  }, [dispatch, location.state])
+  }, [dispatch, location.state, journeys])
 
   // ── Calculate Live Budget for Active Selected Trip ──
   const liveBudgetCalculation = useMemo(() => {
@@ -641,6 +649,35 @@ export default function Trips() {
               </div>
             </header>
 
+            {/* Empty State Banner if no trips found */}
+            {activeJourneysList.length === 0 && (
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: 20,
+                  border: '1px solid #EFEAE2',
+                  padding: '48px 24px',
+                  textAlign: 'center',
+                  marginBottom: 24,
+                }}
+              >
+                <span style={{ fontSize: 40 }}>🧭</span>
+                <h3 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 20, fontWeight: 700, margin: '8px 0 6px', color: '#18181B' }}>
+                  No {filterTab} Journeys Found
+                </h3>
+                <p style={{ fontSize: 13, color: '#8C867A', maxWidth: 440, margin: '0 auto 16px' }}>
+                  You haven't scheduled any journeys in this section yet. Use our AI Trip Optimizer or customizer below to craft your first multi-city adventure!
+                </p>
+                <button
+                  className="btn-ai-optimizer-hero"
+                  onClick={() => setShowAIOptimizerModal(true)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, margin: '0 auto' }}
+                >
+                  <SparkleIcon size={14} color="#D4A843" /> AI Smart Trip Optimizer
+                </button>
+              </div>
+            )}
+
             {/* Journeys 2-Column Grid */}
             <div className="journeys-editorial-grid">
               {activeJourneysList.map((journey) => (
@@ -796,15 +833,32 @@ export default function Trips() {
                   style={{ background: 'rgba(212, 168, 67, 0.15)', borderColor: 'rgba(212, 168, 67, 0.4)', color: '#D4A843' }}
                 >
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                    <UsersIcon size={13} color="#D4A843" /> 👥 Invite Group (QR)
+                    <UsersIcon size={13} color="#D4A843" /> 👥 Invite (QR)
                   </span>
+                </button>
+
+                <button
+                  className="itin-pill-city-btn"
+                  onClick={() => navigate('/messages', { state: { tripId: selectedItineraryTrip._id, tripName: selectedItineraryTrip.dest } })}
+                  title="Open Co-Traveler & Concierge Chat for this Trip"
+                >
+                  <span>💬 Group Chat</span>
+                </button>
+
+                <button
+                  className="itin-pill-city-btn"
+                  onClick={() => navigate('/emergency', { state: { tripCity: selectedItineraryTrip.dest } })}
+                  style={{ color: '#EF4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                  title="Emergency SOS & Solo Safe Guide"
+                >
+                  <span>🛡️ Solo Safe SOS</span>
                 </button>
 
                 <button
                   className="itin-pill-city-btn"
                   onClick={() => setShowPackingModal(true)}
                 >
-                  <span>🎒 Packing Checklist</span>
+                  <span>🎒 Packing List</span>
                 </button>
 
                 <button
@@ -818,7 +872,7 @@ export default function Trips() {
                   className="itin-pill-share-btn"
                   onClick={() => setShowShareModal(true)}
                 >
-                  <span>Share Trip</span>
+                  <span>Share</span>
                 </button>
 
                 <button
