@@ -481,21 +481,7 @@ export default function Trips() {
       setShowPaymentModal(false)
       toast.success(`💳 Payment Successful! Confirmed reservations for ${selectedItineraryTrip.dest}`)
 
-      router.push('/bookings')`,
-              dates: selectedItineraryTrip.dates || 'Upcoming Immersion',
-              time: 'Confirmed Booking',
-              terminal: 'Terminal 3 • Gate B12',
-              status: 'Confirmed',
-              isCompleted: false,
-              price: `₹${transportCost.toLocaleString('en-IN')}`,
-              ref: `FLT-${Math.floor(1000 + Math.random() * 9000)}`,
-              img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=400&q=85&auto=format&fit=crop',
-              icon: '✈️',
-            },
-          ],
-          tripName: selectedItineraryTrip.dest,
-        },
-      })
+      router.push('/bookings')
     }, 1200)
   }
 
