@@ -1,12 +1,18 @@
+import { useSelector } from 'react-redux'
+
 export default function Header() {
+  const { userInfo } = useSelector((state) => state.auth)
+  const name = userInfo?.name?.split(' ')[0] || 'Traveler'
+  const avatar = userInfo?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80&fit=crop&crop=face'
+
   return (
     <header className="flex items-center justify-between p-[28px_36px_0] bg-cream-mid animate-[fadeDown_0.5s_cubic-bezier(0.16,1,0.3,1)_0.1s_both]">
       <div>
         <h1 className="font-display text-[26px] font-bold text-text-dark mb-[4px] tracking-[-0.3px]">
-          Good morning, Ananya!{' '}
+          Good day, {name}!{' '}
           <span className="inline-block w-[32px] h-[32px] rounded-full overflow-hidden ml-[8px] align-middle border-[2px] border-gold/25">
             <img
-              src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&q=80&fit=crop&crop=face"
+              src={avatar}
               alt="User avatar"
               className="w-full h-full object-cover"
             />

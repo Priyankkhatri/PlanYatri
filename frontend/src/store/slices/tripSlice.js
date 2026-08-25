@@ -64,44 +64,30 @@ function normalize(t) {
 
 export const fetchTrips = createAsyncThunk('trips/fetchTrips', async (_, { getState }) => {
   const userId = getState().auth?.userInfo?.id
-  const isDemo = getState().auth?.userInfo?.isDemo
 
-  if (!userId || isDemo) {
-    // Try Express API fallback
-    try {
-      const { data } = await api.get('/trips')
-      return data && data.length > 0 ? data : DEFAULT_TRIPS
-    } catch {
-      return DEFAULT_TRIPS
-    }
+  if (!userId) {
+    return []
   }
 
   try {
     const rows = await tripService.getAll(userId)
-    if (!rows || rows.length === 0) {
-      // Seed demo trip for brand-new users
-      await seedDemoTrip(userId)
-      const seededRows = await tripService.getAll(userId)
-      return seededRows?.length > 0 ? seededRows.map(normalize) : DEFAULT_TRIPS
-    }
-    return rows.map(normalize)
+    return (rows || []).map(normalize)
   } catch (e) {
-    console.warn('Supabase trips fetch failed, using API fallback:', e.message)
+    console.warn('Supabase trips fetch failed, trying local storage:', e.message)
     try {
-      const { data } = await api.get('/trips')
-      return data && data.length > 0 ? data : DEFAULT_TRIPS
+      const local = localStorage.getItem(`planyatri_trips_${userId}`)
+      return local ? JSON.parse(local) : []
     } catch {
-      return DEFAULT_TRIPS
+      return []
     }
   }
 })
 
 export const createTrip = createAsyncThunk('trips/createTrip', async (tripData, { getState, rejectWithValue }) => {
   const userId = getState().auth?.userInfo?.id
-  const isDemo = getState().auth?.userInfo?.isDemo
 
-  if (!userId || isDemo) {
-    // Local-only for demo
+  if (!userId) {
+    // Local fallback for guest
     const localTrip = {
       ...tripData,
       id: `trip_local_${Date.now()}`,
@@ -134,9 +120,9 @@ export const createTrip = createAsyncThunk('trips/createTrip', async (tripData, 
 })
 
 export const updateTrip = createAsyncThunk('trips/updateTrip', async ({ id, tripData }, { getState, rejectWithValue }) => {
-  const isDemo = getState().auth?.userInfo?.isDemo
+  const userId = getState().auth?.userInfo?.id
 
-  if (isDemo || id?.startsWith('trip_demo_') || id?.startsWith('journey-')) {
+  if (!userId || id?.startsWith('trip_local_') || id?.startsWith('journey-')) {
     return { ...tripData, id, _id: id }
   }
 
@@ -154,9 +140,9 @@ export const updateTrip = createAsyncThunk('trips/updateTrip', async ({ id, trip
 })
 
 export const deleteTrip = createAsyncThunk('trips/deleteTrip', async (id, { getState, rejectWithValue }) => {
-  const isDemo = getState().auth?.userInfo?.isDemo
+  const userId = getState().auth?.userInfo?.id
 
-  if (isDemo || id?.startsWith('trip_demo_') || id?.startsWith('journey-')) {
+  if (!userId || id?.startsWith('trip_local_') || id?.startsWith('journey-')) {
     return id
   }
 

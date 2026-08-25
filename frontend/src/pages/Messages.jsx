@@ -181,12 +181,10 @@ const PEOPLE_DIRECTORY = [
 
 export default function Messages() {
   const { userInfo } = useSelector((state) => state.auth)
-  const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
   const userName = userInfo?.name ? userInfo.name.split(' ')[0] : 'Explorer'
 
   const [activeTab, setActiveTab] = useState('chats') // 'chats' | 'people'
   const [contacts, setContacts] = useState(() => {
-    if (isDemo) return INITIAL_CONTACTS
     return [
       {
         id: 1,
@@ -206,7 +204,6 @@ export default function Messages() {
   const [activeContactId, setActiveContactId] = useState(1)
 
   const [conversations, setConversations] = useState(() => {
-    if (isDemo) return INITIAL_CONVERSATIONS
     return {
       1: [
         {
@@ -512,7 +509,7 @@ export default function Messages() {
           {
             id: Date.now(),
             from: 'them',
-            text: `Hi Ananya! Great to connect with you on PlanYatri. I saw you are also exploring ${person.location.split(',')[0]}!`,
+            text: `Hi ${userName}! Great to connect with you on PlanYatri. I saw you are also exploring ${person.location.split(',')[0]}!`,
             time: 'Just now',
           },
         ],

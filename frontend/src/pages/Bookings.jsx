@@ -108,17 +108,15 @@ export default function Bookings() {
   usePageTitle('Travel Bookings & Logistics — PlanYatri')
 
   const { userInfo } = useSelector((state) => state.auth)
-  const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
-  const userKey = isDemo ? 'demo' : (userInfo?.id || userInfo?._id || 'user')
+  const userKey = userInfo?.id || userInfo?._id || userInfo?.email || 'guest'
 
   const [bookings, setBookings] = useState(() => {
     try {
       const storageKey = `planyatri_bookings_${userKey}`
       const saved = localStorage.getItem(storageKey)
-      if (saved) return JSON.parse(saved)
-      return isDemo ? INITIAL_BOOKINGS : []
+      return saved ? JSON.parse(saved) : []
     } catch {
-      return isDemo ? INITIAL_BOOKINGS : []
+      return []
     }
   })
 
@@ -313,9 +311,25 @@ export default function Bookings() {
           </div>
 
           {/* ── 4. BOOKINGS CARDS GRID ── */}
-          <div className="bk-grid-layout">
-            {filteredBookings.map((b) => (
-              <div key={b.id} className="bk-editorial-card">
+          {filteredBookings.length === 0 ? (
+            <div className="bk-empty-state-box" style={{ textAlign: 'center', padding: '48px 24px', background: 'rgba(255,255,255,0.03)', borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)', margin: '20px 0' }}>
+              <span style={{ fontSize: '38px', display: 'block', marginBottom: 12 }}>✈️</span>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 6px', color: '#FAF8F5' }}>No active bookings found</h3>
+              <p style={{ fontSize: '13px', color: 'rgba(250,248,245,0.6)', maxWidth: 420, margin: '0 auto 16px' }}>
+                You have no reservations logged yet. Add your flights, boutique stays, or expedition vouchers here.
+              </p>
+              <button
+                className="bhl-btn-primary"
+                onClick={() => setShowAddModal(true)}
+                style={{ background: '#D4A843', color: '#121316', fontWeight: 700, padding: '10px 20px', borderRadius: 12, border: 'none', cursor: 'pointer' }}
+              >
+                + Add New Reservation
+              </button>
+            </div>
+          ) : (
+            <div className="bk-grid-layout">
+              {filteredBookings.map((b) => (
+                <div key={b.id} className="bk-editorial-card">
                 <div className="bk-card-media">
                   <img
                     src={b.img}
@@ -370,6 +384,7 @@ export default function Bookings() {
               </div>
             ))}
           </div>
+        )}
         </div>
 
         {/* ── 5. LUXURY DIGITAL VOUCHER & BOARDING PASS MODAL ── */}
@@ -408,7 +423,7 @@ export default function Bookings() {
                 <div className="voucher-fields-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', background: 'rgba(212,168,67,0.06)', padding: '16px', borderRadius: '10px', border: '1px solid rgba(212,168,67,0.15)' }}>
                   <div className="v-field">
                     <span className="vf-lbl" style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 700, letterSpacing: '0.5px' }}>PASSENGER / GUEST</span>
-                    <span className="vf-val" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-color, #0F172A)' }}>Ananya Sharma</span>
+                    <span className="vf-val" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-color, #0F172A)' }}>{userInfo?.name || 'Guest Traveler'}</span>
                   </div>
                   <div className="v-field">
                     <span className="vf-lbl" style={{ fontSize: '10px', color: '#94A3B8', fontWeight: 700, letterSpacing: '0.5px' }}>BOOKING REFERENCE</span>

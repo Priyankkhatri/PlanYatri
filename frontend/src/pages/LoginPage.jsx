@@ -25,13 +25,6 @@ function GoogleIcon() {
     </svg>
   )
 }
-function AppleIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-    </svg>
-  )
-}
 function EyeIcon({ open }) {
   return open ? (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -105,15 +98,6 @@ export default function LoginPage() {
     setShowPass(false); setShowConf(false)
   }
 
-  const fillDemo = async () => {
-    formik.setFieldValue('email', 'ananya@example.com')
-    formik.setFieldValue('password', 'password123')
-    const result = await dispatch(loginDemo())
-    if (loginDemo.fulfilled.match(result)) {
-      toast.success('Welcome back, Ananya! 👋 Logged in as Demo User')
-    }
-  }
-
   return (
     <div className={`login-root ${mounted ? 'mounted' : ''}`}>
       <div className="hero-panel">
@@ -135,25 +119,24 @@ export default function LoginPage() {
         <div className="hero-content">
           <div className="hero-tag">✦ Premium Travel Experience</div>
           <h1 className="hero-title">Explore More.<br /><span className="hero-gold">Live More.</span></h1>
-          <p className="hero-desc">Plan your dream journeys, discover hidden gems, and create unforgettable memories around the world.</p>
-          <div className="hero-stats">
-            <div className="h-stat"><span className="h-stat-num">50K+</span><span className="h-stat-lbl">Travelers</span></div>
-            <div className="h-divider" /><div className="h-stat"><span className="h-stat-num">120+</span><span className="h-stat-lbl">Destinations</span></div>
-            <div className="h-divider" /><div className="h-stat"><span className="h-stat-num">4.9★</span><span className="h-stat-lbl">Rating</span></div>
+          <p className="hero-desc">Discover curated itineraries, coordinate journeys with friends in real-time, and explore 120+ breathtaking destinations.</p>
+          <div className="hero-footer">
+            <div className="hero-avatars">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&q=80&auto=format&fit=crop" alt="User 1" />
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&q=80&auto=format&fit=crop" alt="User 2" />
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=60&h=60&q=80&auto=format&fit=crop" alt="User 3" />
+              <div className="hero-avatar-more">+50k</div>
+            </div>
+            <p className="hero-footer-text">Joined by 50,000+ passionate explorers worldwide</p>
           </div>
-        </div>
-        <div className="lp-trip-card">
-          <img src={BALI_THUMB} alt="Bali" className="lp-trip-thumb" />
-          <div className="lp-trip-info"><p className="lp-trip-name">Next Trip: Bali, Indonesia</p><p className="lp-trip-dates">20 May — 02 June 2024 · 12 Days</p></div>
-          <div className="lp-trip-badge">12 Days 🔥</div>
         </div>
       </div>
 
       <motion.div
-        className="auth-panel"
-        initial={{ opacity: 0, x: 40 }}
+        className="form-panel"
+        initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ type: 'spring', stiffness: 280, damping: 26, delay: 0.12 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 26 }}
       >
         <motion.div
           className="auth-card"
@@ -171,13 +154,6 @@ export default function LoginPage() {
             <p className="auth-subtitle">{tab === 'signin' ? 'Sign in to continue your journey' : 'Create your free account today'}</p>
           </div>
 
-          {tab === 'signin' && (
-            <div className="demo-hint">
-              <span className="demo-badge">DEMO</span><span>Try the app instantly — </span>
-              <button type="button" onClick={fillDemo}>use demo account</button>
-            </div>
-          )}
-
           {error && (
             <div className="auth-error">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -193,7 +169,7 @@ export default function LoginPage() {
                 <label className="field-label">Full Name</label>
                 <div className="field-wrap">
                   <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  <input type="text" name="name" className={`field-input ${formik.touched.name && formik.errors.name ? 'error' : ''}`} placeholder="Ananya Sharma" {...formik.getFieldProps('name')} />
+                  <input type="text" name="name" className={`field-input ${formik.touched.name && formik.errors.name ? 'error' : ''}`} placeholder="Your Full Name" {...formik.getFieldProps('name')} />
                 </div>
                 {formik.touched.name && formik.errors.name && <p className="field-error">{formik.errors.name}</p>}
               </div>
@@ -237,9 +213,22 @@ export default function LoginPage() {
             </button>
 
             <div className="or-divider"><span>or continue with</span></div>
-            <div className="social-row">
-              <button type="button" onClick={() => signInWithOAuth('google')} className="social-btn"><GoogleIcon /><span>Google</span></button>
-              <button type="button" onClick={() => signInWithOAuth('apple')} className="social-btn"><AppleIcon /><span>Apple</span></button>
+            <div className="social-row-single">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const res = await signInWithOAuth('google')
+                    if (res && res.error) toast.error(res.error)
+                  } catch (e) {
+                    toast.error('Google sign-in failed. Please try again.')
+                  }
+                }}
+                className="social-btn google-btn-full"
+              >
+                <GoogleIcon />
+                <span>Continue with Google</span>
+              </button>
             </div>
           </form>
 

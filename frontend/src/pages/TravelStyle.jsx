@@ -340,8 +340,7 @@ export default function TravelStyle() {
   usePageTitle('Travel Style & Persona Discovery — PlanYatri')
 
   const { userInfo } = useSelector((state) => state.auth)
-  const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
-  const userKey = isDemo ? 'demo' : (userInfo?.id || userInfo?._id || 'user')
+  const userKey = userInfo?.id || userInfo?._id || userInfo?.email || 'guest'
 
   const [step, setStep] = useState(0) // 0: Overview, 1-4: Questions, 5: Results
   const [answers, setAnswers] = useState(() => {

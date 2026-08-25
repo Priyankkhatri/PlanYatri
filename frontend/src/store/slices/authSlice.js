@@ -26,10 +26,6 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }, 
   try {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      if (email.toLowerCase() === 'ananya@example.com' || email.toLowerCase().includes('demo')) {
-        localStorage.setItem('userInfo', JSON.stringify(DEMO_USER));
-        return DEMO_USER;
-      }
       return thunkAPI.rejectWithValue(error.message);
     }
     const userObj = {
@@ -37,15 +33,11 @@ export const login = createAsyncThunk('auth/login', async ({ email, password }, 
       _id: data.user.id,
       email: data.user.email,
       name: data.user.user_metadata?.full_name || data.user.email.split('@')[0],
-      avatar: data.user.user_metadata?.avatar_url || DEMO_USER.avatar,
+      avatar: data.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&h=160&q=80&auto=format&fit=crop',
     };
     localStorage.setItem('userInfo', JSON.stringify(userObj));
     return userObj;
   } catch (error) {
-    if (email.toLowerCase() === 'ananya@example.com' || email.toLowerCase().includes('demo')) {
-      localStorage.setItem('userInfo', JSON.stringify(DEMO_USER));
-      return DEMO_USER;
-    }
     return thunkAPI.rejectWithValue(error.message || 'Login failed');
   }
 });
@@ -98,6 +90,16 @@ const authSlice = createSlice({
     error: null,
   },
   reducers: {
+    setUser: (state, action) => {
+      state.userInfo = action.payload;
+      state.loading = false;
+      state.error = null;
+      if (action.payload) {
+        localStorage.setItem('userInfo', JSON.stringify(action.payload));
+      } else {
+        localStorage.removeItem('userInfo');
+      }
+    },
     logout: (state) => {
       supabase.auth.signOut().catch(() => {});
       localStorage.removeItem('userInfo');
@@ -123,5 +125,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { setUser, logout, clearError } = authSlice.actions;
 export default authSlice.reducer;

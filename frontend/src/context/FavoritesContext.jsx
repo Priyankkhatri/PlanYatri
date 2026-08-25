@@ -65,10 +65,9 @@ export function FavoritesProvider({ children }) {
   const getUserKey = () => {
     try {
       const info = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
-      if (!info || info.isDemo) return 'demo'
-      return info.id || info._id || info.email || 'user'
+      return info?.id || info?._id || info?.email || 'guest'
     } catch {
-      return 'demo'
+      return 'guest'
     }
   }
 
@@ -76,20 +75,11 @@ export function FavoritesProvider({ children }) {
 
   const [favorites, setFavorites] = useState(() => {
     const key = getUserKey()
-    if (key === 'demo') {
-      try {
-        const saved = localStorage.getItem('planyatri_favorites_demo')
-        return saved ? JSON.parse(saved) : INITIAL_FAVORITES
-      } catch {
-        return INITIAL_FAVORITES
-      }
-    } else {
-      try {
-        const saved = localStorage.getItem(`planyatri_favorites_${key}`)
-        return saved ? JSON.parse(saved) : []
-      } catch {
-        return []
-      }
+    try {
+      const saved = localStorage.getItem(`planyatri_favorites_${key}`)
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
     }
   })
 
@@ -98,20 +88,18 @@ export function FavoritesProvider({ children }) {
     const currentKey = getUserKey()
     if (currentKey !== userKey) {
       setUserKey(currentKey)
-      if (currentKey === 'demo') {
-        const saved = localStorage.getItem('planyatri_favorites_demo')
-        setFavorites(saved ? JSON.parse(saved) : INITIAL_FAVORITES)
-      } else {
+      try {
         const saved = localStorage.getItem(`planyatri_favorites_${currentKey}`)
         setFavorites(saved ? JSON.parse(saved) : [])
+      } catch {
+        setFavorites([])
       }
     }
   }, [userKey])
 
   useEffect(() => {
     try {
-      const storageKey = userKey === 'demo' ? 'planyatri_favorites_demo' : `planyatri_favorites_${userKey}`
-      localStorage.setItem(storageKey, JSON.stringify(favorites))
+      localStorage.setItem(`planyatri_favorites_${userKey}`, JSON.stringify(favorites))
     } catch (err) {
       console.warn('Failed to save favorites:', err)
     }

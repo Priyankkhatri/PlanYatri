@@ -9,9 +9,9 @@ const DEFAULT_CONTACTS = [
 export const fetchContacts = createAsyncThunk('emergency/fetchContacts', async (_, thunkAPI) => {
   try {
     const { data } = await api.get('/emergency');
-    return data && data.length > 0 ? data : DEFAULT_CONTACTS;
+    return Array.isArray(data) ? data : [];
   } catch (error) {
-    return DEFAULT_CONTACTS;
+    return [];
   }
 });
 

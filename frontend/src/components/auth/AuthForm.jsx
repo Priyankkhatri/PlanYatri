@@ -111,7 +111,7 @@ export default function AuthForm() {
                 <input
                   type="text"
                   className="w-full py-[13px] pr-[46px] pl-[44px] border-[1.5px] border-border rounded-[13px] text-[14px] font-body text-text-dark bg-white transition-all duration-200 outline-none tracking-[0.1px] placeholder:text-text-light placeholder:font-light hover:border-black/20 focus:border-gold focus:ring-[3.5px] focus:ring-gold/10"
-                  placeholder="Ananya Sharma"
+                  placeholder="Your Full Name"
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
                   required
@@ -127,7 +127,7 @@ export default function AuthForm() {
               <input
                 type="email"
                 className="w-full py-[13px] pr-[46px] pl-[44px] border-[1.5px] border-border rounded-[13px] text-[14px] font-body text-text-dark bg-white transition-all duration-200 outline-none tracking-[0.1px] placeholder:text-text-light placeholder:font-light hover:border-black/20 focus:border-gold focus:ring-[3.5px] focus:ring-gold/10"
-                placeholder="ananya@example.com"
+                placeholder="you@example.com"
                 value={form.email}
                 onChange={e => setForm({ ...form, email: e.target.value })}
                 required
@@ -210,14 +210,14 @@ export default function AuthForm() {
           </div>
 
           {/* Social */}
-          <div className="grid grid-cols-2 gap-[12px]">
-            <button type="button" onClick={() => signInWithOAuth('google')} className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
+          <div className="w-full">
+            <button
+              type="button"
+              onClick={() => signInWithOAuth('google')}
+              className="w-full flex items-center justify-center gap-[10px] p-[12px_18px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-semibold font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-[#D4A843] hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(212,168,67,0.15)] active:translate-y-0"
+            >
               <GoogleIcon />
-              <span>Google</span>
-            </button>
-            <button type="button" onClick={() => signInWithOAuth('apple')} className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
-              <AppleIcon />
-              <span>Apple</span>
+              <span>Continue with Google</span>
             </button>
           </div>
         </form>

@@ -13,11 +13,12 @@ export default function Profile() {
   const dispatch = useDispatch()
   const toast = useToast()
   const { userInfo } = useSelector((state) => state.auth)
+  const { trips = [] } = useSelector((state) => state.trips)
   const { favorites, removeFavorite } = useFavorites()
 
-  usePageTitle('Profile — Wanderlust')
+  usePageTitle('Profile — PlanYatri')
 
-  const [name, setName] = useState(userInfo?.name || 'Elena Rodriguez')
+  const [name, setName] = useState(userInfo?.name || 'Explorer')
   const [quote, setQuote] = useState(
     userInfo?.bio || '"Collect moments, one boarding pass at a time."'
   )
@@ -45,6 +46,13 @@ export default function Profile() {
     toast.info('Signed out successfully')
     navigate('/')
   }
+
+  const tripsCount = Array.isArray(trips) ? trips.length : 0
+  const savedCount = Array.isArray(favorites) ? favorites.length : 0
+  const countriesCount = new Set([
+    ...(Array.isArray(trips) ? trips.map(t => t.dest?.split(',')[1]?.trim() || t.dest) : []),
+    ...(Array.isArray(favorites) ? favorites.map(f => f.country) : [])
+  ].filter(Boolean)).size
 
   return (
     <div className="prof-page-root">
@@ -75,23 +83,23 @@ export default function Profile() {
             {/* Right 4 Metric Stat Cards */}
             <div className="prof-stats-grid">
               <div className="prof-stat-box">
-                <span className="prof-stat-number">24</span>
-                <span className="prof-stat-lbl">TRIPS TAKEN</span>
+                <span className="prof-stat-number">{tripsCount}</span>
+                <span className="prof-stat-lbl">TRIPS PLANNED</span>
               </div>
 
               <div className="prof-stat-box">
-                <span className="prof-stat-number">12</span>
-                <span className="prof-stat-lbl">COUNTRIES VISITED</span>
+                <span className="prof-stat-number">{countriesCount}</span>
+                <span className="prof-stat-lbl">DESTINATIONS</span>
               </div>
 
               <div className="prof-stat-box">
-                <span className="prof-stat-number">84</span>
+                <span className="prof-stat-number">{savedCount}</span>
                 <span className="prof-stat-lbl">SAVED PLACES</span>
               </div>
 
               <div className="prof-stat-box">
-                <span className="prof-stat-number">2.4k</span>
-                <span className="prof-stat-lbl">MILES LOGGED</span>
+                <span className="prof-stat-number">{tripsCount > 0 ? `${tripsCount * 850}` : '0'}</span>
+                <span className="prof-stat-lbl">KMS LOGGED</span>
               </div>
             </div>
           </section>

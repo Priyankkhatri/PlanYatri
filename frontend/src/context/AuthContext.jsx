@@ -27,16 +27,23 @@ export function AuthProvider({ children }) {
       // Fallback if profiles table is not created yet
     }
 
-    return {
+    const name = profileData?.full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'Explorer'
+    const avatar = profileData?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&h=160&q=80&auto=format&fit=crop'
+
+    const userObj = {
       id: user.id,
+      _id: user.id,
       email: user.email,
-      name: profileData?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Explorer',
-      avatar: profileData?.avatar_url || user.user_metadata?.avatar_url || 'https://picsum.photos/seed/portrait/160/160',
+      name,
+      avatar,
       createdAt: user.created_at,
     }
+
+    localStorage.setItem('userInfo', JSON.stringify(userObj))
+    return userObj
   }, [])
 
-  // Listen to Supabase auth state changes
+  // Listen to Supabase auth state changes (Google OAuth & Email)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: initSession } }) => {
       setSession(initSession)

@@ -35,7 +35,7 @@ export default function JoinTrip() {
               status: 'Upcoming',
             },
             profiles: {
-              full_name: 'Ananya Sharma (Trip Leader)',
+              full_name: 'Expedition Leader',
               avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&q=80',
             }
           })

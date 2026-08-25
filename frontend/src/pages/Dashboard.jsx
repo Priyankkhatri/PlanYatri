@@ -41,11 +41,13 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { userInfo } = useSelector((state) => state.auth)
+  const { trips = [] } = useSelector((state) => state.trips)
 
-  usePageTitle('Dashboard — Wanderlust')
+  usePageTitle('Dashboard — PlanYatri')
 
   const displayName = userInfo?.name || 'Traveler'
   const firstName = displayName.split(' ')[0]
+  const nextTrip = Array.isArray(trips) && trips.length > 0 ? trips[0] : null
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 40)
@@ -206,10 +208,15 @@ export default function Dashboard() {
               </svg>
             </button>
 
-            <div className="widget-trip-item">
+            <div
+              className="widget-trip-item"
+              onClick={() => nextTrip ? navigate('/trips') : setShowAIPlannerModal(true)}
+              style={{ cursor: 'pointer' }}
+              title={nextTrip ? "View Trip Itinerary" : "Plan a trip with AI"}
+            >
               <div>
                 <p className="widget-lbl">Your Next Trip</p>
-                <p className="widget-val">Bali, Indonesia</p>
+                <p className="widget-val">{nextTrip ? (nextTrip.dest || nextTrip.title) : 'No trips planned yet'}</p>
               </div>
               <div className="widget-cal-tag">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2">
@@ -219,8 +226,8 @@ export default function Dashboard() {
                   <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
                 <div>
-                  <span className="cal-sub">Upcoming Trip</span>
-                  <span className="cal-days">12 Days to go</span>
+                  <span className="cal-sub">{nextTrip ? 'Upcoming Trip' : 'Start Journey'}</span>
+                  <span className="cal-days">{nextTrip ? `${nextTrip.days || 5} Days Trip` : 'Plan with AI →'}</span>
                 </div>
               </div>
             </div>

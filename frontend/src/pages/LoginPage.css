@@ -474,11 +474,25 @@
 
 /* Social buttons */
 .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.social-row-single { width: 100%; }
+.google-btn-full {
+  width: 100%;
+  padding: 13px 18px;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(212, 168, 67, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+}
+.google-btn-full:hover {
+  border-color: #D4A843;
+  background: #FFFDF9;
+  box-shadow: 0 6px 20px rgba(212, 168, 67, 0.15);
+}
 .social-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   padding: 11px 16px;
   background: white;
   border: 1.5px solid #E5E7EB;

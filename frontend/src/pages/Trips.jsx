@@ -143,18 +143,16 @@ export default function Trips() {
   usePageTitle('My Journeys — PlanYatri')
 
   const { userInfo } = useSelector((state) => state.auth)
-  const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
-  const userKey = isDemo ? 'demo' : (userInfo?.id || userInfo?._id || 'user')
+  const userKey = userInfo?.id || userInfo?._id || userInfo?.email || 'guest'
 
   const [filterTab, setFilterTab] = useState('Upcoming') // 'Upcoming' | 'Past' | 'Community'
   const [journeys, setJourneys] = useState(() => {
     try {
       const storageKey = `planyatri_trips_${userKey}`
       const saved = localStorage.getItem(storageKey)
-      if (saved) return JSON.parse(saved)
-      return isDemo ? DEFAULT_INITIAL_JOURNEYS : []
+      return saved ? JSON.parse(saved) : []
     } catch {
-      return isDemo ? DEFAULT_INITIAL_JOURNEYS : []
+      return []
     }
   })
 
