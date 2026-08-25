@@ -1,6 +1,7 @@
 // PlanYatri Messages & Co-Traveler QR Invite System
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import Sidebar from '../components/Sidebar'
 import api from '../services/api'
@@ -30,6 +31,7 @@ const ROLES = [
 
 export default function Messages() {
   const toast = useToast()
+  const location = useLocation()
   const { userInfo } = useSelector((state) => state.auth)
   const userName = userInfo?.name ? userInfo.name.split(' ')[0] : 'Explorer'
   const userKey = userInfo?.id || userInfo?._id || userInfo?.email || 'guest'
@@ -88,6 +90,21 @@ export default function Messages() {
   const [tripMembers, setTripMembers] = useState([])
   const [qrPulse, setQrPulse] = useState(false)
   const [revokingId, setRevokingId] = useState(null)
+
+  // Handle incoming navigation states (prompts, trip focus, invite tab)
+  useEffect(() => {
+    if (location.state?.prompt) {
+      setActiveTab('chats')
+      setActiveContactId(1)
+      setMessageInput(location.state.prompt)
+    }
+    if (location.state?.openInvite) {
+      setActiveTab('invite')
+    }
+    if (location.state?.tripId) {
+      setSelectedTripId(location.state.tripId)
+    }
+  }, [location.state])
 
   // Save contacts & conversations to local storage
   useEffect(() => {
