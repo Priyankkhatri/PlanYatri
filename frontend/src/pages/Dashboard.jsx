@@ -6,7 +6,9 @@ import Sidebar from '../components/Sidebar'
 import { fetchTrips } from '../store/slices/tripSlice'
 import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon } from '../components/icons/LuxuryIcons'
+import { useFavorites } from '../context/FavoritesContext'
+import { useToast } from '../context/ToastContext'
+import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon, ShieldIcon, CompassIcon, PlaneIcon } from '../components/icons/LuxuryIcons'
 import WeatherWidget from '../components/WeatherWidget'
 import CurrencyConverter from '../components/CurrencyConverter'
 import FlightTracker from '../components/FlightTracker'
@@ -32,14 +34,16 @@ const heroTextVariant = {
 
 export default function Dashboard() {
   const [mounted, setMounted] = useState(false)
-  const [liked, setLiked] = useState({})
   const [search, setSearch] = useState('')
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterSuccess, setNewsletterSuccess] = useState(false)
   const [showAIPlannerModal, setShowAIPlannerModal] = useState(false)
+  const [userCity, setUserCity] = useState('Bangalore, India')
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const toast = useToast()
+  const { toggleFavorite, isFavorite } = useFavorites()
   const { userInfo } = useSelector((state) => state.auth)
   const { trips = [] } = useSelector((state) => state.trips)
 
@@ -52,12 +56,36 @@ export default function Dashboard() {
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 40)
     dispatch(fetchTrips())
+
+    // Detect user location gracefully
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const { latitude, longitude } = pos.coords
+            const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`)
+            const data = await res.json()
+            if (data.city || data.locality) {
+              setUserCity(`${data.city || data.locality}, ${data.countryName || 'India'}`)
+            }
+          } catch {}
+        },
+        () => {}
+      )
+    }
+
     return () => clearTimeout(t)
   }, [dispatch])
 
-  const toggleHeart = (e, id) => {
+  const handleToggleFav = (e, destObj) => {
     e.stopPropagation()
-    setLiked((prev) => ({ ...prev, [id]: !prev[id] }))
+    toggleFavorite(destObj)
+    const fav = isFavorite(destObj.id)
+    if (!fav) {
+      toast.success(`❤️ Added ${destObj.name} to your Saved Favorites!`)
+    } else {
+      toast.info(`Removed ${destObj.name} from Favorites.`)
+    }
   }
 
   const handleSearchSubmit = (e) => {
@@ -71,6 +99,7 @@ export default function Dashboard() {
     e.preventDefault()
     if (newsletterEmail) {
       setNewsletterSuccess(true)
+      toast.success('🎉 Subscribed to PlanYatri Travel Digest!')
       setTimeout(() => {
         setNewsletterEmail('')
         setNewsletterSuccess(false)
@@ -185,7 +214,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="widget-lbl">Current Location</p>
-                <p className="widget-val">Bangalore, India</p>
+                <p className="widget-val">{userCity}</p>
               </div>
             </div>
 
@@ -244,11 +273,15 @@ export default function Dashboard() {
 
             <motion.div className="db-rec-grid" variants={staggerContainer} initial="initial" animate="animate">
               {/* Card 1: Maldives */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations', { state: { selectedDest: 'Maldives' } })}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['maldives']} alt="Maldives" />
-                  <button className={`rec-heart-btn ${liked['maldives'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'maldives')}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['maldives'] ? '#EF4444' : 'none'} stroke={liked['maldives'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
+                  <button
+                    className={`rec-heart-btn ${isFavorite('fav-maldives') ? 'active' : ''}`}
+                    onClick={(e) => handleToggleFav(e, { id: 'fav-maldives', name: 'Maldives', country: 'MALDIVES', img: WIKIMEDIA_REAL_IMAGES['maldives'], desc: 'Paradise on Earth with turquoise lagoons.' })}
+                    title="Save to Favorites"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill={isFavorite('fav-maldives') ? '#EF4444' : 'none'} stroke={isFavorite('fav-maldives') ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
                   </button>
@@ -261,11 +294,15 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 2: Switzerland */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations', { state: { selectedDest: 'Switzerland' } })}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['switzerland']} alt="Switzerland" />
-                  <button className={`rec-heart-btn ${liked['swiss'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'swiss')}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['swiss'] ? '#EF4444' : 'none'} stroke={liked['swiss'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
+                  <button
+                    className={`rec-heart-btn ${isFavorite('fav-swiss') ? 'active' : ''}`}
+                    onClick={(e) => handleToggleFav(e, { id: 'fav-swiss', name: 'Switzerland', country: 'SWITZERLAND', img: WIKIMEDIA_REAL_IMAGES['switzerland'], desc: 'Alpine Wonderland with majestic peaks.' })}
+                    title="Save to Favorites"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill={isFavorite('fav-swiss') ? '#EF4444' : 'none'} stroke={isFavorite('fav-swiss') ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
                   </button>
@@ -278,11 +315,15 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 3: Greece */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations', { state: { selectedDest: 'Greece' } })}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['greece']} alt="Greece" />
-                  <button className={`rec-heart-btn ${liked['greece'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'greece')}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['greece'] ? '#EF4444' : 'none'} stroke={liked['greece'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
+                  <button
+                    className={`rec-heart-btn ${isFavorite('fav-greece') ? 'active' : ''}`}
+                    onClick={(e) => handleToggleFav(e, { id: 'fav-greece', name: 'Greece', country: 'GREECE', img: WIKIMEDIA_REAL_IMAGES['greece'], desc: 'Timeless beauty and Aegean sunsets.' })}
+                    title="Save to Favorites"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill={isFavorite('fav-greece') ? '#EF4444' : 'none'} stroke={isFavorite('fav-greece') ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
                   </button>
@@ -295,11 +336,15 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 4: Bali */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations', { state: { selectedDest: 'Bali' } })}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
-                  <button className={`rec-heart-btn ${liked['bali'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'bali')}>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['bali'] ? '#EF4444' : 'none'} stroke={liked['bali'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
+                  <button
+                    className={`rec-heart-btn ${isFavorite('fav-ubud') ? 'active' : ''}`}
+                    onClick={(e) => handleToggleFav(e, { id: 'fav-ubud', name: 'Bali', country: 'INDONESIA', img: WIKIMEDIA_REAL_IMAGES['bali'], desc: 'Island of Gods and lush emerald terraces.' })}
+                    title="Save to Favorites"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill={isFavorite('fav-ubud') ? '#EF4444' : 'none'} stroke={isFavorite('fav-ubud') ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
                   </button>
@@ -360,8 +405,8 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <button className="adv-cta-btn" onClick={() => navigate('/trips')}>
-                    <span>Let's Plan Your Trip</span>
+                  <button className="adv-cta-btn" onClick={() => setShowAIPlannerModal(true)}>
+                    <span>Let's Plan Your Trip with AI</span>
                     <span className="adv-arrow">→</span>
                   </button>
                 </div>
@@ -385,7 +430,7 @@ export default function Dashboard() {
             </div>
           </motion.section>
 
-          {/* 5. YOUR UPCOMING TRIPS */}
+          {/* 5. YOUR UPCOMING TRIPS (DYNAMICALLY RENDERED FROM USER TRIPS) */}
           <motion.section className="db-section" variants={fadeUp}>
             <div className="db-section-hdr">
               <h2 className="db-section-title">Your Upcoming Trips</h2>
@@ -394,69 +439,105 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="db-upcoming-layout">
-              {/* Main Feature Trip: Bali */}
-              <div className="upcoming-main-card" onClick={() => navigate('/trips')}>
-                <div className="upcoming-img-box">
-                  <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
-                </div>
-                <div className="upcoming-main-info">
-                  <div>
-                    <h3 className="upcoming-main-title">Bali, Indonesia</h3>
-                    <p className="upcoming-dates">20 May - 02 June 2024</p>
+            {trips.length === 0 ? (
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: 20,
+                  border: '1px solid #EFEAE2',
+                  padding: '48px 32px',
+                  textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 12,
+                }}
+              >
+                <span style={{ fontSize: 42 }}>🧭</span>
+                <h3 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 22, fontWeight: 700, margin: 0, color: '#18181B' }}>
+                  No Journeys Scheduled Yet
+                </h3>
+                <p style={{ fontSize: 14, color: '#8C867A', maxWidth: 440, margin: '0 0 8px' }}>
+                  Ready for your next adventure? Start drafting your personalized multi-city itinerary with our AI Travel Concierge.
+                </p>
+                <button
+                  onClick={() => setShowAIPlannerModal(true)}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#D4A843',
+                    color: '#18181B',
+                    border: 'none',
+                    borderRadius: 12,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    boxShadow: '0 4px 14px rgba(212, 168, 67, 0.25)',
+                  }}
+                >
+                  <SparkleIcon size={14} color="#18181B" /> 🚀 Plan Your First Trip with AI
+                </button>
+              </div>
+            ) : (
+              <div className="db-upcoming-layout">
+                {/* Main Feature Trip */}
+                <div className="upcoming-main-card" onClick={() => navigate('/trips', { state: { selectedTripId: trips[0]._id || trips[0].id } })}>
+                  <div className="upcoming-img-box">
+                    <img src={trips[0].img || WIKIMEDIA_REAL_IMAGES['udaipur']} alt={trips[0].dest || trips[0].title} />
                   </div>
+                  <div className="upcoming-main-info">
+                    <div>
+                      <h3 className="upcoming-main-title">{trips[0].dest || trips[0].title}</h3>
+                      <p className="upcoming-dates">{trips[0].dates || 'Upcoming Journey'}</p>
+                    </div>
 
-                  <div className="upcoming-meta-row">
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                      <CalendarIcon size={13} color="#D4A843" /> 12 Days Trip
-                    </span>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                      <UsersIcon size={13} color="#D4A843" /> 2 People
-                    </span>
-                  </div>
+                    <div className="upcoming-meta-row">
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                        <CalendarIcon size={13} color="#D4A843" /> {trips[0].days || 7} Days Trip
+                      </span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                        <UsersIcon size={13} color="#D4A843" /> {trips[0].members?.length || 2} People
+                      </span>
+                    </div>
 
-                  <div className="upcoming-progress-wrap">
-                    <span className="prog-label">80% Completed</span>
-                    <div className="prog-bar-bg">
-                      <div className="prog-bar-fill" style={{ width: '80%' }} />
+                    <div className="upcoming-progress-wrap">
+                      <span className="prog-label">{trips[0].progress || 60}% Prepared</span>
+                      <div className="prog-bar-bg">
+                        <div className="prog-bar-fill" style={{ width: `${trips[0].progress || 60}%` }} />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Side Mini Trips */}
-              <div className="upcoming-side-list">
-                <div className="upcoming-side-item" onClick={() => navigate('/trips')}>
-                  <div className="side-thumb-box">
-                    <img src={WIKIMEDIA_REAL_IMAGES['switzerland']} alt="Switzerland" />
+                {/* Side Mini Trips */}
+                {trips.length > 1 && (
+                  <div className="upcoming-side-list">
+                    {trips.slice(1, 3).map((tr, idx) => (
+                      <div
+                        key={tr._id || tr.id || idx}
+                        className="upcoming-side-item"
+                        onClick={() => navigate('/trips', { state: { selectedTripId: tr._id || tr.id } })}
+                      >
+                        <div className="side-thumb-box">
+                          <img src={tr.img || WIKIMEDIA_REAL_IMAGES['swiss']} alt={tr.dest || tr.title} />
+                        </div>
+                        <div className="side-item-info">
+                          <h4 className="side-item-title">{tr.dest || tr.title}</h4>
+                          <p className="side-item-dates">{tr.dates || 'Upcoming'}</p>
+                          <p className="side-item-meta" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                              <CalendarIcon size={12} color="#8C867A" /> {tr.days || 5} Days
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="side-item-info">
-                    <h4 className="side-item-title">Switzerland</h4>
-                    <p className="side-item-dates">05 July - 15 July 2024</p>
-                    <p className="side-item-meta" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><CalendarIcon size={12} color="#8C867A" /> 10 Days</span>
-                      <span>·</span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><UsersIcon size={12} color="#8C867A" /> 2 People</span>
-                    </p>
-                  </div>
-                </div>
-
-                <div className="upcoming-side-item" onClick={() => navigate('/trips')}>
-                  <div className="side-thumb-box">
-                    <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
-                  </div>
-                  <div className="side-item-info">
-                    <h4 className="side-item-title">Bali, Indonesia</h4>
-                    <p className="side-item-dates">10 Aug - 25 Aug 2024</p>
-                    <p className="side-item-meta" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><CalendarIcon size={12} color="#8C867A" /> 7 Days</span>
-                      <span>·</span>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><UsersIcon size={12} color="#8C867A" /> 2 People</span>
-                    </p>
-                  </div>
-                </div>
+                )}
               </div>
-            </div>
+            )}
           </motion.section>
 
           {/* 6. TRAVEL INSPIRATION */}
