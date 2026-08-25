@@ -8,8 +8,6 @@ import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
 import { SparkleIcon, MountainIcon, CultureIcon, LeafIcon, BeachIcon } from '@/components/icons/LuxuryIcons'
-import './Destinations.css'
-import './Experiences.css'
 
 const EXPERIENCES = [
   { name: 'Hot Air Balloon — Cappadocia', location: 'Turkey', cat: 'Adventure', duration: '3h', price: '₹15,000', rating: 4.9, reviews: 840, img: WIKIMEDIA_REAL_IMAGES['cappadocia'], tag: 'Bestseller' },

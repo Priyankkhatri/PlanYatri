@@ -3,7 +3,6 @@ import { AppProviders } from '@/components/providers/AppProviders';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import Footer from '@/components/Footer';
-import './globals.css';
 
 export const metadata: Metadata = {
   title: 'PlanYatri — Enterprise Travel Architecture',

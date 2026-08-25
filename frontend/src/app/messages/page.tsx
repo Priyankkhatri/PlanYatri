@@ -17,7 +17,7 @@ import {
   LeafIcon,
   CheckCircleIcon,
 } from '@/components/icons/LuxuryIcons'
-import './Messages.css'
+
 
 // ── 1. INITIAL DEMO CONTACTS ──
 const INITIAL_CONTACTS = [

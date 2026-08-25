@@ -8,7 +8,7 @@ import { useToast } from '@/context/ToastContext'
 import { updateProfile } from '@/store/slices/authSlice'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { UserIcon, BellIcon, LockIcon, CardIcon, GearIcon, ShieldIcon } from '@/components/icons/LuxuryIcons'
-import './Settings.css'
+
 
 const SECTIONS = ['Profile', 'Notifications', 'Privacy', 'Payments', 'Preferences', 'About']
 

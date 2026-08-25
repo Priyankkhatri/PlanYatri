@@ -8,7 +8,7 @@ import { logout, updateProfile } from '@/store/slices/authSlice'
 import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { useFavorites } from '@/context/FavoritesContext'
-import './Profile.css'
+
 
 export default function Profile() {
   const router = useRouter();

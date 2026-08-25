@@ -8,7 +8,7 @@ import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { PlaneIcon, HotelIcon, ShieldIcon, WaveIcon, MountainIcon, CompassIcon } from '@/components/icons/LuxuryIcons'
 import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
-import './Bookings.css'
+
 
 const INITIAL_BOOKINGS = [
   {

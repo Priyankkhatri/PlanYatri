@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Sidebar from '@/components/Sidebar'
 import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
-import './TravelStyle.css'
+
 
 const QUESTIONS = [
   {

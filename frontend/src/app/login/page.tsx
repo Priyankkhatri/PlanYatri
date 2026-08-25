@@ -10,7 +10,7 @@ import { login, register, loginDemo, clearError } from '@/store/slices/authSlice
 import { useToast } from '@/context/ToastContext'
 import { useAuth } from '@/context/AuthContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
-import './LoginPage.css'
+
 
 /* ── Real travel photos ── */
 const HERO_BG    = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80&auto=format&fit=crop'

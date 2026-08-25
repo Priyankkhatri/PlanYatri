@@ -10,7 +10,7 @@ import InteractiveMap from '@/components/InteractiveMap'
 import GoogleAnimatedMap from '@/components/GoogleAnimatedMap'
 import { useFavorites } from '@/context/FavoritesContext'
 import { SparkleIcon, IndiaIcon, MountainIcon, WaveIcon, MonumentIcon, LeafIcon, GlobeIcon, CalendarIcon, ShieldIcon, CompassIcon, MapPinIcon } from '@/components/icons/LuxuryIcons'
-import './Destinations.css'
+
 
 /* ── Animation Variants ── */
 const staggerGrid = {

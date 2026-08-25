@@ -9,7 +9,7 @@ import { fetchTrips } from '@/store/slices/tripSlice'
 import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon } from '@/components/icons/LuxuryIcons'
-import './Dashboard.css'
+
 
 /* ── Animation Variants ── */
 const fadeUp = {

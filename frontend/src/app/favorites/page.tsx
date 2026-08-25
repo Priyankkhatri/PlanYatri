@@ -6,7 +6,7 @@ import Sidebar from '@/components/Sidebar'
 import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { useFavorites } from '@/context/FavoritesContext'
-import './Favorites.css'
+
 
 export default function Favorites() {
   const { favorites, removeFavorite } = useFavorites()

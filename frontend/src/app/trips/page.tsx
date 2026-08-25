@@ -11,7 +11,7 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
 import InteractiveMap from '@/components/InteractiveMap'
 import { CalendarIcon, UsersIcon, MapPinIcon, PlaneIcon, SparkleIcon, TrashIcon, UtensilsIcon, HotelIcon, CompassIcon, CheckCircleIcon, FlameIcon, BookIcon, ShareIcon, CultureIcon, MountainIcon } from '@/components/icons/LuxuryIcons'
-import './Trips.css'
+
 
 // Initial Curated Multi-City Journeys
 const DEFAULT_INITIAL_JOURNEYS = [

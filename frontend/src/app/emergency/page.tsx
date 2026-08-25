@@ -8,7 +8,6 @@ import Sidebar from '@/components/Sidebar'
 import { fetchContacts, addContact, removeContact } from '@/store/slices/emergencySlice'
 import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
-import './Emergency.css'
 
 // ── Clean Luxury Bespoke Icons (Zero Emojis / Zero AI-Slop) ──
 const ShieldSafeIcon = ({ size = 18, color = 'currentColor', className = '' }) => (
