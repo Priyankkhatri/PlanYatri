@@ -117,7 +117,7 @@ export default function Experiences() {
               exit={{ opacity: 0, transition: { duration: 0.15 } }}
             >
               {filtered.map((exp: any) => {
-                const ts = TAG_COLORS[exp.tag] || {}
+                const ts = (TAG_COLORS as any)[exp.tag] || {}
                 return (
                   <motion.div
                     className="exp-card"
