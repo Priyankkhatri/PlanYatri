@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import Sidebar from '../components/Sidebar'
 import api from '../services/api'
-import { supabase } from '../services/supabaseClient'
+import { messageService } from '../services/supabaseService'
+import { connectSocket, disconnectSocket } from '../services/socket'
 import {
   SparkleIcon,
   UsersIcon,
@@ -225,9 +226,14 @@ export default function Messages() {
   const [showCallModal, setShowCallModal] = useState(false)
   const [callDuration, setCallDuration] = useState(0)
   const [showDossierModal, setShowDossierModal] = useState(false)
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const [typingUser, setTypingUser] = useState(null)
+  const [socketConnected, setSocketConnected] = useState(false)
 
   const messagesEndRef = useRef(null)
   const callTimerRef = useRef(null)
+  const socketRef = useRef(null)
+  const typingTimerRef = useRef(null)
 
   const activeContact = contacts.find((c) => c.id === activeContactId) || contacts[0]
   const currentMessages = conversations[activeContactId] || []
@@ -237,78 +243,111 @@ export default function Messages() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [activeContactId, currentMessages, isTyping])
 
-  // ── 1. SUPABASE REALTIME & PERSISTENCE INITIALIZATION ──
+  // ── 1. SOCKET.IO REAL-TIME + SUPABASE PERSISTENCE ──
   useEffect(() => {
-    // Load persisted messages from Supabase if table exists
+    // Load persisted messages from Supabase
     const fetchSupabaseMessages = async () => {
       try {
-        const { data, error } = await supabase
-          .from('messages')
-          .select('*')
-          .order('created_at', { ascending: true })
-
-        if (data && data.length > 0 && !error) {
-          const remoteGrouped = {}
-          data.forEach((row) => {
-            const cid = parseInt(row.contact_id) || row.contact_id
-            if (!remoteGrouped[cid]) remoteGrouped[cid] = []
-            remoteGrouped[cid].push({
-              id: row.id,
-              from: row.sender_type === 'user' ? 'me' : 'them',
-              text: row.text,
-              time: new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            })
-          })
-
-          setConversations((prev) => {
-            const merged = { ...prev }
-            Object.keys(remoteGrouped).forEach((cid) => {
-              merged[cid] = [...(prev[cid] || []), ...remoteGrouped[cid]]
-            })
-            return merged
-          })
+        const roomId = `contact_${activeContactId}`
+        const rows = await messageService.getForRoom(roomId, 60)
+        if (rows && rows.length > 0) {
+          const mapped = rows.map(row => ({
+            id: row.id,
+            from: row.sender_type === 'user' ? 'me' : 'them',
+            text: row.text,
+            time: new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            fromDb: true,
+          }))
+          setConversations(prev => ({
+            ...prev,
+            [activeContactId]: mapped,
+          }))
         }
       } catch (e) {
         console.warn('Supabase messages load fallback:', e.message)
       }
     }
-
     fetchSupabaseMessages()
 
-    // Subscribe to Supabase Realtime Channel
-    const channel = supabase
-      .channel('public:messages')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
-          const row = payload.new
-          if (row && row.contact_id) {
-            const cid = parseInt(row.contact_id) || row.contact_id
-            const incomingMsg = {
-              id: row.id,
-              from: row.sender_type === 'user' ? 'me' : 'them',
-              text: row.text,
-              time: new Date(row.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            }
+    // Supabase realtime subscription via messageService
+    const roomId = `contact_${activeContactId}`
+    const supaChannel = messageService.subscribe(roomId, (newRow) => {
+      const cid = activeContactId
+      const incomingMsg = {
+        id: newRow.id,
+        from: newRow.sender_type === 'user' ? 'me' : 'them',
+        text: newRow.text,
+        time: new Date(newRow.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        fromDb: true,
+      }
+      setConversations(prev => {
+        const currentList = prev[cid] || []
+        if (currentList.some(m => m.id === incomingMsg.id)) return prev
+        return { ...prev, [cid]: [...currentList, incomingMsg] }
+      })
+    })
 
-            setConversations((prev) => {
-              const currentList = prev[cid] || []
-              if (currentList.some((m) => m.id === incomingMsg.id)) return prev
-              return {
-                ...prev,
-                [cid]: [...currentList, incomingMsg],
-              }
-            })
-          }
-        }
-      )
-      .subscribe()
+    // Socket.io real-time connection
+    const socket = connectSocket()
+    socketRef.current = socket
+    const room = `contact_${activeContactId}`
+    const uname = userName || 'Explorer'
+
+    socket.emit('join_room', { room, username: uname })
+    setSocketConnected(socket.connected)
+
+    socket.on('connect', () => setSocketConnected(true))
+    socket.on('disconnect', () => setSocketConnected(false))
+
+    socket.on('chat_history', (history) => {
+      if (!history || history.length === 0) return
+      const mapped = history.map(m => ({
+        id: m.id,
+        from: m.username === uname ? 'me' : 'them',
+        text: m.text,
+        time: new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        wsMsg: true,
+      }))
+      setConversations(prev => ({ ...prev, [activeContactId]: mapped }))
+    })
+
+    socket.on('receive_message', (msg) => {
+      if (msg.username === uname) return // already applied optimistically
+      const mapped = {
+        id: msg.id,
+        from: 'them',
+        text: msg.text,
+        time: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        wsMsg: true,
+      }
+      setConversations(prev => ({ ...prev, [activeContactId]: [...(prev[activeContactId] || []), mapped] }))
+    })
+
+    socket.on('user_joined', ({ username, onlineUsers }) => {
+      setOnlineUsers(onlineUsers || [])
+    })
+    socket.on('user_left', ({ onlineUsers }) => setOnlineUsers(onlineUsers || []))
+    socket.on('user_typing', ({ username }) => {
+      setTypingUser(username)
+      clearTimeout(typingTimerRef.current)
+      typingTimerRef.current = setTimeout(() => setTypingUser(null), 2500)
+    })
+    socket.on('user_stop_typing', () => setTypingUser(null))
+
 
     return () => {
-      supabase.removeChannel(channel)
+      messageService.unsubscribe(supaChannel)
+      socket.emit('stop_typing', { room, username: uname })
+      socket.off('connect')
+      socket.off('disconnect')
+      socket.off('chat_history')
+      socket.off('receive_message')
+      socket.off('user_joined')
+      socket.off('user_left')
+      socket.off('user_typing')
+      socket.off('user_stop_typing')
     }
-  }, [])
+  }, [activeContactId])
 
   // ── 2. CALL SIMULATION TIMER ──
   useEffect(() => {
@@ -353,22 +392,33 @@ export default function Messages() {
     }))
     setMessageInput('')
 
+    // 2. Broadcast via Socket.io
+    if (socketRef.current) {
+      socketRef.current.emit('send_message', {
+        room: `contact_${activeContactId}`,
+        message: textToSend,
+        username: userName || 'Explorer',
+      })
+      socketRef.current.emit('stop_typing', { room: `contact_${activeContactId}`, username: userName })
+    }
+
     // 2. Update contact preview snippet
     setContacts((prev) =>
       prev.map((c) => (c.id === activeContactId ? { ...c, lastMsg: textToSend, time: nowTime } : c))
     )
 
-    // 3. Persist to Supabase
+    // 3. Persist to Supabase via messageService
     try {
-      await supabase.from('messages').insert([
-        {
-          contact_id: String(activeContactId),
-          sender_type: 'user',
-          text: textToSend,
-        },
-      ])
+      await messageService.send({
+        roomId: `contact_${activeContactId}`,
+        userId: userInfo?.id || null,
+        senderName: userName || 'Explorer',
+        text: textToSend,
+        senderType: 'user',
+        contactId: activeContactId,
+      })
     } catch (err) {
-      console.warn('Supabase insert message skipped:', err.message)
+      console.warn('Supabase message persist skipped:', err.message)
     }
 
     // 4. Intelligent Concierge Auto-Reply (Powered by Groq AI)
@@ -403,13 +453,14 @@ export default function Messages() {
           )
 
           try {
-            await supabase.from('messages').insert([
-              {
-                contact_id: '1',
-                sender_type: 'contact',
-                text: replyContent,
-              },
-            ])
+            await messageService.send({
+              roomId: `contact_1`,
+              userId: null,
+              senderName: activeContact.name,
+              text: replyContent,
+              senderType: 'contact',
+              contactId: 1,
+            })
           } catch (e) {
             // fallback
           }
