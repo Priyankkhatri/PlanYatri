@@ -661,7 +661,7 @@ export default function Trips() {
 
                     {/* Multi-City Stops Chips */}
                     <div className="jc-cities-chips-row">
-                      {(journey.cities || []).map((c, i) => (
+                      {(journey.cities || []).map((c: any, i: any) => (
                         <span key={i} className="city-chip-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                           <MapPinIcon size={11} color="#D4A843" /> {c.name} ({c.days}d)
                         </span>
