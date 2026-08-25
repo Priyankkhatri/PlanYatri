@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+// PlanYatri Messages & Co-Traveler QR Invite System
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSelector } from 'react-redux'
+import { QRCodeSVG } from 'qrcode.react'
 import Sidebar from '../components/Sidebar'
 import api from '../services/api'
-import { messageService, profileService } from '../services/supabaseService'
+import { messageService, inviteService, tripService } from '../services/supabaseService'
 import { connectSocket, disconnectSocket } from '../services/socket'
 import { useToast } from '../context/ToastContext'
 import {
@@ -18,166 +20,12 @@ import {
   LeafIcon,
   CheckCircleIcon,
 } from '../components/icons/LuxuryIcons'
+import '../components/TripInviteModal.css'
 import './Messages.css'
 
-// ── 1. INITIAL DEMO CONTACTS ──
-const INITIAL_CONTACTS = [
-  {
-    id: 1,
-    name: 'PlanYatri Concierge',
-    role: 'Private Travel Assistant',
-    badge: 'VERIFIED CONCIERGE',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&q=80&auto=format&fit=crop',
-    lastMsg: 'Your Bali Villa reservation is confirmed with airport pickup.',
-    time: '10:25 AM',
-    unread: 2,
-    online: true,
-    category: 'Concierge',
-  },
-  {
-    id: 2,
-    name: 'Aarav Sharma',
-    role: 'Co-Traveler · Ladakh Trek',
-    badge: 'TRAVEL BUDDY',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&q=80&auto=format&fit=crop',
-    lastMsg: 'I have shared the high-pass acclimatization gear list.',
-    time: '1h ago',
-    unread: 1,
-    online: true,
-    category: 'Buddy',
-  },
-  {
-    id: 3,
-    name: 'Elena Rostova',
-    role: 'Alpine Guide · Swiss Alps',
-    badge: 'CERTIFIED GUIDE',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&h=120&q=80&auto=format&fit=crop',
-    lastMsg: 'Weather forecast for the Bernese pass looks clear for tomorrow.',
-    time: 'Yesterday',
-    unread: 0,
-    online: false,
-    category: 'Guide',
-  },
-  {
-    id: 4,
-    name: 'Komaneka Resort & Spa',
-    role: 'Boutique Property · Ubud',
-    badge: 'HOTEL HOST',
-    avatar: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=120&h=120&q=80&auto=format&fit=crop',
-    lastMsg: 'Your private poolside breakfast has been scheduled for 8:30 AM.',
-    time: '2 days ago',
-    unread: 0,
-    online: false,
-    category: 'Host',
-  },
-  {
-    id: 5,
-    name: 'Rohan Patel',
-    role: 'Traveler · Spiti Expedition',
-    badge: 'TRAVEL BUDDY',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&q=80&auto=format&fit=crop',
-    lastMsg: 'Which homestay are we booking in Kaza for the night?',
-    time: '3 days ago',
-    unread: 0,
-    online: true,
-    category: 'Buddy',
-  },
-]
-
-// ── 2. PRE-LOADED CONVERSATION THREADS ──
-const INITIAL_CONVERSATIONS = {
-  1: [
-    { id: 101, from: 'them', text: 'Good morning Ananya! Your Bali luxury stay at Komaneka Bisma has been fully confirmed.', time: '10:20 AM' },
-    { id: 102, from: 'them', text: 'Private airport chauffeur service will be waiting at Denpasar International Airport with your name board.', time: '10:21 AM' },
-    { id: 103, from: 'me', text: 'Thank you so much! Could you please verify if early check-in at 1:00 PM is available?', time: '10:24 AM' },
-    { id: 104, from: 'them', text: 'Your Bali Villa reservation is confirmed with airport pickup and complimentary early check-in has been noted.', time: '10:25 AM' },
-  ],
-  2: [
-    { id: 201, from: 'them', text: 'Hey Ananya, are you packing for the Pangong & Khardung La pass expedition?', time: '09:15 AM' },
-    { id: 202, from: 'me', text: 'Yes, getting thermal layers ready. Did you check the oxygen cylinder rental in Leh?', time: '09:30 AM' },
-    { id: 203, from: 'them', text: 'I have shared the high-pass acclimatization gear list and confirmed the backup vehicle.', time: '1h ago' },
-  ],
-  3: [
-    { id: 301, from: 'them', text: 'Hello! I am Elena, your alpine guide for the Swiss Alps Matterhorn trek.', time: 'Aug 20' },
-    { id: 302, from: 'them', text: 'Weather forecast for the Bernese pass looks clear for tomorrow. Trek commences at 07:00 AM.', time: 'Yesterday' },
-  ],
-  4: [
-    { id: 401, from: 'them', text: 'Warm greetings from Ubud. Your valley-view pool villa is prepared for your arrival.', time: 'Aug 19' },
-    { id: 402, from: 'them', text: 'Your private poolside breakfast has been scheduled for 8:30 AM.', time: '2 days ago' },
-  ],
-  5: [
-    { id: 501, from: 'them', text: 'Hey! Planning to leave for Spiti via Manali route on Thursday.', time: 'Aug 18' },
-    { id: 502, from: 'them', text: 'Which homestay are we booking in Kaza for the night?', time: '3 days ago' },
-  ],
-}
-
-// ── 3. DISCOVER PEOPLE / TRAVEL BUDDIES DIRECTORY ──
-const PEOPLE_DIRECTORY = [
-  {
-    id: 101,
-    name: 'Priya Sengupta',
-    location: 'Kerala & Varkala, India',
-    travelStyle: 'Wellness & Coastal',
-    badge: 'VERIFIED EXPLORER',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&q=80&auto=format&fit=crop',
-    bio: 'Ayurvedic retreat lover, solo female traveler, exploring backwater homestays & Kathakali heritage.',
-    trips: 'Kerala 7-Day Retreat (Oct 2024)',
-    icon: LeafIcon,
-    safetyScore: '9.9/10',
-    online: true,
-  },
-  {
-    id: 102,
-    name: 'Kabir Mehta',
-    location: 'Jaipur & Udaipur, Rajasthan',
-    travelStyle: 'Royal Heritage',
-    badge: 'HERITAGE CURATOR',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&q=80&auto=format&fit=crop',
-    bio: 'Architect & royal fort photographer. Looking for companions for Amber Fort sunrise walks & street food tours.',
-    trips: 'Rajasthan Grand Circuit (Nov 2024)',
-    icon: MonumentIcon,
-    safetyScore: '9.8/10',
-    online: true,
-  },
-  {
-    id: 103,
-    name: 'Natasha Varma',
-    location: 'Ubud & Canggu, Bali',
-    travelStyle: 'Luxury & Mindful',
-    badge: 'SOLO NOMAD',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&q=80&auto=format&fit=crop',
-    bio: 'Remote designer based between Bali & Mumbai. Love rainforest hikes, organic cafes, and scuba diving.',
-    trips: 'Bali 10-Day Immersion (Nov 2024)',
-    icon: WaveIcon,
-    safetyScore: '9.9/10',
-    online: true,
-  },
-  {
-    id: 104,
-    name: 'Devansh Kulkarni',
-    location: 'Spiti & Zanskar, Himalayas',
-    travelStyle: 'High-Altitude Trek',
-    badge: 'ALPINE EXPLORER',
-    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&q=80&auto=format&fit=crop',
-    bio: 'Motorbike enthusiast & mountaineer. Looking for co-riders for the Manali-Kaza-Chandra Taal circuit.',
-    trips: 'Spiti Valley Expedition (Oct 2024)',
-    icon: MountainIcon,
-    safetyScore: '9.7/10',
-    online: false,
-  },
-  {
-    id: 105,
-    name: 'Marco Valenti',
-    location: 'Amalfi Coast & Capri, Italy',
-    travelStyle: 'Coastal & Gastronomy',
-    badge: 'VERIFIED GUIDE',
-    avatar: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150&h=150&q=80&auto=format&fit=crop',
-    bio: 'Private skipper and sommelier in Positano. Happy to share sailing itineraries and vineyard tours.',
-    trips: 'Amalfi Yacht Charter (Oct 2024)',
-    icon: WaveIcon,
-    safetyScore: '9.9/10',
-    online: false,
-  },
+const ROLES = [
+  { value: 'editor', label: '✏️ Editor', desc: 'Can edit itinerary & add activities' },
+  { value: 'viewer', label: '👁️ Viewer', desc: 'Can view the trip only' },
 ]
 
 export default function Messages() {
@@ -186,7 +34,7 @@ export default function Messages() {
   const userName = userInfo?.name ? userInfo.name.split(' ')[0] : 'Explorer'
   const userKey = userInfo?.id || userInfo?._id || userInfo?.email || 'guest'
 
-  const [activeTab, setActiveTab] = useState('chats') // 'chats' | 'people'
+  const [activeTab, setActiveTab] = useState('chats') // 'chats' | 'invite'
   const [contacts, setContacts] = useState(() => {
     try {
       const saved = localStorage.getItem(`planyatri_contacts_${userKey}`)
@@ -227,82 +75,215 @@ export default function Messages() {
     }
   })
 
-  // People & Community Directory
-  const [peopleDirectory, setPeopleDirectory] = useState(() => {
-    try {
-      const saved = localStorage.getItem(`planyatri_community_people_${userKey}`)
-      return saved ? JSON.parse(saved) : PEOPLE_DIRECTORY
-    } catch {
-      return PEOPLE_DIRECTORY
-    }
-  })
-
-  // Companion & Invite Modals State
-  const [showAddPersonModal, setShowAddPersonModal] = useState(false)
-  const [showPostRequestModal, setShowPostRequestModal] = useState(false)
-  const [newPerson, setNewPerson] = useState({
-    name: '',
-    emailOrPhone: '',
-    location: '',
-    travelStyle: 'Adventure & Trekking',
-    bio: '',
-    trips: '',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&q=80&auto=format&fit=crop',
-    initialMsg: '',
-  })
-
-  const [newPost, setNewPost] = useState({
-    destination: '',
-    month: 'Upcoming Season',
-    style: 'Adventure & Trekking',
-    description: '',
-  })
+  // ── TRIP & QR INVITE STATE ──
+  const [userTrips, setUserTrips] = useState([])
+  const [selectedTripId, setSelectedTripId] = useState('')
+  const [invite, setInvite] = useState(null)
+  const [loadingInvite, setLoadingInvite] = useState(false)
+  const [copiedInvite, setCopiedInvite] = useState(false)
+  const [inviteRole, setInviteRole] = useState('viewer')
+  const [maxUses, setMaxUses] = useState(10)
+  const [expiresDays, setExpiresDays] = useState(7)
+  const [existingInvites, setExistingInvites] = useState([])
+  const [tripMembers, setTripMembers] = useState([])
+  const [qrPulse, setQrPulse] = useState(false)
+  const [revokingId, setRevokingId] = useState(null)
 
   // Save contacts & conversations to local storage
   useEffect(() => {
     try {
       localStorage.setItem(`planyatri_contacts_${userKey}`, JSON.stringify(contacts))
       localStorage.setItem(`planyatri_conversations_${userKey}`, JSON.stringify(conversations))
-      localStorage.setItem(`planyatri_community_people_${userKey}`, JSON.stringify(peopleDirectory))
     } catch (e) {
       console.warn('Failed to save chat data:', e)
     }
-  }, [contacts, conversations, peopleDirectory, userKey])
+  }, [contacts, conversations, userKey])
 
-  // Sync real registered users from Supabase profiles
+  // Load User's Real Trips for Invite Hub
   useEffect(() => {
-    profileService.getAllProfiles().then((profiles) => {
-      if (profiles && profiles.length > 0) {
-        const formatted = profiles
-          .filter(p => p.id !== userInfo?.id)
-          .map(p => ({
-            id: p.id,
-            name: p.full_name || p.username || 'PlanYatri Explorer',
-            location: p.location || 'Global Explorer',
-            travelStyle: p.travel_style || 'Curated Wanderer',
-            badge: 'REGISTERED MEMBER',
-            avatar: p.avatar_url || `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&q=80&auto=format&fit=crop`,
-            bio: p.bio || 'Passionate traveler on PlanYatri.',
-            trips: p.upcoming_trip || 'Exploring New Horizons',
-            icon: LeafIcon,
-            safetyScore: '10/10',
-            online: true,
-            isRealUser: true,
-          }))
-
-        if (formatted.length > 0) {
-          setPeopleDirectory((prev) => {
-            const combined = [...formatted, ...prev.filter(p => !formatted.some(f => f.id === p.id))]
-            return combined
-          })
+    const fetchUserTrips = async () => {
+      try {
+        const trips = await tripService.getAll(userInfo?.id)
+        if (trips && trips.length > 0) {
+          setUserTrips(trips)
+          setSelectedTripId(trips[0].id)
+        } else {
+          const fallback = {
+            id: 'circle_main',
+            dest: 'My Travel Circle',
+            title: 'My Travel Circle',
+            destination: 'Global Expeditions',
+          }
+          setUserTrips([fallback])
+          setSelectedTripId('circle_main')
         }
+      } catch {
+        const fallback = {
+          id: 'circle_main',
+          dest: 'My Travel Circle',
+          title: 'My Travel Circle',
+          destination: 'Global Expeditions',
+        }
+        setUserTrips([fallback])
+        setSelectedTripId('circle_main')
       }
-    }).catch(() => {})
+    }
+    fetchUserTrips()
   }, [userInfo?.id])
 
+  const currentSelectedTrip = userTrips.find((t) => t.id === selectedTripId) || userTrips[0]
+  const isDemoTrip = !currentSelectedTrip?.id || currentSelectedTrip.id.startsWith('circle_') || currentSelectedTrip.id.startsWith('journey-')
+  const inviteUrl = invite
+    ? inviteService.buildUrl(invite.token)
+    : `${window.location.origin}/join/${currentSelectedTrip?.id || 'circle'}`
+
+  // Load Invites and Members for Selected Trip
+  const loadTripData = useCallback(async () => {
+    if (!currentSelectedTrip?.id || isDemoTrip) return
+    try {
+      const rows = await inviteService.listForTrip(currentSelectedTrip.id)
+      setExistingInvites(rows || [])
+      const members = await tripService.getMembers(currentSelectedTrip.id)
+      setTripMembers(members || [])
+    } catch (e) {
+      console.warn('Failed to load trip invite data:', e)
+    }
+  }, [currentSelectedTrip?.id, isDemoTrip])
+
+  useEffect(() => {
+    loadTripData()
+  }, [loadTripData])
+
+  // ── GENERATE QR & INVITE TOKEN ──
+  const handleGenerateInvite = async () => {
+    if (isDemoTrip) {
+      const fakeToken = `token_${Math.random().toString(36).slice(2, 12)}`
+      setInvite({
+        id: `inv_${Date.now()}`,
+        token: fakeToken,
+        role: inviteRole,
+        max_uses: maxUses,
+        expires_at: new Date(Date.now() + expiresDays * 86400000).toISOString(),
+      })
+      setQrPulse(true)
+      setTimeout(() => setQrPulse(false), 1200)
+      toast.success('✨ Fresh QR Code & invite link created!')
+      return
+    }
+
+    setLoadingInvite(true)
+    try {
+      const newInv = await inviteService.create(currentSelectedTrip.id, userInfo?.id, {
+        role: inviteRole,
+        maxUses,
+        expiresInDays: expiresDays,
+      })
+      setInvite(newInv)
+      setQrPulse(true)
+      setTimeout(() => setQrPulse(false), 1200)
+      await loadTripData()
+      toast.success('✨ Trip invite token & QR code generated!')
+    } catch (e) {
+      toast.error(e.message || 'Failed to generate invite')
+    } finally {
+      setLoadingInvite(false)
+    }
+  }
+
+  // ── COPY INVITE LINK ──
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteUrl)
+      setCopiedInvite(true)
+      setTimeout(() => setCopiedInvite(false), 2200)
+      toast.success('🔗 Invite link copied to clipboard!')
+    } catch {
+      toast.success('🔗 Invite link ready!')
+    }
+  }
+
+  // ── WHATSAPP SHARE ──
+  const handleWhatsAppShare = () => {
+    const tripTitle = currentSelectedTrip?.dest || currentSelectedTrip?.title || 'Travel Expedition'
+    const text = encodeURIComponent(
+      `Hey! Join my trip "${tripTitle}" on PlanYatri 🌍\nClick the link or scan my QR to coordinate itinerary & bookings:\n${inviteUrl}`
+    )
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank')
+  }
+
+  // ── DOWNLOAD QR CODE SVG ──
+  const handleDownloadQR = () => {
+    const svg = document.querySelector('#invite-hub-qr svg')
+    if (!svg) {
+      toast.error('Generate a QR code first.')
+      return
+    }
+    const blob = new Blob([svg.outerHTML], { type: 'image/svg+xml' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `planyatri-qr-${(currentSelectedTrip?.dest || 'trip').replace(/\s/g, '-')}.svg`
+    a.click()
+    URL.revokeObjectURL(url)
+    toast.success('📥 QR code image downloaded!')
+  }
+
+  // ── REVOKE AN INVITE ──
+  const handleRevokeInvite = async (inv) => {
+    setRevokingId(inv.id)
+    try {
+      await inviteService.revoke(inv.id)
+      setExistingInvites((prev) => prev.filter((i) => i.id !== inv.id))
+      if (invite?.id === inv.id) setInvite(null)
+      toast.success('Invite link revoked successfully.')
+    } catch {
+      toast.error('Failed to revoke invite.')
+    } finally {
+      setRevokingId(null)
+    }
+  }
+
+  // ── START CHAT WITH JOINED CO-TRAVELER ──
+  const handleStartChatWithMember = (member) => {
+    const memberName = member.user?.name || member.user?.email || 'Co-Traveler'
+    const memberId = member.user_id || `member_${Date.now()}`
+    const existing = contacts.find((c) => c.id === memberId || c.name === memberName)
+
+    if (!existing) {
+      const newContact = {
+        id: memberId,
+        name: memberName,
+        role: `Co-Traveler · ${currentSelectedTrip?.dest || 'Trip Member'}`,
+        badge: member.role === 'editor' ? 'TRIP EDITOR' : 'TRIP VIEWER',
+        avatar: member.user?.avatar_url || `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&h=120&q=80&auto=format&fit=crop`,
+        lastMsg: `Joined ${currentSelectedTrip?.dest || 'your trip'} via QR invite`,
+        time: 'Just now',
+        unread: 0,
+        online: true,
+        category: 'Buddy',
+      }
+      setContacts((prev) => [newContact, ...prev])
+      setConversations((prev) => ({
+        ...prev,
+        [memberId]: [
+          {
+            id: Date.now(),
+            from: 'them',
+            text: `Hey ${userName}! I joined the "${currentSelectedTrip?.dest || 'trip'}" group via your QR invite. Excited to travel together!`,
+            time: 'Just now',
+          },
+        ],
+      }))
+    }
+
+    setActiveContactId(existing ? existing.id : memberId)
+    setActiveTab('chats')
+    toast.success(`💬 Chat opened with ${memberName}`)
+  }
+
+  // ── MESSAGING & SOCKET STATE ──
   const [messageInput, setMessageInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
-  const [peopleFilter, setPeopleFilter] = useState('All')
   const [isTyping, setIsTyping] = useState(false)
   const [showCallModal, setShowCallModal] = useState(false)
   const [callDuration, setCallDuration] = useState(0)
@@ -319,190 +300,96 @@ export default function Messages() {
   const activeContact = contacts.find((c) => c.id === activeContactId) || contacts[0]
   const currentMessages = conversations[activeContactId] || []
 
-  // ── Auto Scroll ──
+  // Auto Scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [activeContactId, currentMessages, isTyping])
 
-  // ── 1. SOCKET.IO REAL-TIME + SUPABASE PERSISTENCE ──
+  // Socket.io Real-Time + Supabase Persistence
   useEffect(() => {
-    // Load persisted messages from Supabase
-    const fetchSupabaseMessages = async () => {
-      try {
-        const roomId = `contact_${activeContactId}`
-        const rows = await messageService.getForRoom(roomId, 60)
-        if (rows && rows.length > 0) {
-          const mapped = rows.map(row => ({
-            id: row.id,
-            from: row.sender_type === 'user' ? 'me' : 'them',
-            text: row.text,
-            time: new Date(row.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            fromDb: true,
-          }))
-          setConversations(prev => ({
+    const room = `contact_${activeContactId}`
+    const username = userInfo?.name || 'Explorer'
+
+    const socket = connectSocket({
+      room,
+      username,
+      onConnect: () => setSocketConnected(true),
+      onDisconnect: () => setSocketConnected(false),
+      onReceiveMessage: (msg) => {
+        if (msg.username !== username) {
+          setConversations((prev) => ({
             ...prev,
-            [activeContactId]: mapped,
+            [activeContactId]: [
+              ...(prev[activeContactId] || []),
+              { id: msg.id, from: 'them', text: msg.text, time: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) },
+            ],
           }))
         }
-      } catch (e) {
-        console.warn('Supabase messages load fallback:', e.message)
-      }
-    }
-    fetchSupabaseMessages()
-
-    // Supabase realtime subscription via messageService
-    const roomId = `contact_${activeContactId}`
-    const supaChannel = messageService.subscribe(roomId, (newRow) => {
-      const cid = activeContactId
-      const incomingMsg = {
-        id: newRow.id,
-        from: newRow.sender_type === 'user' ? 'me' : 'them',
-        text: newRow.text,
-        time: new Date(newRow.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        fromDb: true,
-      }
-      setConversations(prev => {
-        const currentList = prev[cid] || []
-        if (currentList.some(m => m.id === incomingMsg.id)) return prev
-        return { ...prev, [cid]: [...currentList, incomingMsg] }
-      })
+      },
+      onUserJoined: ({ onlineUsers: users }) => setOnlineUsers(users || []),
+      onUserLeft: ({ onlineUsers: users }) => setOnlineUsers(users || []),
+      onUserTyping: ({ username: typer }) => setTypingUser(typer),
+      onUserStopTyping: () => setTypingUser(null),
     })
 
-    // Socket.io real-time connection
-    const socket = connectSocket()
     socketRef.current = socket
-    const room = `contact_${activeContactId}`
-    const uname = userName || 'Explorer'
-
-    socket.emit('join_room', { room, username: uname })
-    setSocketConnected(socket.connected)
-
-    socket.on('connect', () => setSocketConnected(true))
-    socket.on('disconnect', () => setSocketConnected(false))
-
-    socket.on('chat_history', (history) => {
-      if (!history || history.length === 0) return
-      const mapped = history.map(m => ({
-        id: m.id,
-        from: m.username === uname ? 'me' : 'them',
-        text: m.text,
-        time: new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        wsMsg: true,
-      }))
-      setConversations(prev => ({ ...prev, [activeContactId]: mapped }))
-    })
-
-    socket.on('receive_message', (msg) => {
-      if (msg.username === uname) return // already applied optimistically
-      const mapped = {
-        id: msg.id,
-        from: 'them',
-        text: msg.text,
-        time: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        wsMsg: true,
-      }
-      setConversations(prev => ({ ...prev, [activeContactId]: [...(prev[activeContactId] || []), mapped] }))
-    })
-
-    socket.on('user_joined', ({ username, onlineUsers }) => {
-      setOnlineUsers(onlineUsers || [])
-    })
-    socket.on('user_left', ({ onlineUsers }) => setOnlineUsers(onlineUsers || []))
-    socket.on('user_typing', ({ username }) => {
-      setTypingUser(username)
-      clearTimeout(typingTimerRef.current)
-      typingTimerRef.current = setTimeout(() => setTypingUser(null), 2500)
-    })
-    socket.on('user_stop_typing', () => setTypingUser(null))
-
 
     return () => {
-      messageService.unsubscribe(supaChannel)
-      socket.emit('stop_typing', { room, username: uname })
-      socket.off('connect')
-      socket.off('disconnect')
-      socket.off('chat_history')
-      socket.off('receive_message')
-      socket.off('user_joined')
-      socket.off('user_left')
-      socket.off('user_typing')
-      socket.off('user_stop_typing')
+      disconnectSocket()
+      socketRef.current = null
     }
-  }, [activeContactId])
+  }, [activeContactId, userInfo?.name])
 
-  // ── 2. CALL SIMULATION TIMER ──
-  useEffect(() => {
-    if (showCallModal) {
-      setCallDuration(0)
-      callTimerRef.current = setInterval(() => {
-        setCallDuration((d) => d + 1)
-      }, 1000)
-    } else {
-      if (callTimerRef.current) clearInterval(callTimerRef.current)
-    }
-    return () => {
-      if (callTimerRef.current) clearInterval(callTimerRef.current)
-    }
-  }, [showCallModal])
-
-  const formatCallTimer = (sec) => {
-    const m = Math.floor(sec / 60)
-    const s = sec % 60
-    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
-  }
-
-  // ── 3. SEND MESSAGE HANDLER ──
+  // Send Message
   const handleSendMessage = async (e) => {
     e.preventDefault()
     if (!messageInput.trim()) return
 
     const textToSend = messageInput.trim()
-    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-
-    const localMsg = {
+    const newMsg = {
       id: Date.now(),
       from: 'me',
       text: textToSend,
-      time: nowTime,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     }
 
-    // 1. Optimistic UI update
     setConversations((prev) => ({
       ...prev,
-      [activeContactId]: [...(prev[activeContactId] || []), localMsg],
+      [activeContactId]: [...(prev[activeContactId] || []), newMsg],
     }))
+
+    setContacts((prev) =>
+      prev.map((c) => (c.id === activeContactId ? { ...c, lastMsg: textToSend, time: newMsg.time } : c))
+    )
+
     setMessageInput('')
 
-    // 2. Broadcast via Socket.io
     if (socketRef.current) {
       socketRef.current.emit('send_message', {
         room: `contact_${activeContactId}`,
         message: textToSend,
-        username: userName || 'Explorer',
+        username: userInfo?.name || 'Explorer',
+        avatar: userInfo?.avatar || null,
       })
-      socketRef.current.emit('stop_typing', { room: `contact_${activeContactId}`, username: userName })
+      socketRef.current.emit('stop_typing', {
+        room: `contact_${activeContactId}`,
+        username: userInfo?.name || 'Explorer',
+      })
     }
 
-    // 2. Update contact preview snippet
-    setContacts((prev) =>
-      prev.map((c) => (c.id === activeContactId ? { ...c, lastMsg: textToSend, time: nowTime } : c))
-    )
-
-    // 3. Persist to Supabase via messageService
+    // Persist to Supabase
     try {
       await messageService.send({
         roomId: `contact_${activeContactId}`,
         userId: userInfo?.id || null,
-        senderName: userName || 'Explorer',
+        senderName: userInfo?.name || 'Explorer',
         text: textToSend,
         senderType: 'user',
         contactId: activeContactId,
       })
-    } catch (err) {
-      console.warn('Supabase message persist skipped:', err.message)
-    }
+    } catch {}
 
-    // 4. Intelligent Concierge Auto-Reply (Powered by Groq AI)
+    // Concierge AI Response
     if (activeContactId === 1) {
       setIsTyping(true)
       try {
@@ -532,189 +419,10 @@ export default function Messages() {
           setContacts((prev) =>
             prev.map((c) => (c.id === 1 ? { ...c, lastMsg: replyContent, time: aiReply.time } : c))
           )
-
-          try {
-            await messageService.send({
-              roomId: `contact_1`,
-              userId: null,
-              senderName: activeContact.name,
-              text: replyContent,
-              senderType: 'contact',
-              contactId: 1,
-            })
-          } catch (e) {
-            // fallback
-          }
         }, 1200)
-      } catch (err) {
+      } catch {
         setIsTyping(false)
       }
-    } else {
-      // Simulate companion / guide response
-      setTimeout(() => {
-        const replyBuddy = {
-          id: Date.now() + 1,
-          from: 'them',
-          text: `Got it! Looking forward to coordinating our plans for ${activeContact.role.split('·')[1]?.trim() || 'the trip'}.`,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        }
-
-        setConversations((prev) => ({
-          ...prev,
-          [activeContactId]: [...(prev[activeContactId] || []), replyBuddy],
-        }))
-      }, 1500)
-    }
-  }
-
-  // ── 4. CONNECT WITH DISCOVERED TRAVEL BUDDY ──
-  const handleConnectWithPerson = (person) => {
-    const existingContact = contacts.find((c) => c.name === person.name)
-    let targetId = existingContact ? existingContact.id : person.id
-
-    if (!existingContact) {
-      const newContact = {
-        id: person.id,
-        name: person.name,
-        role: `Co-Traveler · ${person.location.split(',')[0]}`,
-        badge: person.badge,
-        avatar: person.avatar,
-        lastMsg: `Connected regarding ${person.trips}`,
-        time: 'Just now',
-        unread: 0,
-        online: person.online,
-        category: 'Buddy',
-      }
-      setContacts((prev) => [newContact, ...prev])
-
-      setConversations((prev) => ({
-        ...prev,
-        [person.id]: [
-          {
-            id: Date.now(),
-            from: 'them',
-            text: `Hi ${userName}! Great to connect with you on PlanYatri. I saw you are also exploring ${person.location.split(',')[0]}!`,
-            time: 'Just now',
-          },
-        ],
-      }))
-    }
-
-    setActiveContactId(targetId)
-    setActiveTab('chats')
-    toast.success(`💬 Chat opened with ${person.name}`)
-  }
-
-  // ── 5. ADD CUSTOM COMPANION / CO-TRAVELER ──
-  const handleAddPersonSubmit = (e) => {
-    e.preventDefault()
-    if (!newPerson.name.trim() || !newPerson.location.trim()) {
-      toast.error('Please enter a companion name and planned destination.')
-      return
-    }
-
-    const createdPerson = {
-      id: `custom_${Date.now()}`,
-      name: newPerson.name.trim(),
-      location: newPerson.location.trim(),
-      travelStyle: newPerson.travelStyle,
-      badge: 'TRAVEL COMPANION',
-      avatar: newPerson.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&q=80&auto=format&fit=crop',
-      bio: newPerson.bio.trim() || `Exploring ${newPerson.location} with fellow travelers.`,
-      trips: newPerson.trips.trim() || `${newPerson.location} Expedition`,
-      safetyScore: '10/10',
-      online: true,
-      emailOrPhone: newPerson.emailOrPhone,
-      isCustom: true,
-    }
-
-    setPeopleDirectory((prev) => [createdPerson, ...prev])
-
-    // Also auto-create active chat contact
-    const newContact = {
-      id: createdPerson.id,
-      name: createdPerson.name,
-      role: `Co-Traveler · ${createdPerson.location.split(',')[0]}`,
-      badge: createdPerson.badge,
-      avatar: createdPerson.avatar,
-      lastMsg: newPerson.initialMsg.trim() || `Connected regarding ${createdPerson.trips}`,
-      time: 'Just now',
-      unread: 0,
-      online: true,
-      category: 'Buddy',
-    }
-
-    setContacts((prev) => [newContact, ...prev.filter((c) => c.id !== createdPerson.id)])
-    setConversations((prev) => ({
-      ...prev,
-      [createdPerson.id]: [
-        {
-          id: Date.now(),
-          from: 'me',
-          text: newPerson.initialMsg.trim() || `Hey ${createdPerson.name}! Glad to connect on PlanYatri for our trip to ${createdPerson.location}.`,
-          time: 'Just now',
-        },
-        {
-          id: Date.now() + 1,
-          from: 'them',
-          text: `Hey ${userName}! Great to connect! Let's synchronize our itinerary and planned dates.`,
-          time: 'Just now',
-        },
-      ],
-    }))
-
-    setActiveContactId(createdPerson.id)
-    setActiveTab('chats')
-    setShowAddPersonModal(false)
-    setNewPerson({
-      name: '',
-      emailOrPhone: '',
-      location: '',
-      travelStyle: 'Adventure & Trekking',
-      bio: '',
-      trips: '',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&q=80&auto=format&fit=crop',
-      initialMsg: '',
-    })
-    toast.success(`✨ Added ${createdPerson.name} to your travel companions!`)
-  }
-
-  // ── 6. BROADCAST TRAVEL REQUEST TO COMMUNITY ──
-  const handlePostRequestSubmit = (e) => {
-    e.preventDefault()
-    if (!newPost.destination.trim()) {
-      toast.error('Please specify the destination.')
-      return
-    }
-
-    const myBroadcast = {
-      id: `broadcast_${Date.now()}`,
-      name: userInfo?.name || 'Explorer (You)',
-      location: newPost.destination.trim(),
-      travelStyle: newPost.style,
-      badge: 'OPEN FOR COMPANIONS',
-      avatar: userInfo?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&q=80&auto=format&fit=crop',
-      bio: newPost.description.trim() || `Looking for companions to explore ${newPost.destination} together!`,
-      trips: `${newPost.destination} (${newPost.month})`,
-      safetyScore: '10/10',
-      online: true,
-      isSelfBroadcast: true,
-    }
-
-    setPeopleDirectory((prev) => [myBroadcast, ...prev])
-    setShowPostRequestModal(false)
-    setNewPost({ destination: '', month: 'Upcoming Season', style: 'Adventure & Trekking', description: '' })
-    toast.success('🚀 Companion request published to community board!')
-  }
-
-  // ── 7. INVITE VIA SHAREABLE LINK ──
-  const handleCopyInviteLink = () => {
-    const inviteUrl = `${window.location.origin}/join/companion_${userInfo?.id || 'traveler'}`
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(inviteUrl)
-      toast.success('🔗 Personal companion invite link copied to clipboard!')
-    } else {
-      toast.success('🔗 Invite link ready!')
     }
   }
 
@@ -725,28 +433,13 @@ export default function Messages() {
       c.role.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  // Filter people directory
-  const filteredPeople = peopleDirectory.filter((p) => {
-    const matchesSearch =
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (p.travelStyle || '').toLowerCase().includes(searchQuery.toLowerCase())
-    if (!matchesSearch) return false
-
-    if (peopleFilter === 'Adventure') return (p.travelStyle || '').includes('Trek') || (p.travelStyle || '').includes('Adventure')
-    if (peopleFilter === 'Heritage') return (p.travelStyle || '').includes('Heritage')
-    if (peopleFilter === 'Wellness') return (p.travelStyle || '').includes('Wellness')
-    if (peopleFilter === 'Coastal') return (p.travelStyle || '').includes('Coastal')
-    return true
-  })
-
   return (
     <div className="msg-root">
       <Sidebar />
 
       <div className="msg-container">
         {/* ═════════════════════════════════════════════════════════════
-            LEFT SIDEBAR: CHATS & DISCOVER PEOPLE
+            LEFT SIDEBAR: CHATS & INVITE CO-TRAVELERS TABS
         ═════════════════════════════════════════════════════════════ */}
         <aside className="msg-sidebar">
           <div className="msg-sidebar-header">
@@ -759,125 +452,133 @@ export default function Messages() {
                 <span className="pill-count">{contacts.length}</span>
               </button>
               <button
-                className={`msg-nav-pill ${activeTab === 'people' ? 'active' : ''}`}
-                onClick={() => setActiveTab('people')}
+                className={`msg-nav-pill ${activeTab === 'invite' ? 'active' : ''}`}
+                onClick={() => setActiveTab('invite')}
               >
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                  <UsersIcon size={12} color="currentColor" /> Discover People
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                  <UsersIcon size={12} color="currentColor" /> Invite (QR)
                 </span>
               </button>
             </div>
 
             <div className="msg-search-box">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8C867A" strokeWidth="2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8C867A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
               <input
                 type="text"
-                placeholder={activeTab === 'chats' ? 'Search conversations...' : 'Search people or destinations...'}
+                placeholder="Search conversations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                className="msg-search-input"
               />
             </div>
           </div>
 
-          {/* Contact List */}
-          {activeTab === 'chats' ? (
-            <div className="msg-contact-list">
-              {filteredContacts.map((contact) => {
-                const isActive = contact.id === activeContactId
-                return (
-                  <div
-                    key={contact.id}
-                    className={`msg-contact-card ${isActive ? 'active' : ''}`}
-                    onClick={() => setActiveContactId(contact.id)}
-                  >
-                    <div className="msg-avatar-wrapper">
-                      <img src={contact.avatar} alt={contact.name} className="msg-contact-avatar" />
-                      {contact.online && <span className="msg-online-badge" />}
-                    </div>
-
-                    <div className="msg-contact-info">
-                      <div className="msg-contact-row1">
-                        <h4 className="msg-contact-name">{contact.name}</h4>
-                        <span className="msg-contact-time">{contact.time}</span>
-                      </div>
-
-                      <span className="msg-badge-tag">{contact.badge}</span>
-                      <p className="msg-preview-text">{contact.lastMsg}</p>
-                    </div>
-
-                    {contact.unread > 0 && !isActive && (
-                      <span className="msg-unread-dot">{contact.unread}</span>
-                    )}
-                  </div>
-                )
-              })}
+          <div className="msg-contacts-list">
+            <div className="msg-category-header">
+              <span>ACTIVE THREADS</span>
+              <span style={{ fontSize: 10, color: '#22C55E' }}>● LIVE</span>
             </div>
-          ) : (
-            /* Left Mini People Summary */
-            <div className="msg-left-people-list">
-              <p className="people-sidebar-hint">Verified Co-Travelers & Certified Guides</p>
-              {filteredPeople.map((person) => (
+
+            {filteredContacts.map((contact) => {
+              const isActive = contact.id === activeContactId && activeTab === 'chats'
+              return (
                 <div
-                  key={person.id}
-                  className="msg-person-mini-card"
-                  onClick={() => handleConnectWithPerson(person)}
+                  key={contact.id}
+                  className={`msg-contact-card ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveContactId(contact.id)
+                    setActiveTab('chats')
+                  }}
                 >
                   <div className="msg-avatar-wrapper">
-                    <img src={person.avatar} alt={person.name} className="msg-contact-avatar" />
-                    {person.online && <span className="msg-online-badge" />}
+                    <img src={contact.avatar} alt={contact.name} className="msg-avatar-img" />
+                    {contact.online && <span className="msg-online-badge" />}
                   </div>
+
                   <div className="msg-contact-info">
-                    <h4 className="msg-contact-name">{person.name}</h4>
-                    <span className="person-mini-loc">{person.location}</span>
+                    <div className="msg-info-top">
+                      <h4 className="msg-contact-name">{contact.name}</h4>
+                      <span className="msg-time-stamp">{contact.time}</span>
+                    </div>
+
+                    <p className="msg-preview-text">{contact.lastMsg}</p>
+
+                    <div className="msg-badge-row">
+                      <span className="msg-tag-badge">{contact.badge}</span>
+                      {contact.unread > 0 && <span className="msg-unread-counter">{contact.unread}</span>}
+                    </div>
                   </div>
-                  <button className="person-connect-mini-btn" title="Message">
-                    →
-                  </button>
                 </div>
-              ))}
+              )
+            })}
+
+            {/* Quick Invite Box */}
+            <div
+              onClick={() => setActiveTab('invite')}
+              style={{
+                margin: '16px 12px',
+                padding: '12px 14px',
+                borderRadius: 14,
+                border: '1px dashed #D4A843',
+                background: 'rgba(212, 168, 67, 0.06)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#D4A843', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#18181B', fontWeight: 800, fontSize: 14 }}>
+                +
+              </div>
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 700, margin: 0, color: '#18181B' }}>Invite Co-Travelers</p>
+                <p style={{ fontSize: 11, color: '#8C867A', margin: 0 }}>Generate QR & Share Link</p>
+              </div>
             </div>
-          )}
+          </div>
         </aside>
 
         {/* ═════════════════════════════════════════════════════════════
-            RIGHT MAIN WINDOW: CHAT OR DISCOVER PEOPLE DIRECTORY
+            RIGHT MAIN VIEW: CHAT INTERFACE OR QR INVITE HUB
         ═════════════════════════════════════════════════════════════ */}
         {activeTab === 'chats' ? (
           <main className="msg-chat-window">
-            {/* Header */}
             <header className="msg-chat-header">
-              <div className="msg-active-user">
-                <div className="msg-avatar-wrapper">
-                  <img src={activeContact.avatar} alt={activeContact.name} className="msg-active-avatar" />
+              <div className="msg-header-left">
+                <div className="msg-header-avatar-wrap">
+                  <img src={activeContact.avatar} alt={activeContact.name} className="msg-header-avatar" />
                   {activeContact.online && <span className="msg-online-badge" />}
                 </div>
                 <div>
-                  <div className="msg-name-badge-row">
-                    <h3 className="msg-active-name">{activeContact.name}</h3>
-                    <span className="msg-active-badge">{activeContact.badge}</span>
+                  <div className="msg-header-name-row">
+                    <h3 className="msg-header-name">{activeContact.name}</h3>
+                    <span className="msg-header-badge">{activeContact.badge}</span>
                   </div>
-                  <p className="msg-active-status">
-                    {activeContact.online ? 'Active now' : 'Last seen recently'} · {activeContact.role}
+                  <p className="msg-header-sub">
+                    {typingUser ? `💬 ${typingUser} is typing...` : socketConnected ? '🟢 Connected to Real-Time Travel Room' : '🔒 End-to-End Encrypted Travel Channel'}
                   </p>
                 </div>
               </div>
 
-              <div className="msg-chat-actions">
+              <div className="msg-header-actions">
                 <button
-                  className="msg-action-btn"
-                  title="Call Concierge"
-                  onClick={() => setShowCallModal(true)}
+                  className="msg-hdr-btn"
+                  title="Invite Co-Travelers via QR"
+                  onClick={() => setActiveTab('invite')}
+                  style={{ color: '#D4A843', fontWeight: 700, fontSize: 12 }}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <UsersIcon size={13} color="#D4A843" /> 👥 Invite QR
+                  </span>
                 </button>
+
                 <button
-                  className="msg-action-btn"
-                  title="Itinerary Details"
+                  className="msg-hdr-btn"
+                  title="Travel Dossier"
                   onClick={() => setShowDossierModal(true)}
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -893,7 +594,7 @@ export default function Messages() {
             <div className="msg-stream">
               <div className="msg-date-divider">
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  <ShieldIcon size={12} color="#D4A843" /> ENCRYPTED END-TO-END LUXURY CONCIERGE
+                  <ShieldIcon size={12} color="#D4A843" /> ENCRYPTED CONCIERGE & CO-TRAVELER LINK
                 </span>
               </div>
 
@@ -914,7 +615,6 @@ export default function Messages() {
                 )
               })}
 
-              {/* Typing Indicator */}
               {isTyping && (
                 <div className="msg-bubble-row them">
                   <img src={activeContact.avatar} alt="Avatar" className="msg-bubble-avatar" />
@@ -932,12 +632,6 @@ export default function Messages() {
             {/* Chat Input Bar */}
             <form className="msg-input-form" onSubmit={handleSendMessage}>
               <div className="msg-input-bar">
-                <button type="button" className="msg-attach-btn" title="Attach Travel Voucher">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C867A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-                  </svg>
-                </button>
-
                 <input
                   type="text"
                   className="msg-text-input"
@@ -945,7 +639,6 @@ export default function Messages() {
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                 />
-
                 <button type="submit" className="msg-send-btn" disabled={!messageInput.trim()}>
                   <span>Send</span>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -957,360 +650,401 @@ export default function Messages() {
             </form>
           </main>
         ) : (
-          /* ── DISCOVER PEOPLE FULL DIRECTORY VIEW ── */
-          <main className="msg-people-directory">
-            <header className="people-dir-header">
+          /* ═════════════════════════════════════════════════════════════
+             CO-TRAVELER QR & INVITE HUB (CONNECTED TO TRIPS & SUPABASE)
+          ═════════════════════════════════════════════════════════════ */
+          <main className="msg-people-directory" style={{ padding: '36px 44px' }}>
+            <header className="people-dir-header" style={{ marginBottom: 28 }}>
               <div>
                 <span className="people-dir-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                  <UsersIcon size={12} color="#D4A843" /> VERIFIED TRAVEL COMMUNITY
+                  <UsersIcon size={12} color="#D4A843" /> TRIP COMPANIONS & QR HUB
                 </span>
-                <h2 className="people-dir-title">Discover Co-Travelers & Local Guides</h2>
+                <h2 className="people-dir-title">Invite Co-Travelers to Your Journey</h2>
                 <p className="people-dir-sub">
-                  Connect with verified solo travelers, certified alpine guides, and boutique hosts sharing your destination itinerary.
+                  Generate secure QR codes, copy instant invite links, and coordinate seamlessly with your travel companions.
                 </p>
-
-                <div className="people-actions-bar">
-                  <button
-                    className="people-action-btn-primary"
-                    onClick={() => setShowAddPersonModal(true)}
-                  >
-                    <span>+ Add Co-Traveler</span>
-                  </button>
-                  <button
-                    className="people-action-btn-secondary"
-                    onClick={() => setShowPostRequestModal(true)}
-                  >
-                    <span>📢 Post Companion Search</span>
-                  </button>
-                  <button
-                    className="people-action-btn-secondary"
-                    onClick={handleCopyInviteLink}
-                    title="Copy your personal companion invite link"
-                  >
-                    <span>🔗 Invite Friends</span>
-                  </button>
-                </div>
               </div>
 
-              {/* Filter Tabs */}
-              <div className="people-filter-chips">
-                {['All', 'Adventure', 'Heritage', 'Wellness', 'Coastal'].map((chip) => (
-                  <button
-                    key={chip}
-                    className={`people-chip-btn ${peopleFilter === chip ? 'active' : ''}`}
-                    onClick={() => setPeopleFilter(chip)}
-                  >
-                    {chip}
-                  </button>
-                ))}
+              {/* Trip Selector Dropdown */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 240 }}>
+                <label style={{ fontSize: 11, fontWeight: 800, color: '#8C867A', letterSpacing: '0.08em' }}>SELECT TRIP TO INVITE TO</label>
+                <select
+                  value={selectedTripId}
+                  onChange={(e) => {
+                    setSelectedTripId(e.target.value)
+                    setInvite(null)
+                  }}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: 12,
+                    border: '1.5px solid #EFEAE2',
+                    background: '#FFFFFF',
+                    color: '#18181B',
+                    fontSize: 13.5,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    outline: 'none',
+                  }}
+                >
+                  {userTrips.map((trip) => (
+                    <option key={trip.id} value={trip.id}>
+                      {trip.dest || trip.title || 'Travel Journey'}
+                    </option>
+                  ))}
+                </select>
               </div>
             </header>
 
-            {/* People Grid */}
-            <div className="people-cards-grid">
-              {filteredPeople.length === 0 ? (
-                <div className="people-empty-box" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 24px', background: '#FFFFFF', borderRadius: 20, border: '1px solid #EFEAE2' }}>
-                  <span style={{ fontSize: 40, display: 'block', marginBottom: 12 }}>🧭</span>
-                  <h3 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 22, fontWeight: 700, margin: '0 0 8px', color: '#18181B' }}>No Co-Travelers Found</h3>
-                  <p style={{ fontSize: 14, color: '#8C867A', maxWidth: 440, margin: '0 auto 20px' }}>
-                    Be the first to add a travel buddy or broadcast your planned destination to connect with fellow travelers!
-                  </p>
-                  <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
-                    <button className="people-action-btn-primary" onClick={() => setShowAddPersonModal(true)}>
-                      + Add First Co-Traveler
+            {/* Main Interactive Invite Suite */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 420px) 1fr', gap: 32, alignItems: 'start' }}>
+              {/* Left Column: Animated Luxury QR Card */}
+              <div
+                style={{
+                  background: '#18191E',
+                  borderRadius: 24,
+                  border: '1px solid rgba(212, 168, 67, 0.3)',
+                  padding: 28,
+                  boxShadow: '0 20px 48px rgba(0,0,0,0.25)',
+                  color: '#FAF8F5',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                  <span style={{ fontSize: 18 }}>📱</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#D4A843', textTransform: 'uppercase' }}>
+                    SCAN & JOIN TRIP
+                  </span>
+                </div>
+
+                {/* QR Code Container with Pulse and Laser Animation */}
+                <div
+                  id="invite-hub-qr"
+                  className={`tim-qr-container ${qrPulse ? 'pulse' : ''}`}
+                  style={{
+                    background: '#FFFFFF',
+                    padding: 16,
+                    borderRadius: 18,
+                    boxShadow: '0 8px 32px rgba(212, 168, 67, 0.25)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'inline-block',
+                    marginBottom: 16,
+                  }}
+                >
+                  <QRCodeSVG
+                    value={inviteUrl}
+                    size={210}
+                    level="H"
+                    includeMargin={false}
+                    fgColor="#18181B"
+                    bgColor="#FFFFFF"
+                  />
+                  <div className="tim-laser-sweep" />
+                </div>
+
+                <h4 style={{ fontSize: 17, fontWeight: 700, color: '#FFFFFF', margin: '4px 0 2px' }}>
+                  {currentSelectedTrip?.dest || currentSelectedTrip?.title}
+                </h4>
+                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '0 0 18px' }}>
+                  Role: <strong style={{ color: '#D4A843' }}>{inviteRole.toUpperCase()}</strong> · Max Uses: <strong>{maxUses}</strong>
+                </p>
+
+                {/* Primary Action Buttons */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%' }}>
+                  <button
+                    onClick={handleCopyLink}
+                    style={{
+                      padding: '12px 18px',
+                      background: copiedInvite ? '#22C55E' : '#D4A843',
+                      color: '#18181B',
+                      border: 'none',
+                      borderRadius: 12,
+                      fontSize: 13.5,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <span>{copiedInvite ? '✓ Link Copied!' : '🔗 Copy Invite Link'}</span>
+                  </button>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <button
+                      onClick={handleWhatsAppShare}
+                      style={{
+                        padding: '10px 14px',
+                        background: '#25D366',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: 10,
+                        fontSize: 12.5,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      💬 WhatsApp
                     </button>
-                    <button className="people-action-btn-secondary" onClick={() => setShowPostRequestModal(true)}>
-                      📢 Post Trip Request
+                    <button
+                      onClick={handleDownloadQR}
+                      style={{
+                        padding: '10px 14px',
+                        background: 'rgba(255,255,255,0.08)',
+                        color: '#FFFFFF',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        borderRadius: 10,
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      📥 Download QR
                     </button>
                   </div>
                 </div>
-              ) : (
-                filteredPeople.map((person) => {
-                  const IconComponent = person.icon || CompassIcon
-                  return (
-                    <div key={person.id} className="person-editorial-card">
-                      <div className="pec-header-row">
-                        <div className="pec-avatar-wrap">
-                          <img src={person.avatar} alt={person.name} className="pec-avatar" />
-                          {person.online && <span className="msg-online-badge" />}
+              </div>
+
+              {/* Right Column: Invite Settings & Joined Members */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                {/* Invite Controls Box */}
+                <div
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: 20,
+                    border: '1px solid #EFEAE2',
+                    padding: 24,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <div>
+                      <h4 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: '#18181B' }}>Invite Permissions & Expiry</h4>
+                      <p style={{ fontSize: 12.5, color: '#8C867A', margin: 0 }}>Configure role and access parameters for newly generated links.</p>
+                    </div>
+                    <button
+                      disabled={loadingInvite}
+                      onClick={handleGenerateInvite}
+                      style={{
+                        padding: '9px 16px',
+                        background: '#18181B',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: 10,
+                        fontSize: 12.5,
+                        fontWeight: 700,
+                        cursor: loadingInvite ? 'wait' : 'pointer',
+                      }}
+                    >
+                      {loadingInvite ? 'Generating...' : '⚡ Generate New Token'}
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 11.5, fontWeight: 700, color: '#18181B', display: 'block', marginBottom: 6 }}>
+                        MEMBER ROLE
+                      </label>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        {ROLES.map((r) => (
+                          <button
+                            key={r.value}
+                            type="button"
+                            onClick={() => setInviteRole(r.value)}
+                            style={{
+                              flex: 1,
+                              padding: '8px 12px',
+                              borderRadius: 8,
+                              border: inviteRole === r.value ? '1.5px solid #D4A843' : '1px solid #EFEAE2',
+                              background: inviteRole === r.value ? 'rgba(212,168,67,0.1)' : '#FFFFFF',
+                              color: inviteRole === r.value ? '#B8860B' : '#666',
+                              fontSize: 12.5,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {r.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 11.5, fontWeight: 700, color: '#18181B', display: 'block', marginBottom: 6 }}>
+                        MAX USES ALLOWED
+                      </label>
+                      <select
+                        value={maxUses}
+                        onChange={(e) => setMaxUses(Number(e.target.value))}
+                        style={{ width: '100%', padding: '8px 12px', borderRadius: 8, border: '1px solid #EFEAE2', fontSize: 13 }}
+                      >
+                        <option value={1}>1 person (Single use)</option>
+                        <option value={5}>5 persons</option>
+                        <option value={10}>10 persons (Standard)</option>
+                        <option value={50}>50 persons (Group expedition)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Joined Co-Travelers Section */}
+                <div
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: 20,
+                    border: '1px solid #EFEAE2',
+                    padding: 24,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                    <div>
+                      <h4 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 4px', color: '#18181B' }}>
+                        Joined Co-Travelers ({tripMembers.length + 1})
+                      </h4>
+                      <p style={{ fontSize: 12.5, color: '#8C867A', margin: 0 }}>Companions currently synchronized on this trip.</p>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {/* Current User Card */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '10px 14px',
+                        borderRadius: 12,
+                        background: '#FAF8F5',
+                        border: '1px solid #EFEAE2',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#D4A843', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#18181B', fontWeight: 800, fontSize: 13 }}>
+                          {userName[0]}
                         </div>
                         <div>
-                          <div className="pec-name-badge">
-                            <h3 className="pec-name">{person.name}</h3>
-                            <span className="pec-badge">{person.badge}</span>
-                          </div>
-                          <span className="pec-loc" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                            <MapPinIcon size={11} color="#D4A843" /> {person.location}
-                          </span>
+                          <p style={{ fontSize: 13, fontWeight: 700, margin: 0, color: '#18181B' }}>{userInfo?.name || 'You'} (Leader)</p>
+                          <p style={{ fontSize: 11, color: '#D4A843', margin: 0, fontWeight: 600 }}>★ TRIP CREATOR</p>
                         </div>
                       </div>
-
-                      <p className="pec-bio">{person.bio}</p>
-
-                      <div className="pec-meta-box">
-                        <div className="pec-meta-item">
-                          <span className="pmi-lbl">UPCOMING ESCAPE</span>
-                          <span className="pmi-val">{person.trips}</span>
-                        </div>
-                        <div className="pec-meta-item">
-                          <span className="pmi-lbl">STYLE & SAFETY</span>
-                          <span className="pmi-val" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                            <IconComponent size={12} color="#D4A843" /> {person.travelStyle} · {person.safetyScore}
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        className="pec-connect-btn"
-                        onClick={() => handleConnectWithPerson(person)}
-                      >
-                        <span>Connect & Message</span>
-                        <span>→</span>
-                      </button>
+                      <span style={{ fontSize: 11, background: '#18181B', color: '#FFF', padding: '3px 8px', borderRadius: 6, fontWeight: 700 }}>Host</span>
                     </div>
-                  )
-                })
-              )}
+
+                    {/* Joined Members */}
+                    {tripMembers.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '24px 16px', color: '#8C867A', fontSize: 13 }}>
+                        <p style={{ margin: '0 0 6px' }}>No other travelers have scanned or joined this trip yet.</p>
+                        <p style={{ fontSize: 11.5, color: '#D4A843', fontWeight: 600, margin: 0 }}>
+                          Share the QR code or invite link above to bring your friends on board!
+                        </p>
+                      </div>
+                    ) : (
+                      tripMembers.map((m) => (
+                        <div
+                          key={m.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '10px 14px',
+                            borderRadius: 12,
+                            background: '#FAF8F5',
+                            border: '1px solid #EFEAE2',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#18181B', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFFFFF', fontWeight: 700, fontSize: 13 }}>
+                              {(m.user?.name || m.user?.email || 'T')[0]}
+                            </div>
+                            <div>
+                              <p style={{ fontSize: 13, fontWeight: 700, margin: 0, color: '#18181B' }}>{m.user?.name || m.user?.email}</p>
+                              <p style={{ fontSize: 11, color: '#8C867A', margin: 0 }}>Role: {m.role}</p>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => handleStartChatWithMember(m)}
+                            style={{
+                              padding: '6px 12px',
+                              background: '#D4A843',
+                              color: '#18181B',
+                              border: 'none',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            💬 Message
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* Active Invites Manager */}
+                {existingInvites.length > 0 && (
+                  <div
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: 20,
+                      border: '1px solid #EFEAE2',
+                      padding: 24,
+                    }}
+                  >
+                    <h4 style={{ fontSize: 15, fontWeight: 700, margin: '0 0 12px', color: '#18181B' }}>
+                      Active Invite Tokens ({existingInvites.length})
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {existingInvites.map((inv) => (
+                        <div
+                          key={inv.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '8px 12px',
+                            borderRadius: 8,
+                            border: '1px solid #EFEAE2',
+                            fontSize: 12,
+                          }}
+                        >
+                          <div>
+                            <strong style={{ color: '#18181B' }}>Token: ...{inv.token.slice(-6)}</strong> · Role: {inv.role} · Uses: {inv.uses_count}/{inv.max_uses}
+                          </div>
+                          <button
+                            disabled={revokingId === inv.id}
+                            onClick={() => handleRevokeInvite(inv)}
+                            style={{
+                              padding: '4px 8px',
+                              background: 'transparent',
+                              color: '#EF4444',
+                              border: '1px solid #EF4444',
+                              borderRadius: 6,
+                              fontSize: 11,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {revokingId === inv.id ? 'Revoking...' : 'Revoke'}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </main>
         )}
 
         {/* ═════════════════════════════════════════════════════════════
-            MODAL: ADD NEW CO-TRAVELER / COMPANION
-        ═════════════════════════════════════════════════════════════ */}
-        {showAddPersonModal && (
-          <div className="custom-modal-backdrop" onClick={() => setShowAddPersonModal(false)}>
-            <div className="custom-modal-window" style={{ maxWidth: 520 }} onClick={(e) => e.stopPropagation()}>
-              <div className="cm-header">
-                <div>
-                  <span className="cm-badge-ai" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                    <UsersIcon size={12} color="#D4A843" /> NEW TRAVEL COMPANION
-                  </span>
-                  <h3 className="cm-title">Add Co-Traveler to PlanYatri</h3>
-                </div>
-                <button className="cm-close" onClick={() => setShowAddPersonModal(false)}>✕</button>
-              </div>
-
-              <form onSubmit={handleAddPersonSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 12 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>FULL NAME *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Aarav Mehta"
-                    value={newPerson.name}
-                    onChange={(e) => setNewPerson({ ...newPerson, name: e.target.value })}
-                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
-                  />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>PLANNED DESTINATION *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Ladakh & Spiti"
-                      value={newPerson.location}
-                      onChange={(e) => setNewPerson({ ...newPerson, location: e.target.value })}
-                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>TRAVEL STYLE</label>
-                    <select
-                      value={newPerson.travelStyle}
-                      onChange={(e) => setNewPerson({ ...newPerson, travelStyle: e.target.value })}
-                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, background: '#FFFFFF' }}
-                    >
-                      <option>Adventure & Trekking</option>
-                      <option>Royal Heritage</option>
-                      <option>Wellness & Yoga</option>
-                      <option>Beach & Coastal</option>
-                      <option>Luxury & Gastronomy</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>EMAIL OR PHONE (OPTIONAL)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. aarav@example.com or +91 98765 43210"
-                    value={newPerson.emailOrPhone}
-                    onChange={(e) => setNewPerson({ ...newPerson, emailOrPhone: e.target.value })}
-                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>ABOUT / TRAVEL BIO</label>
-                  <textarea
-                    rows={2}
-                    placeholder="e.g. Wildlife photographer planning a 7-day trip to Ranthambore."
-                    value={newPerson.bio}
-                    onChange={(e) => setNewPerson({ ...newPerson, bio: e.target.value })}
-                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, resize: 'none' }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>FIRST MESSAGE / NOTE</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Hey! Let's coordinate our itinerary and travel dates."
-                    value={newPerson.initialMsg}
-                    onChange={(e) => setNewPerson({ ...newPerson, initialMsg: e.target.value })}
-                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddPersonModal(false)}
-                    style={{ padding: '10px 18px', background: 'transparent', border: '1px solid #EFEAE2', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{ padding: '10px 22px', background: '#D4A843', color: '#18181B', border: 'none', borderRadius: 10, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}
-                  >
-                    Add Companion & Start Chatting →
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* ═════════════════════════════════════════════════════════════
-            MODAL: BROADCAST TRAVEL REQUEST TO COMMUNITY
-        ═════════════════════════════════════════════════════════════ */}
-        {showPostRequestModal && (
-          <div className="custom-modal-backdrop" onClick={() => setShowPostRequestModal(false)}>
-            <div className="custom-modal-window" style={{ maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
-              <div className="cm-header">
-                <div>
-                  <span className="cm-badge-ai" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                    <SparkleIcon size={12} color="#D4A843" /> COMMUNITY BROADCAST
-                  </span>
-                  <h3 className="cm-title">Post Companion Search</h3>
-                </div>
-                <button className="cm-close" onClick={() => setShowPostRequestModal(false)}>✕</button>
-              </div>
-
-              <form onSubmit={handlePostRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 12 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>WHERE ARE YOU HEADING? *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Spiti Valley Expedition or Bali Yoga Retreat"
-                    value={newPost.destination}
-                    onChange={(e) => setNewPost({ ...newPost, destination: e.target.value })}
-                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
-                  />
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>TRAVEL TIMELINE</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Oct 2026 or Next Month"
-                      value={newPost.month}
-                      onChange={(e) => setNewPost({ ...newPost, month: e.target.value })}
-                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
-                    />
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>EXPEDITION STYLE</label>
-                    <select
-                      value={newPost.style}
-                      onChange={(e) => setNewPost({ ...newPost, style: e.target.value })}
-                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, background: '#FFFFFF' }}
-                    >
-                      <option>Adventure & Trekking</option>
-                      <option>Royal Heritage</option>
-                      <option>Wellness & Yoga</option>
-                      <option>Beach & Coastal</option>
-                      <option>Luxury & Gastronomy</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>DETAILS & WHAT YOU'RE LOOKING FOR</label>
-                  <textarea
-                    rows={3}
-                    placeholder="e.g. Planning a road trip from Manali to Leh. Looking for 2 co-travelers to share cab and homestay expenses!"
-                    value={newPost.description}
-                    onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, resize: 'none' }}
-                  />
-                </div>
-
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                  <button
-                    type="button"
-                    onClick={() => setShowPostRequestModal(false)}
-                    style={{ padding: '10px 18px', background: 'transparent', border: '1px solid #EFEAE2', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{ padding: '10px 22px', background: '#D4A843', color: '#18181B', border: 'none', borderRadius: 10, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}
-                  >
-                    Publish to Community Board 🚀
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* ═════════════════════════════════════════════════════════════
-            MODAL 1: CONCIERGE CALL SIMULATION MODAL
-        ═════════════════════════════════════════════════════════════ */}
-        {showCallModal && (
-          <div className="custom-modal-backdrop" onClick={() => setShowCallModal(false)}>
-            <div className="call-modal-window" onClick={(e) => e.stopPropagation()}>
-              <div className="call-avatar-pulse">
-                <img src={activeContact.avatar} alt={activeContact.name} className="call-avatar-img" />
-              </div>
-
-              <span className="call-badge-status">SECURE CONCIERGE VOICE LINK</span>
-              <h3 className="call-contact-name">{activeContact.name}</h3>
-              <p className="call-contact-role">{activeContact.role}</p>
-
-              <div className="call-wave-visualizer">
-                <span className="wave-bar" />
-                <span className="wave-bar" />
-                <span className="wave-bar" />
-                <span className="wave-bar" />
-                <span className="wave-bar" />
-                <span className="wave-bar" />
-                <span className="wave-bar" />
-              </div>
-
-              <span className="call-timer-display">{formatCallTimer(callDuration)}</span>
-
-              <div className="call-actions-row">
-                <button className="call-end-btn" onClick={() => setShowCallModal(false)}>
-                  <span>End Private Call</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ═════════════════════════════════════════════════════════════
-            MODAL 2: CONTACT & ITINERARY DOSSIER MODAL
+            MODAL 1: CONTACT DOSSIER MODAL
         ═════════════════════════════════════════════════════════════ */}
         {showDossierModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowDossierModal(false)}>
@@ -1333,7 +1067,7 @@ export default function Messages() {
                     <h4 className="dossier-name">{activeContact.name}</h4>
                     <p className="dossier-role">{activeContact.role}</p>
                     <span className="dossier-status-text">
-                      {activeContact.online ? '● Active in Bali/IST Zone' : '○ Verified Guide Available on Request'}
+                      {activeContact.online ? '● Active in IST Zone' : '○ Verified Guide Available on Request'}
                     </span>
                   </div>
                 </div>
