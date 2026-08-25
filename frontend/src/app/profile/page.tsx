@@ -155,7 +155,7 @@ export default function Profile() {
                   {/* Remaining Mini Cards */}
                   {favorites.length > 1 && (
                     <div className="prof-bucket-duo-grid">
-                      {favorites.slice(1, 5).map((item) => (
+                      {favorites.slice(1, 5).map((item: any) => (
                         <div
                           key={item.id}
                           className="prof-mini-bucket-card"
@@ -166,7 +166,7 @@ export default function Profile() {
                             <button
                               className="prof-mini-heart-btn"
                               title="Remove from Bucket List"
-                              onClick={(e) => {
+                              onClick={(e: any) => {
                                 e.stopPropagation()
                                 removeFavorite(item.id)
                                 toast.info(`Removed ${item.name} from Bucket List`)
@@ -297,7 +297,7 @@ export default function Profile() {
         {/* ── EDIT PROFILE MODAL ── */}
         {showEditModal && (
           <div className="prof-modal-backdrop" onClick={() => setShowEditModal(false)}>
-            <div className="prof-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="prof-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="prof-modal-header">
                 <h3 className="prof-modal-title">Edit Profile Information</h3>
                 <button className="prof-modal-close" onClick={() => setShowEditModal(false)}>
@@ -312,7 +312,7 @@ export default function Profile() {
                     type="text"
                     className="prof-form-input"
                     value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
+                    onChange={(e: any) => setEditName(e.target.value)}
                     required
                   />
                 </div>
@@ -323,7 +323,7 @@ export default function Profile() {
                     type="text"
                     className="prof-form-input"
                     value={editQuote}
-                    onChange={(e) => setEditQuote(e.target.value)}
+                    onChange={(e: any) => setEditQuote(e.target.value)}
                   />
                 </div>
 
@@ -333,7 +333,7 @@ export default function Profile() {
                     type="url"
                     className="prof-form-input"
                     value={editAvatarUrl}
-                    onChange={(e) => setEditAvatarUrl(e.target.value)}
+                    onChange={(e: any) => setEditAvatarUrl(e.target.value)}
                   />
                 </div>
 

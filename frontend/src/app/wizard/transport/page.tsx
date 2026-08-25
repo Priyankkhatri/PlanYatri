@@ -19,7 +19,7 @@ export default function TransportStep() {
         <h1 className="text-3xl font-serif font-bold text-[#18181B] text-center">How would you like to travel?</h1>
         
         <div className="space-y-4 pt-4">
-          {TRANSPORTS.map((t) => (
+          {TRANSPORTS.map((t: any) => (
             <div
               key={t.id}
               onClick={() => setSelected(t.id)}

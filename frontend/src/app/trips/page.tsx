@@ -324,7 +324,7 @@ export default function Trips() {
     e.preventDefault()
     setIsOptimizing(true)
     try {
-      const cityArray = aiCitiesInput.split(',').map((c) => c.trim()).filter(Boolean)
+      const cityArray = aiCitiesInput.split(',').map((c: any) => c.trim()).filter(Boolean)
       const res = await api.post('/gemini/optimize-itinerary', {
         tripName: aiTripName,
         cities: cityArray.length ? cityArray : ['Paris', 'Rome', 'Barcelona'],
@@ -339,7 +339,7 @@ export default function Trips() {
         const newOptimizedTrip = {
           _id: `journey-opt-${Date.now()}`,
           dest: aiTripName,
-          subtitle: (opt.optimizedCities || []).map((c) => c.name).join(' → '),
+          subtitle: (opt.optimizedCities || []).map((c: any) => c.name).join(' → '),
           statusTag: 'AI OPTIMIZED',
           status: 'Upcoming',
           dates: `${aiDays} Days Custom Plan`,
@@ -347,7 +347,7 @@ export default function Trips() {
           budgetINR: aiBudget,
           progress: 80,
           img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&h=800&q=85&auto=format&fit=crop',
-          desc: `AI-Optimized Multi-City Route: ${(opt.optimizedCities || []).map((c) => c.name).join(' → ')}. Balanced for ${aiTravelStyle} travel.`,
+          desc: `AI-Optimized Multi-City Route: ${(opt.optimizedCities || []).map((c: any) => c.name).join(' → ')}. Balanced for ${aiTravelStyle} travel.`,
           cities: opt.optimizedCities || [],
           daysPlan: opt.days || [],
           expenses: {
@@ -428,7 +428,7 @@ export default function Trips() {
     }
 
     const updatedCities = [...(selectedItineraryTrip.cities || []), newCityObj]
-    const updatedSubtitle = updatedCities.map((c) => c.name).join(' → ')
+    const updatedSubtitle = updatedCities.map((c: any) => c.name).join(' → ')
     const updatedTrip = {
       ...selectedItineraryTrip,
       cities: updatedCities,
@@ -631,7 +631,7 @@ export default function Trips() {
                     <div className="jc-menu-wrapper">
                       <button
                         className="jc-dots-btn"
-                        onClick={(e) => {
+                        onClick={(e: any) => {
                           e.stopPropagation()
                           setMenuOpenId(menuOpenId === journey._id ? null : journey._id)
                         }}
@@ -640,7 +640,7 @@ export default function Trips() {
                       </button>
 
                       {menuOpenId === journey._id && (
-                        <div className="jc-dropdown-menu" onClick={(e) => e.stopPropagation()}>
+                        <div className="jc-dropdown-menu" onClick={(e: any) => e.stopPropagation()}>
                           <button
                             onClick={() => {
                               setSelectedItineraryTrip(journey)
@@ -1064,7 +1064,7 @@ export default function Trips() {
 
                     <form
                       className="crew-invite-row"
-                      onSubmit={(e) => {
+                      onSubmit={(e: any) => {
                         e.preventDefault()
                         if (inviteEmail) {
                           toast.success(`✉️ Invite sent to ${inviteEmail}! Added to Priyank & Dhyey's team.`)
@@ -1076,7 +1076,7 @@ export default function Trips() {
                         type="email"
                         placeholder="Add co-explorer email..."
                         value={inviteEmail}
-                        onChange={(e) => setInviteEmail(e.target.value)}
+                        onChange={(e: any) => setInviteEmail(e.target.value)}
                         className="crew-input"
                       />
                       <button type="submit" className="crew-invite-btn">
@@ -1213,7 +1213,7 @@ export default function Trips() {
         ═════════════════════════════════════════════════════════════ */}
         {showAIOptimizerModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowAIOptimizerModal(false)}>
-            <div className="custom-modal-window wide" onClick={(e) => e.stopPropagation()}>
+            <div className="custom-modal-window wide" onClick={(e: any) => e.stopPropagation()}>
               <div className="cm-header">
                 <div>
                   <span className="cm-badge-ai" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
@@ -1231,7 +1231,7 @@ export default function Trips() {
                     type="text"
                     required
                     value={aiTripName}
-                    onChange={(e) => setAiTripName(e.target.value)}
+                    onChange={(e: any) => setAiTripName(e.target.value)}
                     placeholder="e.g. Europe Grand Tour or Golden Triangle Expedition"
                   />
                 </div>
@@ -1242,7 +1242,7 @@ export default function Trips() {
                     type="text"
                     required
                     value={aiCitiesInput}
-                    onChange={(e) => setAiCitiesInput(e.target.value)}
+                    onChange={(e: any) => setAiCitiesInput(e.target.value)}
                     placeholder="e.g. Paris, Rome, Barcelona or Delhi, Agra, Jaipur"
                   />
                 </div>
@@ -1255,7 +1255,7 @@ export default function Trips() {
                       min="2"
                       max="30"
                       value={aiDays}
-                      onChange={(e) => setAiDays(Number(e.target.value))}
+                      onChange={(e: any) => setAiDays(Number(e.target.value))}
                     />
                   </div>
 
@@ -1265,7 +1265,7 @@ export default function Trips() {
                       type="number"
                       step="5000"
                       value={aiBudget}
-                      onChange={(e) => setAiBudget(Number(e.target.value))}
+                      onChange={(e: any) => setAiBudget(Number(e.target.value))}
                     />
                   </div>
                 </div>
@@ -1273,7 +1273,7 @@ export default function Trips() {
                 <div className="cm-grid-2">
                   <div className="cm-field">
                     <label>Travel Style</label>
-                    <select value={aiTravelStyle} onChange={(e) => setAiTravelStyle(e.target.value)}>
+                    <select value={aiTravelStyle} onChange={(e: any) => setAiTravelStyle(e.target.value)}>
                       <option value="Boutique">Boutique & Authentic</option>
                       <option value="Luxury">Luxury & 5-Star</option>
                       <option value="Backpacker">Budget & Backpacker</option>
@@ -1289,7 +1289,7 @@ export default function Trips() {
                           <input
                             type="checkbox"
                             checked={aiInterests.includes(intr)}
-                            onChange={(e) => {
+                            onChange={(e: any) => {
                               if (e.target.checked) setAiInterests((p) => [...p, intr])
                               else setAiInterests((p) => p.filter((x) => x !== intr))
                             }}
@@ -1323,7 +1323,7 @@ export default function Trips() {
         ═════════════════════════════════════════════════════════════ */}
         {showAddActivityModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowAddActivityModal(false)}>
-            <div className="custom-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="custom-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="cm-header">
                 <h3 className="cm-title">Add Activity to Day {targetDayIndex + 1}</h3>
                 <button className="cm-close" onClick={() => setShowAddActivityModal(false)}>✕</button>
@@ -1337,14 +1337,14 @@ export default function Trips() {
                     required
                     placeholder="e.g. Louvre Museum Guided Tour or Sunset Boat Ride"
                     value={newActName}
-                    onChange={(e) => setNewActName(e.target.value)}
+                    onChange={(e: any) => setNewActName(e.target.value)}
                   />
                 </div>
 
                 <div className="cm-grid-2">
                   <div className="cm-field">
                     <label>Category</label>
-                    <select value={newActCategory} onChange={(e) => setNewActCategory(e.target.value)}>
+                    <select value={newActCategory} onChange={(e: any) => setNewActCategory(e.target.value)}>
                       <option value="Sightseeing">Sightseeing</option>
                       <option value="Culture">Culture & Heritage</option>
                       <option value="Food">Food & Dining</option>
@@ -1360,7 +1360,7 @@ export default function Trips() {
                       required
                       placeholder="1500"
                       value={newActCost}
-                      onChange={(e) => setNewActCost(e.target.value)}
+                      onChange={(e: any) => setNewActCost(e.target.value)}
                     />
                   </div>
                 </div>
@@ -1372,7 +1372,7 @@ export default function Trips() {
                       type="text"
                       placeholder="11:00 AM"
                       value={newActTime}
-                      onChange={(e) => setNewActTime(e.target.value)}
+                      onChange={(e: any) => setNewActTime(e.target.value)}
                     />
                   </div>
 
@@ -1382,7 +1382,7 @@ export default function Trips() {
                       type="text"
                       placeholder="2 hours"
                       value={newActDuration}
-                      onChange={(e) => setNewActDuration(e.target.value)}
+                      onChange={(e: any) => setNewActDuration(e.target.value)}
                     />
                   </div>
                 </div>
@@ -1393,7 +1393,7 @@ export default function Trips() {
                     type="text"
                     placeholder="Fast-track entry, meeting point at main gate..."
                     value={newActDesc}
-                    onChange={(e) => setNewActDesc(e.target.value)}
+                    onChange={(e: any) => setNewActDesc(e.target.value)}
                   />
                 </div>
 
@@ -1419,7 +1419,7 @@ export default function Trips() {
         ═════════════════════════════════════════════════════════════ */}
         {showAddCityModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowAddCityModal(false)}>
-            <div className="custom-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="custom-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="cm-header">
                 <h3 className="cm-title">+ Add City Stop to Itinerary</h3>
                 <button className="cm-close" onClick={() => setShowAddCityModal(false)}>✕</button>
@@ -1433,7 +1433,7 @@ export default function Trips() {
                     required
                     placeholder="e.g. Venice, Amsterdam, Goa, or Kyoto"
                     value={newCityName}
-                    onChange={(e) => setNewCityName(e.target.value)}
+                    onChange={(e: any) => setNewCityName(e.target.value)}
                   />
                 </div>
 
@@ -1443,7 +1443,7 @@ export default function Trips() {
                     type="number"
                     min="1"
                     value={newCityDays}
-                    onChange={(e) => setNewCityDays(Number(e.target.value))}
+                    onChange={(e: any) => setNewCityDays(Number(e.target.value))}
                   />
                 </div>
 
@@ -1469,7 +1469,7 @@ export default function Trips() {
         ═════════════════════════════════════════════════════════════ */}
         {showShareModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowShareModal(false)}>
-            <div className="custom-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="custom-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="cm-header">
                 <div>
                   <span className="cm-badge-ai">PUBLIC SHARING & COMMUNITY</span>
@@ -1518,7 +1518,7 @@ export default function Trips() {
         ═════════════════════════════════════════════════════════════ */}
         {showCreateModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowCreateModal(false)}>
-            <div className="custom-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="custom-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="cm-header">
                 <h3 className="cm-title">Create New Trip Itinerary</h3>
                 <button className="cm-close" onClick={() => setShowCreateModal(false)}>✕</button>
@@ -1532,7 +1532,7 @@ export default function Trips() {
                     required
                     placeholder="e.g. Swiss Alps & Italian Lakes"
                     value={newTripDest}
-                    onChange={(e) => setNewTripDest(e.target.value)}
+                    onChange={(e: any) => setNewTripDest(e.target.value)}
                   />
                 </div>
 
@@ -1543,7 +1543,7 @@ export default function Trips() {
                       type="number"
                       min="1"
                       value={newTripDays}
-                      onChange={(e) => setNewTripDays(e.target.value)}
+                      onChange={(e: any) => setNewTripDays(e.target.value)}
                     />
                   </div>
 
@@ -1552,7 +1552,7 @@ export default function Trips() {
                     <input
                       type="number"
                       value={newTripBudget}
-                      onChange={(e) => setNewTripBudget(e.target.value)}
+                      onChange={(e: any) => setNewTripBudget(e.target.value)}
                     />
                   </div>
                 </div>
@@ -1563,7 +1563,7 @@ export default function Trips() {
                     type="text"
                     placeholder="e.g. 10 Aug — 18 Aug 2026"
                     value={newTripDates}
-                    onChange={(e) => setNewTripDates(e.target.value)}
+                    onChange={(e: any) => setNewTripDates(e.target.value)}
                   />
                 </div>
 
@@ -1589,7 +1589,7 @@ export default function Trips() {
         ═════════════════════════════════════════════════════════════ */}
         {showLogisticsModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowLogisticsModal(false)}>
-            <div className="logistics-drawer-window" onClick={(e) => e.stopPropagation()}>
+            <div className="logistics-drawer-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="log-drawer-left-photo">
                 <img
                   src={selectedItineraryTrip?.img}
@@ -1662,7 +1662,7 @@ export default function Trips() {
         {/* ── LUXURY PAYMENT CHECKOUT MODAL ── */}
         {showPaymentModal && selectedItineraryTrip && (
           <div className="trips-modal-backdrop" onClick={() => !isProcessingPayment && setShowPaymentModal(false)}>
-            <div className="trips-modal-card" style={{ maxWidth: '540px', padding: '28px', border: '1px solid rgba(212,168,67,0.35)', background: '#0C1B2A', color: '#FBF9F5', borderRadius: '16px' }} onClick={(e) => e.stopPropagation()}>
+            <div className="trips-modal-card" style={{ maxWidth: '540px', padding: '28px', border: '1px solid rgba(212,168,67,0.35)', background: '#0C1B2A', color: '#FBF9F5', borderRadius: '16px' }} onClick={(e: any) => e.stopPropagation()}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>
                 <div>
                   <span style={{ fontSize: '11px', color: '#D4A843', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' }}>PLANYATRI CONCIERGE CHECKOUT</span>

@@ -449,7 +449,7 @@ export default function Destinations() {
 
   // Toggle active filter tag
   const removeTag = (tag) => {
-    setActiveTags((prev) => prev.filter((t) => t !== tag))
+    setActiveTags((prev) => prev.filter((t: any) => t !== tag))
   }
 
   const toggleActivity = (act) => {
@@ -640,7 +640,7 @@ export default function Destinations() {
 
   // ── Filter & Search Logic ──
   const filtered = useMemo(() => {
-    return destList.filter((item) => {
+    return destList.filter((item: any) => {
       // 1. Search Query
       if (search.trim()) {
         const query = search.toLowerCase()
@@ -771,7 +771,7 @@ export default function Destinations() {
                 className="dest-search-input"
                 placeholder="Search Ladakh, Kerala, Swiss..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e: any) => setSearch(e.target.value)}
               />
               {search && (
                 <button className="dest-search-clear" onClick={() => setSearch('')}>
@@ -819,7 +819,7 @@ export default function Destinations() {
                       className="ai-banner-input"
                       placeholder="e.g., Jaipur for 4 days, 4 people, budget 50000rs..."
                       value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
+                      onChange={(e: any) => setAiPrompt(e.target.value)}
                       disabled={isGeneratingAI}
                     />
                     <button type="submit" className="ai-banner-submit" disabled={isGeneratingAI || !aiPrompt.trim()}>
@@ -868,7 +868,7 @@ export default function Destinations() {
                       className="ai-banner-input"
                       placeholder="Ask to refine (e.g. 'Add hot air ballooning', 'Change budget to ₹40k', 'Include 5-star palace stay')..."
                       value={aiPrompt}
-                      onChange={(e) => setAiPrompt(e.target.value)}
+                      onChange={(e: any) => setAiPrompt(e.target.value)}
                       disabled={isGeneratingAI}
                     />
                     <button type="submit" className="ai-banner-submit" disabled={isGeneratingAI || !aiPrompt.trim()}>
@@ -969,7 +969,7 @@ export default function Destinations() {
                     max={currency === 'INR' ? 500000 : 6000 * 85}
                     step={currency === 'INR' ? 5000 : 50 * 85}
                     value={budgetMax}
-                    onChange={(e) => setBudgetMax(Number(e.target.value))}
+                    onChange={(e: any) => setBudgetMax(Number(e.target.value))}
                     className="refine-slider-input"
                   />
                   <div className="refine-slider-ticks">
@@ -1141,7 +1141,7 @@ export default function Destinations() {
                   <select
                     className="curated-sort-select"
                     value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
+                    onChange={(e: any) => setSortOption(e.target.value)}
                   >
                     <option value="Recommended">Recommended</option>
                     <option value="Price: Low to High">Price: Low to High</option>
@@ -1189,7 +1189,7 @@ export default function Destinations() {
                         {/* Top Right Heart Icon */}
                         <button
                           className={`escape-heart-btn ${isHearted ? 'active' : ''}`}
-                          onClick={(e) => toggleHeart(e, dest)}
+                          onClick={(e: any) => toggleHeart(e, dest)}
                           aria-label="Save to favorites"
                         >
                           <svg
@@ -1241,7 +1241,7 @@ export default function Destinations() {
                         {/* View Details Button */}
                         <button
                           className="escape-details-btn"
-                          onClick={(e) => {
+                          onClick={(e: any) => {
                             e.stopPropagation()
                             setSelectedModalDest(dest)
                           }}
@@ -1307,7 +1307,7 @@ export default function Destinations() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: any) => e.stopPropagation()}
           >
             <button className="dest-modal-close" onClick={() => setSelectedModalDest(null)}>
               ✕

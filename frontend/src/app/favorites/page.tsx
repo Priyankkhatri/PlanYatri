@@ -36,7 +36,7 @@ export default function Favorites() {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
       ['Name,Country,Category']
-        .concat(favorites.map((f) => `"${f.name}","${f.country}","${f.category}"`))
+        .concat(favorites.map((f: any) => `"${f.name}","${f.country}","${f.category}"`))
         .join('\n')
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
@@ -49,7 +49,7 @@ export default function Favorites() {
   }
 
   const filteredFavorites = useMemo(() => {
-    return favorites.filter((item) => {
+    return favorites.filter((item: any) => {
       const matchesSearch =
         item.name.toLowerCase().includes(search.toLowerCase()) ||
         item.country.toLowerCase().includes(search.toLowerCase()) ||
@@ -87,7 +87,7 @@ export default function Favorites() {
               className="fav-search-input"
               placeholder="Search saved..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e: any) => setSearch(e.target.value)}
             />
             {search && (
               <button className="fav-search-clear" onClick={() => setSearch('')}>
@@ -124,7 +124,7 @@ export default function Favorites() {
                     {/* Top Heart Badge */}
                     <button
                       className="fav-heart-circle"
-                      onClick={(e) => toggleHeart(e, item.id, item.name)}
+                      onClick={(e: any) => toggleHeart(e, item.id, item.name)}
                       title="Save / Unsave"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="2">
@@ -151,7 +151,7 @@ export default function Favorites() {
                       {isFirst && (
                         <button
                           className="fav-book-stay-btn"
-                          onClick={(e) => {
+                          onClick={(e: any) => {
                             e.stopPropagation()
                             router.push('/trips', { state: { initialDest: item.name, initialImg: item.img } })
                           }}

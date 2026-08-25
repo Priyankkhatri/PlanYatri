@@ -329,14 +329,14 @@ export default function Settings() {
       {/* ── CHANGE AVATAR MODAL ── */}
       {showPhotoModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowPhotoModal(false)}>
-          <div style={{ background: 'var(--bg-card, #0C1B2A)', border: '1px solid rgba(212,168,67,0.3)', padding: '24px', borderRadius: '16px', maxWidth: '420px', width: '90%', color: '#FFF' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'var(--bg-card, #0C1B2A)', border: '1px solid rgba(212,168,67,0.3)', padding: '24px', borderRadius: '16px', maxWidth: '420px', width: '90%', color: '#FFF' }} onClick={(e: any) => e.stopPropagation()}>
             <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 12px' }}>Update Profile Photo</h3>
             <p style={{ fontSize: '13px', color: '#94A3B8', margin: '0 0 16px' }}>Paste a direct image URL or choose a preset photo:</p>
             <input
               type="text"
               placeholder="https://example.com/photo.jpg"
               value={newAvatarUrl}
-              onChange={(e) => setNewAvatarUrl(e.target.value)}
+              onChange={(e: any) => setNewAvatarUrl(e.target.value)}
               style={{ width: '100%', padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px', marginBottom: '16px' }}
             />
             <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
@@ -380,11 +380,11 @@ export default function Settings() {
       {/* ── CHANGE PASSWORD MODAL ── */}
       {showPasswordModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowPasswordModal(false)}>
-          <div style={{ background: 'var(--bg-card, #0C1B2A)', border: '1px solid rgba(212,168,67,0.3)', padding: '24px', borderRadius: '16px', maxWidth: '420px', width: '90%', color: '#FFF' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'var(--bg-card, #0C1B2A)', border: '1px solid rgba(212,168,67,0.3)', padding: '24px', borderRadius: '16px', maxWidth: '420px', width: '90%', color: '#FFF' }} onClick={(e: any) => e.stopPropagation()}>
             <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 12px' }}>Change Security Password</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
               <input type="password" placeholder="Current Password" style={{ padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }} />
-              <input type="password" placeholder="New Security Password" value={newPass} onChange={(e) => setNewPass(e.target.value)} style={{ padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }} />
+              <input type="password" placeholder="New Security Password" value={newPass} onChange={(e: any) => setNewPass(e.target.value)} style={{ padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }} />
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
@@ -408,16 +408,16 @@ export default function Settings() {
       {/* ── ADD PAYMENT METHOD MODAL ── */}
       {showPaymentModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowPaymentModal(false)}>
-          <div style={{ background: 'var(--bg-card, #0C1B2A)', border: '1px solid rgba(212,168,67,0.3)', padding: '24px', borderRadius: '16px', maxWidth: '420px', width: '90%', color: '#FFF' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'var(--bg-card, #0C1B2A)', border: '1px solid rgba(212,168,67,0.3)', padding: '24px', borderRadius: '16px', maxWidth: '420px', width: '90%', color: '#FFF' }} onClick={(e: any) => e.stopPropagation()}>
             <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 12px' }}>Add New Payment Method</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-              <select value={newCard.type} onChange={(e) => setNewCard(p => ({ ...p, type: e.target.value }))} style={{ padding: '10px', background: '#0C1B2A', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }}>
+              <select value={newCard.type} onChange={(e: any) => setNewCard(p => ({ ...p, type: e.target.value }))} style={{ padding: '10px', background: '#0C1B2A', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }}>
                 <option value="Visa">Visa Credit / Debit</option>
                 <option value="Mastercard">Mastercard</option>
                 <option value="UPI">UPI ID (GPay / PhonePe)</option>
               </select>
-              <input type="text" placeholder={newCard.type === 'UPI' ? 'user@upi' : 'Card Number (4000 1234 ...)'} value={newCard.number} onChange={(e) => setNewCard(p => ({ ...p, number: e.target.value }))} style={{ padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }} />
-              <input type="text" placeholder="Expiry MM/YY" value={newCard.exp} onChange={(e) => setNewCard(p => ({ ...p, exp: e.target.value }))} style={{ padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }} />
+              <input type="text" placeholder={newCard.type === 'UPI' ? 'user@upi' : 'Card Number (4000 1234 ...)'} value={newCard.number} onChange={(e: any) => setNewCard(p => ({ ...p, number: e.target.value }))} style={{ padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }} />
+              <input type="text" placeholder="Expiry MM/YY" value={newCard.exp} onChange={(e: any) => setNewCard(p => ({ ...p, exp: e.target.value }))} style={{ padding: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '8px', color: '#FFF', fontSize: '13px' }} />
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button

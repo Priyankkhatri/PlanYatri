@@ -20,7 +20,7 @@ export default function TravelersStep() {
         <h1 className="text-3xl font-serif font-bold text-[#18181B] text-center">Who are you traveling with?</h1>
         
         <div className="grid grid-cols-2 gap-4 pt-4">
-          {TRAVELER_TYPES.map((t) => (
+          {TRAVELER_TYPES.map((t: any) => (
             <div
               key={t.id}
               onClick={() => setSelected(t.id)}

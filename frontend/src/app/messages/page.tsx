@@ -356,7 +356,7 @@ export default function Messages() {
 
     // 2. Update contact preview snippet
     setContacts((prev) =>
-      prev.map((c) => (c.id === activeContactId ? { ...c, lastMsg: textToSend, time: nowTime } : c))
+      prev.map((c: any) => (c.id === activeContactId ? { ...c, lastMsg: textToSend, time: nowTime } : c))
     )
 
     // 3. Persist to Supabase
@@ -400,7 +400,7 @@ export default function Messages() {
           }))
 
           setContacts((prev) =>
-            prev.map((c) => (c.id === 1 ? { ...c, lastMsg: replyContent, time: aiReply.time } : c))
+            prev.map((c: any) => (c.id === 1 ? { ...c, lastMsg: replyContent, time: aiReply.time } : c))
           )
 
           try {
@@ -532,7 +532,7 @@ export default function Messages() {
                 type="text"
                 placeholder={activeTab === 'chats' ? 'Search conversations...' : 'Search people or destinations...'}
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e: any) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
@@ -698,7 +698,7 @@ export default function Messages() {
                   className="msg-text-input"
                   placeholder={`Message ${activeContact.name}...`}
                   value={messageInput}
-                  onChange={(e) => setMessageInput(e.target.value)}
+                  onChange={(e: any) => setMessageInput(e.target.value)}
                 />
 
                 <button type="submit" className="msg-send-btn" disabled={!messageInput.trim()}>
@@ -795,7 +795,7 @@ export default function Messages() {
         ═════════════════════════════════════════════════════════════ */}
         {showCallModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowCallModal(false)}>
-            <div className="call-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="call-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="call-avatar-pulse">
                 <img src={activeContact.avatar} alt={activeContact.name} className="call-avatar-img" />
               </div>
@@ -830,7 +830,7 @@ export default function Messages() {
         ═════════════════════════════════════════════════════════════ */}
         {showDossierModal && (
           <div className="custom-modal-backdrop" onClick={() => setShowDossierModal(false)}>
-            <div className="custom-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="custom-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="cm-header">
                 <div>
                   <span className="cm-badge-ai" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>

@@ -95,7 +95,7 @@ export default function DestinationItineraryPage() {
         {/* Day Selector & Timeline */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex gap-2 overflow-x-auto pb-2 border-b border-[#EFEAE2]">
-            {ITINERARY_DAYS.map((d) => (
+            {ITINERARY_DAYS.map((d: any) => (
               <button
                 key={d.day}
                 onClick={() => setActiveDay(d.day)}
@@ -111,7 +111,7 @@ export default function DestinationItineraryPage() {
           </div>
 
           {/* Active Day Details */}
-          {ITINERARY_DAYS.filter((d) => d.day === activeDay).map((dayData) => (
+          {ITINERARY_DAYS.filter((d: any) => d.day === activeDay).map((dayData) => (
             <div key={dayData.day} className="bg-white p-8 rounded-2xl border border-[#EFEAE2] shadow-sm space-y-6">
               <div className="flex justify-between items-center border-b border-[#EFEAE2] pb-4">
                 <div>

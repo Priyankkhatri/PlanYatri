@@ -274,7 +274,7 @@ function ContactModal({ initial, onSave, onClose }) {
     <div className="em-modal-backdrop" onClick={onClose}>
       <motion.div
         className="em-modal-box"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: any) => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 12 }}
@@ -301,7 +301,7 @@ function ContactModal({ initial, onSave, onClose }) {
               required
               placeholder="e.g. Captain Rajesh Sharma"
               value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              onChange={(e: any) => setForm({ ...form, name: e.target.value })}
             />
           </div>
 
@@ -309,7 +309,7 @@ function ContactModal({ initial, onSave, onClose }) {
             <label>Relationship / Role *</label>
             <select
               value={form.relation}
-              onChange={(e) => setForm({ ...form, relation: e.target.value })}
+              onChange={(e: any) => setForm({ ...form, relation: e.target.value })}
             >
               <option value="Family">Family / Parent</option>
               <option value="Partner">Spouse / Partner</option>
@@ -327,7 +327,7 @@ function ContactModal({ initial, onSave, onClose }) {
               required
               placeholder="+91 98765 43210"
               value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              onChange={(e: any) => setForm({ ...form, phone: e.target.value })}
             />
           </div>
 
@@ -657,7 +657,7 @@ export default function Emergency() {
     }
   }
 
-  const filteredFacilities = VERIFIED_FACILITIES.filter((f) => {
+  const filteredFacilities = VERIFIED_FACILITIES.filter((f: any) => {
     const matchesSearch =
       f.name.toLowerCase().includes(facilitySearch.toLowerCase()) ||
       f.address.toLowerCase().includes(facilitySearch.toLowerCase())
@@ -889,7 +889,7 @@ export default function Emergency() {
                       className="em-fac-search"
                       placeholder="Search facility by name or road..."
                       value={facilitySearch}
-                      onChange={(e) => setFacilitySearch(e.target.value)}
+                      onChange={(e: any) => setFacilitySearch(e.target.value)}
                     />
                     <div className="em-fac-pills">
                       {['ALL', 'Hospital', 'Police', 'Pharmacy'].map((tab) => (
@@ -969,7 +969,7 @@ export default function Emergency() {
                       </div>
                     )}
 
-                    {contacts.map((c) => (
+                    {contacts.map((c: any) => (
                       <div key={c._id || c.id} className="em-guardian-row">
                         <div className="em-guardian-avatar">
                           {c.initial || c.name?.charAt(0) || 'G'}
@@ -1079,7 +1079,7 @@ export default function Emergency() {
         <div className="em-modal-backdrop" onClick={() => setDeleteId(null)}>
           <motion.div
             className="em-confirm-modal"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: any) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
           >

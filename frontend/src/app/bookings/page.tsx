@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react'
 
@@ -105,7 +106,7 @@ const INITIAL_BOOKINGS = [
 
 export default function Bookings() {
   const router = useRouter();
-  const pathname = usePathname();
+  const location: any = {};
   const toast = useToast()
   usePageTitle('Travel Bookings & Logistics — PlanYatri')
 
@@ -140,12 +141,12 @@ export default function Bookings() {
   useEffect(() => {
     if (location.state?.newBooking) {
       const nb = location.state.newBooking
-      setBookings((prev) => [nb, ...prev])
+      setBookings((prev: any) => [nb, ...prev])
       toast.success(`🎉 Confirmed booking added for "${nb.title}"!`)
       window.history.replaceState({}, document.title)
     } else if (location.state?.newBookings && Array.isArray(location.state.newBookings)) {
       const nbs = location.state.newBookings
-      setBookings((prev) => [...nbs, ...prev])
+      setBookings((prev: any) => [...nbs, ...prev])
       const tripName = location.state.tripName || 'your trip'
       toast.success(`🎉 Confirmed ${nbs.length} reservations for ${tripName}!`)
       window.history.replaceState({}, document.title)
@@ -160,7 +161,7 @@ export default function Bookings() {
   const [newPrice, setNewPrice] = useState('₹45,000')
 
   const filteredBookings = useMemo(() => {
-    return bookings.filter((item) => {
+    return bookings.filter((item: any) => {
       const matchesSearch =
         item.title.toLowerCase().includes(search.toLowerCase()) ||
         item.subtitle.toLowerCase().includes(search.toLowerCase()) ||
@@ -196,7 +197,7 @@ export default function Bookings() {
       icon: newType === 'Flight' ? '✈️' : newType === 'Stay' ? '🏨' : '🎯',
     }
 
-    setBookings((prev) => [newBookingObj, ...prev])
+    setBookings((prev: any) => [newBookingObj, ...prev])
     setShowAddModal(false)
     setNewTitle('')
     setNewSubtitle('')
@@ -308,7 +309,7 @@ export default function Bookings() {
                 type="text"
                 placeholder="Search bookings or ref #..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e: any) => setSearch(e.target.value)}
                 className="bk-search-input"
               />
             </div>
@@ -316,7 +317,7 @@ export default function Bookings() {
 
           {/* ── 4. BOOKINGS CARDS GRID ── */}
           <div className="bk-grid-layout">
-            {filteredBookings.map((b) => (
+            {filteredBookings.map((b: any) => (
               <div key={b.id} className="bk-editorial-card">
                 <div className="bk-card-media">
                   <img
@@ -377,7 +378,7 @@ export default function Bookings() {
         {/* ── 5. LUXURY DIGITAL VOUCHER & BOARDING PASS MODAL ── */}
         {selectedBookingForModal && (
           <div className="bk-modal-backdrop" onClick={() => setSelectedBookingForModal(null)}>
-            <div className="bk-modal-window" style={{ maxWidth: '640px', padding: 0, overflow: 'hidden', border: '1px solid rgba(212,168,67,0.3)' }} onClick={(e) => e.stopPropagation()}>
+            <div className="bk-modal-window" style={{ maxWidth: '640px', padding: 0, overflow: 'hidden', border: '1px solid rgba(212,168,67,0.3)' }} onClick={(e: any) => e.stopPropagation()}>
               
               {/* Header */}
               <div className="bk-modal-hdr" style={{ background: '#0C1B2A', color: '#FBF9F5', padding: '20px 24px', margin: 0 }}>
@@ -469,7 +470,7 @@ export default function Bookings() {
         {/* ── 6. ADD BOOKING MODAL ── */}
         {showAddModal && (
           <div className="bk-modal-backdrop" onClick={() => setShowAddModal(false)}>
-            <div className="bk-modal-window" onClick={(e) => e.stopPropagation()}>
+            <div className="bk-modal-window" onClick={(e: any) => e.stopPropagation()}>
               <div className="bk-modal-hdr">
                 <h3 className="modal-title">Add Reservation / Booking</h3>
                 <button className="modal-close" onClick={() => setShowAddModal(false)}>
@@ -485,7 +486,7 @@ export default function Bookings() {
                     required
                     placeholder="e.g. Alila Ubud Luxury Resort"
                     value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
+                    onChange={(e: any) => setNewTitle(e.target.value)}
                   />
                 </div>
 
@@ -495,14 +496,14 @@ export default function Bookings() {
                     type="text"
                     placeholder="e.g. Deluxe Terrace Pool Villa, Bali"
                     value={newSubtitle}
-                    onChange={(e) => setNewSubtitle(e.target.value)}
+                    onChange={(e: any) => setNewSubtitle(e.target.value)}
                   />
                 </div>
 
                 <div className="bm-grid-2">
                   <div className="bm-field">
                     <label>Category</label>
-                    <select value={newType} onChange={(e) => setNewType(e.target.value)}>
+                    <select value={newType} onChange={(e: any) => setNewType(e.target.value)}>
                       <option value="Stay">Luxury Stay</option>
                       <option value="Flight">Flight / Charter</option>
                       <option value="Activity">Experience / Activity</option>
@@ -516,7 +517,7 @@ export default function Bookings() {
                       type="text"
                       placeholder="e.g. ₹55,000"
                       value={newPrice}
-                      onChange={(e) => setNewPrice(e.target.value)}
+                      onChange={(e: any) => setNewPrice(e.target.value)}
                     />
                   </div>
                 </div>
@@ -527,7 +528,7 @@ export default function Bookings() {
                     type="text"
                     placeholder="e.g. 15 Nov — 22 Nov 2024"
                     value={newDates}
-                    onChange={(e) => setNewDates(e.target.value)}
+                    onChange={(e: any) => setNewDates(e.target.value)}
                   />
                 </div>
 

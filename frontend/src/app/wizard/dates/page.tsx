@@ -19,7 +19,7 @@ export default function DatesStep() {
             min={3}
             max={21}
             value={duration}
-            onChange={(e) => setDuration(Number(e.target.value))}
+            onChange={(e: any) => setDuration(Number(e.target.value))}
             className="w-full accent-[#4D41DF]"
           />
           <div className="flex justify-between text-xs text-gray-400 font-semibold">

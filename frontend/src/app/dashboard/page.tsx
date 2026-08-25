@@ -93,7 +93,7 @@ export default function Dashboard() {
                 className="db-search-input"
                 placeholder="Search destinations, experiences..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e: any) => setSearch(e.target.value)}
               />
               <button type="submit" className="db-search-submit">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -237,7 +237,7 @@ export default function Dashboard() {
               <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['maldives']} alt="Maldives" />
-                  <button className={`rec-heart-btn ${liked['maldives'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'maldives')}>
+                  <button className={`rec-heart-btn ${liked['maldives'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'maldives')}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['maldives'] ? '#EF4444' : 'none'} stroke={liked['maldives'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
@@ -254,7 +254,7 @@ export default function Dashboard() {
               <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['switzerland']} alt="Switzerland" />
-                  <button className={`rec-heart-btn ${liked['swiss'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'swiss')}>
+                  <button className={`rec-heart-btn ${liked['swiss'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'swiss')}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['swiss'] ? '#EF4444' : 'none'} stroke={liked['swiss'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
@@ -271,7 +271,7 @@ export default function Dashboard() {
               <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['greece']} alt="Greece" />
-                  <button className={`rec-heart-btn ${liked['greece'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'greece')}>
+                  <button className={`rec-heart-btn ${liked['greece'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'greece')}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['greece'] ? '#EF4444' : 'none'} stroke={liked['greece'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
@@ -288,7 +288,7 @@ export default function Dashboard() {
               <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
-                  <button className={`rec-heart-btn ${liked['bali'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'bali')}>
+                  <button className={`rec-heart-btn ${liked['bali'] ? 'active' : ''}`} onClick={(e: any) => toggleHeart(e, 'bali')}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill={liked['bali'] ? '#EF4444' : 'none'} stroke={liked['bali'] ? '#EF4444' : '#FFFFFF'} strokeWidth="2">
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                     </svg>
@@ -508,7 +508,7 @@ export default function Dashboard() {
                   className="nl-input-field"
                   placeholder="Enter your email"
                   value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  onChange={(e: any) => setNewsletterEmail(e.target.value)}
                   required
                 />
                 <button type="submit" className="nl-submit-btn">
