@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 import Sidebar from '@/components/Sidebar'
@@ -11,7 +11,7 @@ import { usePageTitle } from '@/hooks/usePageTitle'
 import { useFavorites } from '@/context/FavoritesContext'
 
 
-export default function Profile() {
+function ProfileContent() {
   const router = useRouter();
   const dispatch = useDispatch<any>()
   const toast = useToast()
@@ -357,4 +357,13 @@ export default function Profile() {
       </main>
     </div>
   )
+}
+
+
+export default function Profile(props: any) {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <ProfileContent {...props} />
+    </Suspense>
+  );
 }

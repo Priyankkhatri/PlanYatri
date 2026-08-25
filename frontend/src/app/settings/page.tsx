@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Sidebar from '@/components/Sidebar'
 import Topbar from '@/components/Topbar'
@@ -14,7 +14,7 @@ import { UserIcon, BellIcon, LockIcon, CardIcon, GearIcon, ShieldIcon } from '@/
 
 const SECTIONS = ['Profile', 'Notifications', 'Privacy', 'Payments', 'Preferences', 'About']
 
-export default function Settings() {
+function SettingsContent() {
   const dispatch = useDispatch<any>()
   const toast = useToast()
   const { dark, toggle } = useTheme()
@@ -346,7 +346,7 @@ export default function Settings() {
                 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&h=160&q=80&auto=format&fit=crop',
                 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&h=160&q=80&auto=format&fit=crop',
                 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=160&h=160&q=80&auto=format&fit=crop',
-              ].map((url, idx) => (
+              ].map((url: any, idx: any) => (
                 <img
                   key={idx}
                   src={url}
@@ -452,4 +452,13 @@ export default function Settings() {
       )}
     </div>
   )
+}
+
+
+export default function Settings(props: any) {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <SettingsContent {...props} />
+    </Suspense>
+  );
 }

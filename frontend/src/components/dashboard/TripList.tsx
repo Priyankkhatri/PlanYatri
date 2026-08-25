@@ -9,7 +9,7 @@ const TRIPS = [
   { ...TRIP_DATA[3], img: TRIP_IMGS.goa },
 ]
 
-const STATS_PATCHED = STATS.map((s, i) => ({ ...s, img: STAT_IMGS[i] }))
+const STATS_PATCHED = STATS.map((s: any, i: any) => ({ ...s, img: STAT_IMGS[i] }))
 
 const STATUS_COLORS = {
   upcoming: { bg: 'rgba(212,168,67,0.14)', color: '#B8860B', dot: '#D4A843' },
@@ -29,8 +29,8 @@ export default function TripList() {
         <button className="tl-viewall">View All →</button>
       </div>
       <div className="tl-grid">
-        {TRIPS.map((trip, i) => {
-          const s = STATUS_COLORS[trip.status] || STATUS_COLORS.upcoming
+        {TRIPS.map((trip: any, i: any) => {
+          const s = (STATUS_COLORS as any)[trip.status] || STATUS_COLORS.upcoming
           return (
             <div className="tl-card" key={trip.id} style={{ animationDelay: `${i * 0.08}s` }}>
               <div className="tl-img-wrap">

@@ -2,7 +2,7 @@
 // Using a mix of verified-stable Unsplash IDs and Pexels CDN URLs
 
 // Unsplash helper — only use IDs confirmed working
-const U = (id, w = 600, h = 400) =>
+const U = (id: string, w = 600, h = 400) =>
   `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&q=80&auto=format&fit=crop`
 
 // ── Destinations ──────────────────────────────────────────────────────

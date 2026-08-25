@@ -33,7 +33,7 @@ export default function Sidebar({ activeNav, setActiveNav }: { activeNav?: any; 
             onClick={() => setActiveNav(item.id)}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-              {item.icon.split(' M').map((d, i) => (
+              {item.icon.split(' M').map((d: any, i: any) => (
                 <path key={i} d={i === 0 ? d : 'M' + d}/>
               ))}
             </svg>

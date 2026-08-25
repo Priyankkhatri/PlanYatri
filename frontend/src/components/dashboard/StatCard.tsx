@@ -1,4 +1,4 @@
-export default function StatCard({ s, i }) {
+export default function StatCard({ s, i }: any) {
   return (
     <div 
       className="bg-white rounded-[20px] p-[22px] flex flex-col gap-[4px] border border-black/5 animate-[fadeUp_0.5s_cubic-bezier(0.16,1,0.3,1)_both] transition-all duration-200 relative overflow-hidden hover:-translate-y-[4px] hover:shadow-[0_12px_36px_rgba(0,0,0,0.1)] before:content-[''] before:absolute before:top-0 before:right-0 before:w-[80px] before:h-[80px] before:rounded-[0_20px_0_100%] before:opacity-5" 

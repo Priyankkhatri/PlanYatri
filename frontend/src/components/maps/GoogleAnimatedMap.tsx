@@ -6,17 +6,17 @@ export default function GoogleAnimatedMap({
   destName = 'Jaipur',
   daysPlan = [],
   height = '360px',
-}) {
+}: any) {
   const [activeTab, setActiveTab] = useState('animated') // 'animated' | 'google_street' | 'google_sat'
   const [animProgress, setAnimProgress] = useState(0)
   const animRef = useRef<any>(null)
 
   // Smooth 60 FPS Bézier curve animation loop
   useEffect(() => {
-    let startTime = null
+    let startTime: any = null
     const duration = 5000 // 5 seconds smooth trip cycle
 
-    const animate = (timestamp) => {
+    const animate = (timestamp: any) => {
       if (!startTime) startTime = timestamp
       const elapsed = timestamp - startTime
       const progress = (elapsed % duration) / duration
@@ -295,7 +295,7 @@ export default function GoogleAnimatedMap({
 
             {/* Bottom Interactive Milestones Row */}
             <div style={{ position: 'relative', zIndex: 3, display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
-              {milestones.map((m, idx) => {
+              {milestones.map((m: any, idx: any) => {
                 const isActive = idx === activeMilestoneIndex
                 return (
                   <div

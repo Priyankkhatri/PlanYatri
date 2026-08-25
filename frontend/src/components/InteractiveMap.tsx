@@ -1,13 +1,15 @@
-import { useEffect, useRef } from 'react'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+'use client';
 
-export default function InteractiveMap({ lat = 24.5854, lng = 73.7125, zoom = 11, locationName = 'Udaipur, Rajasthan' }) {
+import { useEffect, useRef } from 'react'
+
+export default function InteractiveMap({ lat = 24.5854, lng = 73.7125, zoom = 11, locationName = 'Udaipur, Rajasthan' }: any) {
   const mapRef = useRef<any>(null)
   const mapInstance = useRef<any>(null)
 
   useEffect(() => {
     if (!mapRef.current) return
+    const L = typeof window !== 'undefined' ? require('leaflet') : null
+    if (!L) return
 
     if (!mapInstance.current) {
       mapInstance.current = L.map(mapRef.current, {

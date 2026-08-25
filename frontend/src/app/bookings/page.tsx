@@ -289,7 +289,7 @@ export default function Bookings() {
           {/* ── 3. SEARCH & TABS FILTER BAR ── */}
           <div className="bk-filter-bar">
             <div className="bk-tabs-group">
-              {['All', 'Upcoming', 'Stays', 'Flights', 'Completed'].map((tab) => (
+              {['All', 'Upcoming', 'Stays', 'Flights', 'Completed'].map((tab: any) => (
                 <button
                   key={tab}
                   className={`bk-tab-btn ${activeTab === tab ? 'active' : ''}`}

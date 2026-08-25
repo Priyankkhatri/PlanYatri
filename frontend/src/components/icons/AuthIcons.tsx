@@ -17,7 +17,7 @@ export function AppleIcon() {
   )
 }
 
-export function EyeIcon({ open }) {
+export function EyeIcon({ open }: any) {
   return open ? (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>

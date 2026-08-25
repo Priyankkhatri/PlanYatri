@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 @import "../styles/Dashboard.css";
 @import "../styles/Trips.css";
 @import "../styles/Bookings.css";

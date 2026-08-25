@@ -1,67 +1,68 @@
-import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react'
+'use client';
 
-import { GoogleIcon, AppleIcon, EyeIcon, MailIcon, LockIcon, UserIcon } from '../icons/AuthIcons'
-import { useAuth } from '../../context/AuthContext'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { GoogleIcon, AppleIcon, EyeIcon, MailIcon, LockIcon, UserIcon } from '../icons/AuthIcons';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AuthForm() {
   const router = useRouter();
-  const { signIn, signUp, signInWithOAuth } = useAuth()
+  const { signIn, signUp, signInWithOAuth }: any = useAuth();
 
-  const [tab, setTab] = useState('signin')
-  const [showPass, setShowPass] = useState(false)
-  const [showConfirmPass, setShowConfirmPass] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
+  const [tab, setTab] = useState('signin');
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [form, setForm] = useState({
     email: '',
     password: '',
     name: '',
     confirmPassword: ''
-  })
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setErrorMsg('')
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setErrorMsg('');
 
     if (tab === 'signup' && form.password !== form.confirmPassword) {
-      setErrorMsg('Passwords do not match.')
-      return
+      setErrorMsg('Passwords do not match.');
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
       if (tab === 'signup') {
-        const res = await signUp(form.name, form.email, form.password)
-        if (res?.success) {
-          router.push('/dashboard')
+        const res = await signUp?.(form.name, form.email, form.password);
+        if (res?.success !== false) {
+          router.push('/dashboard');
         } else {
-          setErrorMsg(res?.error || 'Failed to create account.')
+          setErrorMsg(res?.error || 'Failed to create account.');
         }
       } else {
-        const res = await signIn(form.email, form.password)
-        if (res?.success) {
-          router.push('/dashboard')
+        const res = await signIn?.(form.email, form.password);
+        if (res?.success !== false) {
+          router.push('/dashboard');
         } else {
-          setErrorMsg(res?.error || 'Invalid login credentials.')
+          setErrorMsg(res?.error || 'Invalid login credentials.');
         }
       }
-    } catch (err) {
-      setErrorMsg(err.message || 'An error occurred.')
+    } catch (err: any) {
+      setErrorMsg(err.message || 'An error occurred.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleTabChange = (newTab) => {
-    setTab(newTab)
-    setForm({ email: '', password: '', name: '', confirmPassword: '' })
-    setShowPass(false)
-    setShowConfirmPass(false)
-    setErrorMsg('')
-  }
+  const handleTabChange = (newTab: any) => {
+    setTab(newTab);
+    setForm({ email: '', password: '', name: '', confirmPassword: '' });
+    setShowPass(false);
+    setShowConfirmPass(false);
+    setErrorMsg('');
+  };
 
   return (
     <div className="flex-1 md:flex-[0_0_48%] flex items-center justify-center p-[24px_20px_36px] md:p-[36px_40px] bg-cream overflow-y-auto relative z-0">
@@ -212,11 +213,11 @@ export default function AuthForm() {
 
           {/* Social */}
           <div className="grid grid-cols-2 gap-[12px]">
-            <button type="button" onClick={() => signInWithOAuth('google')} className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
+            <button type="button" onClick={() => signInWithOAuth?.('google')} className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
               <GoogleIcon />
               <span>Google</span>
             </button>
-            <button type="button" onClick={() => signInWithOAuth('apple')} className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
+            <button type="button" onClick={() => signInWithOAuth?.('apple')} className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
               <AppleIcon />
               <span>Apple</span>
             </button>
@@ -236,5 +237,5 @@ export default function AuthForm() {
         </p>
       </div>
     </div>
-  )
+  );
 }

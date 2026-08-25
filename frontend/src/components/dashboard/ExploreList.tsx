@@ -1,7 +1,7 @@
 import { EXPLORE } from '../../data/mockData'
 import { EXPLORE_IMGS } from '../../data/images'
 
-const ITEMS = EXPLORE.map((e, i) => ({ ...e, img: EXPLORE_IMGS[i] }))
+const ITEMS = EXPLORE.map((e: any, i: any) => ({ ...e, img: EXPLORE_IMGS[i] }))
 
 export default function ExploreList() {
   return (
@@ -11,7 +11,7 @@ export default function ExploreList() {
         <button className="el-viewall">View All →</button>
       </div>
       <div className="el-grid">
-        {ITEMS.map((item, i) => (
+        {ITEMS.map((item: any, i: any) => (
           <div className="el-card" key={item.name} style={{ animationDelay: `${i * 0.06}s` }}>
             <div className="el-img-wrap">
               <img src={item.img} alt={item.name} className="el-img" />

@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState, useMemo, useEffect } from 'react'
+import { Suspense, useState, useMemo, useEffect } from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
 import Sidebar from '@/components/Sidebar'
@@ -395,7 +395,7 @@ const INITIAL_DESTINATIONS = [
   },
 ]
 
-export default function Destinations() {
+function DestinationsContent() {
   const router = useRouter();
   const searchParams = useSearchParams(); const location: any = { state: { search: searchParams?.get("search") || "" } };
 
@@ -842,7 +842,7 @@ export default function Destinations() {
                 </div>
 
                 <div className="ai-chat-messages">
-                  {chatHistory.map((msg) => (
+                  {chatHistory.map((msg: any) => (
                     <div key={msg.id} className={`ai-chat-bubble ${msg.sender}`}>
                       <span className="chat-bubble-sender">
                         {msg.sender === 'user' ? 'YOU' : 'PLANYATRI AI CONCIERGE'}
@@ -885,7 +885,7 @@ export default function Destinations() {
               { id: 'Heritage', label: 'Royal Heritage', icon: MonumentIcon },
               { id: 'Wellness', label: 'Wellness & Nature', icon: LeafIcon },
               { id: 'Global', label: 'Global Classics', icon: GlobeIcon },
-            ].map((cat) => {
+            ].map((cat: any) => {
               const Icon = cat.icon
               return (
                 <button
@@ -997,7 +997,7 @@ export default function Destinations() {
               <div className="refine-section">
                 <span className="refine-label">GUEST RATING</span>
                 <div className="refine-rating-row">
-                  {['4.0+', '4.5+', '5.0'].map((rate) => {
+                  {['4.0+', '4.5+', '5.0'].map((rate: any) => {
                     const isSelected = guestRating === rate
                     return (
                       <button
@@ -1380,4 +1380,13 @@ export default function Destinations() {
       </AnimatePresence>
     </div>
   )
+}
+
+
+export default function Destinations(props: any) {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <DestinationsContent {...props} />
+    </Suspense>
+  );
 }

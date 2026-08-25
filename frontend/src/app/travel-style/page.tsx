@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
 import Sidebar from '@/components/Sidebar'
@@ -337,7 +337,7 @@ const ARCHETYPES = {
   },
 }
 
-export default function TravelStyle() {
+function TravelStyleContent() {
   const router = useRouter();
   const toast = useToast()
   usePageTitle('Travel Style & Persona Discovery — GlobeTrotter')
@@ -626,4 +626,13 @@ export default function TravelStyle() {
       </main>
     </div>
   )
+}
+
+
+export default function TravelStyle(props: any) {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <TravelStyleContent {...props} />
+    </Suspense>
+  );
 }

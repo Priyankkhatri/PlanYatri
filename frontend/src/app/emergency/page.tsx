@@ -4,8 +4,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import Sidebar from '@/components/Sidebar'
 import { fetchContacts, addContact, removeContact } from '@/store/slices/emergencySlice'
 import { useToast } from '@/context/ToastContext'
@@ -401,6 +399,8 @@ export default function Emergency() {
   // 2. Leaflet Map Initialisation
   useEffect(() => {
     if (!mounted || !mapRef.current) return
+    const L = typeof window !== 'undefined' ? require('leaflet') : null
+    if (!L) return
 
     if (mapInstance.current) {
       mapInstance.current.remove()
@@ -442,7 +442,7 @@ export default function Emergency() {
       )
 
     // Facilities Markers
-    VERIFIED_FACILITIES.forEach((fac) => {
+    VERIFIED_FACILITIES.forEach((fac: any) => {
       const isHospital = fac.type === 'Hospital'
       const isPolice = fac.type === 'Police'
       const pinColor = isHospital ? '#B91C1C' : isPolice ? '#1D4ED8' : '#15803D'
@@ -544,7 +544,7 @@ export default function Emergency() {
 
   const startAudioSiren = () => {
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
+      const AudioCtx = typeof window !== 'undefined' ? (window.AudioContext || (window as any).webkitAudioContext) : null
       if (!AudioCtx) {
         toast.error('Web Audio not supported.')
         return
@@ -660,7 +660,7 @@ export default function Emergency() {
     }
   }
 
-  const filteredFacilities = VERIFIED_FACILITIES.filter((f) => {
+  const filteredFacilities = VERIFIED_FACILITIES.filter((f: any) => {
     const matchesSearch =
       f.name.toLowerCase().includes(facilitySearch.toLowerCase()) ||
       f.address.toLowerCase().includes(facilitySearch.toLowerCase())
@@ -842,7 +842,7 @@ export default function Emergency() {
               </div>
 
               <div className="em-hotlines-card-grid">
-                {HOTLINES.map((h) => (
+                {HOTLINES.map((h: any) => (
                   <motion.div
                     key={h.id}
                     className="em-hotline-item-card"
@@ -895,7 +895,7 @@ export default function Emergency() {
                       onChange={(e: any) => setFacilitySearch(e.target.value)}
                     />
                     <div className="em-fac-pills">
-                      {['ALL', 'Hospital', 'Police', 'Pharmacy'].map((tab) => (
+                      {['ALL', 'Hospital', 'Police', 'Pharmacy'].map((tab: any) => (
                         <button
                           key={tab}
                           className={`em-pill-btn ${facilityFilter === tab ? 'active' : ''}`}
@@ -908,7 +908,7 @@ export default function Emergency() {
                   </div>
 
                   <div className="em-fac-directory">
-                    {filteredFacilities.map((fac) => (
+                    {filteredFacilities.map((fac: any) => (
                       <div key={fac.id} className="em-fac-row">
                         <div className="em-fac-meta">
                           <div className="em-fac-name-line">
@@ -1023,7 +1023,7 @@ export default function Emergency() {
                   </div>
 
                   <div className="em-protocols-list">
-                    {FIRST_AID_PROTOCOLS.map((p) => {
+                    {FIRST_AID_PROTOCOLS.map((p: any) => {
                       const isOpen = expandedProtocol === p.id
                       const IconComp = p.icon
                       return (
@@ -1051,7 +1051,7 @@ export default function Emergency() {
                               >
                                 <p className="em-proto-summary">{p.summary}</p>
                                 <ol className="em-proto-steps">
-                                  {p.steps.map((step, idx) => (
+                                  {p.steps.map((step: any, idx: any) => (
                                     <li key={idx}>
                                       <span className="em-proto-num">{idx + 1}</span>
                                       <span>{step}</span>

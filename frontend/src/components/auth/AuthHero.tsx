@@ -41,7 +41,7 @@ export default function AuthHero() {
           The world is waiting for you. Start your journey today and collect unforgettable moments.
         </p>
         <ul className="flex flex-col gap-[11px]">
-          {['Curated destinations worldwide', 'AI-powered trip planning', 'Exclusive member deals'].map((f, i) => (
+          {['Curated destinations worldwide', 'AI-powered trip planning', 'Exclusive member deals'].map((f: any, i: any) => (
             <li key={f} className="flex items-center gap-[11px] text-[14px] text-white/90 font-normal opacity-0 animate-[fadeRight_0.55s_cubic-bezier(0.16,1,0.3,1)_forwards]" style={{ animationDelay: `${0.5 + i * 0.12}s` }}>
               <span className="w-[22px] h-[22px] rounded-full bg-gold flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(201,150,58,0.4)]">
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">

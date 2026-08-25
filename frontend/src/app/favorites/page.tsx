@@ -172,7 +172,7 @@ export default function Favorites() {
           <footer className="fav-bottom-action-bar">
             {/* Filter Pills */}
             <div className="fav-filter-pill-group">
-              {['All Spots', 'Beach', 'Mountain', 'City'].map((tab) => (
+              {['All Spots', 'Beach', 'Mountain', 'City'].map((tab: any) => (
                 <button
                   key={tab}
                   className={`fav-filter-tab ${activeFilter === tab ? 'active' : ''}`}

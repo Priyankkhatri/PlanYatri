@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState, useEffect, useMemo } from 'react'
+import { Suspense, useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Sidebar from '@/components/Sidebar'
@@ -133,7 +133,7 @@ const DEFAULT_INITIAL_JOURNEYS = [
   },
 ]
 
-export default function Trips() {
+function TripsContent() {
   const searchParams = useSearchParams(); const location: any = {};
   const router = useRouter();
   const dispatch = useDispatch<any>()
@@ -811,7 +811,7 @@ export default function Trips() {
 
             {/* 2. Interactive Navigation Tabs for Itinerary */}
             <div className="itin-tabs-nav-bar">
-              {['Daily Schedule', 'Calendar & Timeline', 'Automatic Budget Breakdown'].map((tab) => (
+              {['Daily Schedule', 'Calendar & Timeline', 'Automatic Budget Breakdown'].map((tab: any) => (
                 <button
                   key={tab}
                   className={`itin-tab-item ${activeItineraryTab === tab ? 'active' : ''}`}
@@ -1062,7 +1062,7 @@ export default function Trips() {
                 </div>
 
                 <div className="cal-days-grid">
-                  {(selectedItineraryTrip.daysPlan || []).map((day, idx) => (
+                  {(selectedItineraryTrip.daysPlan || []).map((day: any, idx: any) => (
                     <div key={idx} className="cal-day-cell">
                       <div className="cdc-top">
                         <span className="cdc-day-num">Day 0{idx + 1}</span>
@@ -1071,7 +1071,7 @@ export default function Trips() {
                       <h5 className="cdc-theme">{day.theme}</h5>
 
                       <div className="cdc-acts-stack">
-                        {(day.activities || []).map((a, aIdx) => (
+                        {(day.activities || []).map((a: any, aIdx: any) => (
                           <div key={aIdx} className="cdc-act-mini">
                             <span className="cdc-time">{a.time}</span>
                             <span className="cdc-name">{a.name}</span>
@@ -1249,14 +1249,14 @@ export default function Trips() {
                   <div className="cm-field">
                     <label>Primary Interests</label>
                     <div className="interest-checkboxes">
-                      {['Culture', 'Food', 'Photography', 'Adventure', 'Sightseeing'].map((intr) => (
+                      {['Culture', 'Food', 'Photography', 'Adventure', 'Sightseeing'].map((intr: any) => (
                         <label key={intr} className="intr-chip">
                           <input
                             type="checkbox"
                             checked={aiInterests.includes(intr)}
                             onChange={(e: any) => {
                               if (e.target.checked) setAiInterests((p: any) => [...p, intr])
-                              else setAiInterests((p: any) => p.filter((x) => x !== intr))
+                              else setAiInterests((p: any) => p.filter((x: any) => x !== intr))
                             }}
                           />
                           <span>{intr}</span>
@@ -1733,4 +1733,13 @@ export default function Trips() {
       </main>
     </div>
   )
+}
+
+
+export default function Trips(props: any) {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <TripsContent {...props} />
+    </Suspense>
+  );
 }

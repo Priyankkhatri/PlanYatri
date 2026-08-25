@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
@@ -48,7 +48,7 @@ function EyeIcon({ open }: { open?: any }) {
   )
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter();
   const dispatch = useDispatch<any>()
   const toast = useToast()
@@ -254,4 +254,13 @@ export default function LoginPage() {
       </motion.div>
     </div>
   )
+}
+
+
+export default function LoginPage(props: any) {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <LoginPageContent {...props} />
+    </Suspense>
+  );
 }

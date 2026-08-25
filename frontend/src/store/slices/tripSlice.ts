@@ -12,16 +12,16 @@ export const createTrip = createAsyncThunk('trips/createTrip', async (tripData: 
 
 export const tripSlice = createSlice({
   name: 'trips',
-  initialState: { trips: MOCK_TRIPS, loading: false },
+  initialState: { trips: MOCK_TRIPS as any[], loading: false },
   reducers: {
-    addTrip: (state, action: PayloadAction<Trip>) => {
+    addTrip: (state, action: PayloadAction<any>) => {
       state.trips.unshift(action.payload);
     },
     deleteTrip: (state, action: PayloadAction<string | number>) => {
-      state.trips = state.trips.filter(t => t.id !== action.payload);
+      state.trips = state.trips.filter((t: any) => t.id !== action.payload);
     },
     updateTrip: (state, action: PayloadAction<Partial<Trip> & { id: string | number }>) => {
-      const idx = state.trips.findIndex(t => t.id === action.payload.id);
+      const idx = state.trips.findIndex((t: any) => t.id === action.payload.id);
       if (idx !== -1) {
         state.trips[idx] = { ...state.trips[idx], ...action.payload };
       }

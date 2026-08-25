@@ -8,13 +8,13 @@ export const fetchContacts = createAsyncThunk('emergency/fetchContacts', async (
 
 export const emergencySlice = createSlice({
   name: 'emergency',
-  initialState: { contacts: MOCK_EMERGENCY_CONTACTS, loading: false },
+  initialState: { contacts: MOCK_EMERGENCY_CONTACTS as any[], loading: false },
   reducers: {
     addContact: (state, action: PayloadAction<EmergencyContact>) => {
-      state.contacts.push(action.payload);
+      state.contacts.push(action.payload as any);
     },
     removeContact: (state, action: PayloadAction<string>) => {
-      state.contacts = state.contacts.filter(c => c.id !== action.payload);
+      state.contacts = state.contacts.filter((c: any) => c.id !== action.payload);
     }
   }
 });

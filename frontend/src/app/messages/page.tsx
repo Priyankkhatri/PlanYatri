@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react'
+import { Suspense, useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import Sidebar from '@/components/Sidebar'
 import api from '@/services/api'
@@ -181,7 +181,7 @@ const PEOPLE_DIRECTORY = [
   },
 ]
 
-export default function Messages() {
+function MessagesContent() {
   const { userInfo } = useSelector((state: any) => state.auth)
   const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
   const userName = userInfo?.name ? userInfo.name.split(' ')[0] : 'Explorer'
@@ -265,7 +265,7 @@ export default function Messages() {
 
           setConversations((prev: any) => {
             const merged = { ...prev }
-            Object.keys(remoteGrouped).forEach((cid) => {
+            Object.keys(remoteGrouped).forEach((cid: any) => {
               merged[cid] = [...(prev[cid] || []), ...remoteGrouped[cid]]
             })
             return merged
@@ -542,7 +542,7 @@ export default function Messages() {
           {/* Contact List */}
           {activeTab === 'chats' ? (
             <div className="msg-contact-list">
-              {filteredContacts.map((contact) => {
+              {filteredContacts.map((contact: any) => {
                 const isActive = contact.id === activeContactId
                 return (
                   <div
@@ -729,7 +729,7 @@ export default function Messages() {
 
               {/* Filter Tabs */}
               <div className="people-filter-chips">
-                {['All', 'Adventure', 'Heritage', 'Wellness', 'Coastal'].map((chip) => (
+                {['All', 'Adventure', 'Heritage', 'Wellness', 'Coastal'].map((chip: any) => (
                   <button
                     key={chip}
                     className={`people-chip-btn ${peopleFilter === chip ? 'active' : ''}`}
@@ -880,4 +880,13 @@ export default function Messages() {
       </div>
     </div>
   )
+}
+
+
+export default function Messages(props: any) {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+      <MessagesContent {...props} />
+    </Suspense>
+  );
 }
