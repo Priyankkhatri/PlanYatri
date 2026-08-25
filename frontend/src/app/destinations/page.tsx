@@ -1079,7 +1079,7 @@ export default function Destinations() {
                       <div className="asc-highlights-list">
                         <span className="asc-highlights-title">CURATED HIGHLIGHTS & LOCAL SECRETS</span>
                         <div className="asc-chips-row">
-                          {aiSpotlight.highlights.map((h, i) => (
+                          {aiSpotlight.highlights.map((h: any, i: any) => (
                             <span key={i} className="asc-highlight-chip">
                               • {h}
                             </span>
@@ -1357,7 +1357,7 @@ export default function Destinations() {
               <div className="dest-modal-highlights">
                 <h4>Curated Inclusions & Highlights</h4>
                 <ul>
-                  {selectedModalDest.highlights?.map((h, i) => (
+                  {selectedModalDest.highlights?.map((h: any, i: any) => (
                     <li key={i}>
                       <span className="highlight-dot">✦</span> {h}
                     </li>
