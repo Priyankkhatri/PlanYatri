@@ -12,7 +12,7 @@ import { useFavorites } from '@/context/FavoritesContext'
 
 export default function Profile() {
   const router = useRouter();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<any>()
   const toast = useToast()
   const { userInfo } = useSelector((state: any) => state.auth)
   const { favorites, removeFavorite } = useFavorites()

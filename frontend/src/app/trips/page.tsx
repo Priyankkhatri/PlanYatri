@@ -135,7 +135,7 @@ const DEFAULT_INITIAL_JOURNEYS = [
 export default function Trips() {
   const pathname = usePathname();
   const router = useRouter();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<any>()
   const toast = useToast()
 
   usePageTitle('My Journeys — GlobeTrotter')

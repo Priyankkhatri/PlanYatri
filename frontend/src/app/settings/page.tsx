@@ -13,7 +13,7 @@ import { UserIcon, BellIcon, LockIcon, CardIcon, GearIcon, ShieldIcon } from '@/
 const SECTIONS = ['Profile', 'Notifications', 'Privacy', 'Payments', 'Preferences', 'About']
 
 export default function Settings() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<any>()
   const toast = useToast()
   const { dark, toggle } = useTheme()
   const { userInfo } = useSelector((state: any) => state.auth)

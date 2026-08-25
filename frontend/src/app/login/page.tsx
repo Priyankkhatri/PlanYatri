@@ -49,7 +49,7 @@ function EyeIcon({ open }) {
 
 export default function LoginPage() {
   const router = useRouter();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<any>()
   const toast = useToast()
   const { signInWithOAuth } = useAuth()
   usePageTitle('Sign In')

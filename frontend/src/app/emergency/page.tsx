@@ -369,7 +369,7 @@ export default function Emergency() {
   const audioCtxRef = useRef(null)
   const sirenIntervalRef = useRef(null)
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<any>()
   const { contacts = [], loading } = useSelector((state: any) => state.emergency)
   const toast = useToast()
 
