@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react'
 
@@ -30,7 +31,7 @@ const heroTextVariant = {
 
 export default function Dashboard() {
   const [mounted, setMounted] = useState(false)
-  const [liked, setLiked] = useState({})
+  const [liked, setLiked] = useState<Record<string, any>>({})
   const [search, setSearch] = useState('')
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterSuccess, setNewsletterSuccess] = useState(false)
@@ -52,13 +53,13 @@ export default function Dashboard() {
 
   const toggleHeart = (e: any, id: any) => {
     e.stopPropagation()
-    setLiked((prev) => ({ ...prev, [id]: !prev[id] }))
+    setLiked((prev: any) => ({ ...prev, [id]: !prev[id] }))
   }
 
   const handleSearchSubmit = (e: any) => {
     e.preventDefault()
     if (search.trim()) {
-      router.push('/destinations', { state: { search: search.trim() } })
+      router.push(`/destinations?search=search.trim()`)
     }
   }
 

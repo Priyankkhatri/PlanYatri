@@ -116,7 +116,7 @@ export default function Favorites() {
                   <div
                     key={item.id}
                     className={`fav-card-editorial ${isFirst ? 'fav-card-large' : ''}`}
-                    onClick={() => router.push('/destinations', { state: { search: item.name } })}
+                    onClick={() => router.push(`/destinations?search=item.name`)}
                   >
                     <img src={item.img} alt={item.name} className="fav-card-bg-img" />
                     <div className="fav-card-gradient-overlay" />
@@ -153,7 +153,7 @@ export default function Favorites() {
                           className="fav-book-stay-btn"
                           onClick={(e: any) => {
                             e.stopPropagation()
-                            router.push('/trips', { state: { initialDest: item.name, initialImg: item.img } })
+                            router.push('/trips') })
                           }}
                         >
                           <span>Book Stay</span>
