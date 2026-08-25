@@ -533,19 +533,7 @@ export default function Destinations() {
     setChatHistory((prev) => [...prev, userMsg])
     setAiPrompt('')
 
-    // ── INTENT CHECK: Is this a real travel query? ──
-    if (!isTravelQuery(currentPrompt)) {
-      const casualReply = getCasualReply(currentPrompt)
-      setTimeout(() => {
-        setChatHistory((prev) => [
-          ...prev,
-          { id: Date.now() + 1, sender: 'ai', text: casualReply },
-        ])
-      }, 400)
-      return
-    }
-
-    // ── LIVE BACKEND GEMINI AI INTEGRATION ──
+    // ── LIVE MULTI-MODEL AI INTEGRATION (Groq / Gemini) ──
     setIsGeneratingAI(true)
 
     const daysMatch   = currentPrompt.match(/(\d+)\s*(?:day|days|d|nights)/i)
@@ -647,10 +635,11 @@ export default function Destinations() {
       {
         id: Date.now() + 1,
         sender: 'ai',
-        text: `✨ ${isLiveAi ? 'Gemini 2.0 AI' : 'PlanYatri AI'} has curated a bespoke ${parsedDays}-day expedition for ${parsedPeople} travelers tailored to "${currentPrompt}". Your custom spotlight itinerary is ready below!`,
+        text: `PlanYatri AI has curated a bespoke ${parsedDays}-day expedition for ${parsedPeople} travelers tailored to "${currentPrompt}". Your custom spotlight itinerary is ready below.`,
       },
     ])
 
+    toast.success(`Curated ${generatedDests.length} bespoke escapes!`)
     setShowAllJourneys(true)
     setIsGeneratingAI(false)
 

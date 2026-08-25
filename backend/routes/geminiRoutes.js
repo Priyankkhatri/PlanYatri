@@ -75,58 +75,49 @@ async function callGemini(systemPrompt, userPrompt) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GROQ — Ultra-Fast AI (llama-3.3-70b-versatile & llama-3.1-8b-instant)
+// GROQ — Ultra-Fast Multi-Model AI (gpt-oss-120b, qwen3.6-27b, gpt-oss-20b)
 // ─────────────────────────────────────────────────────────────────────────────
 async function callGroq(systemPrompt, userPrompt) {
   if (!GROQ_API_KEY) throw new Error('No GROQ_API_KEY');
 
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${GROQ_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user',   content: userPrompt   },
-      ],
-      response_format: { type: 'json_object' },
-      temperature: 0.4,
-      max_tokens: 3000,
-    }),
-  });
+  const models = ['openai/gpt-oss-120b', 'qwen/qwen3.6-27b', 'openai/gpt-oss-20b', 'groq/compound'];
+  let lastErr = null;
 
-  if (!res.ok) {
-    // Try fast fallback
-    const res2 = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user',   content: userPrompt   },
-        ],
-        response_format: { type: 'json_object' },
-        temperature: 0.4,
-        max_tokens: 3000,
-      }),
-    });
-    if (!res2.ok) {
-      const err = await res.text();
-      throw new Error(`Groq error: ${err}`);
+  for (const model of models) {
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user',   content: userPrompt   },
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.4,
+          max_tokens: 3000,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const raw = data.choices?.[0]?.message?.content || '{}';
+        return JSON.parse(raw);
+      } else {
+        const errText = await res.text();
+        console.warn(`[Groq ${model}] non-ok:`, errText);
+      }
+    } catch (e) {
+      lastErr = e;
+      console.warn(`[Groq ${model}] fetch failed:`, e.message);
     }
-    const data2 = await res2.json();
-    return JSON.parse(data2.choices?.[0]?.message?.content || '{}');
   }
 
-  const data = await res.json();
-  return JSON.parse(data.choices?.[0]?.message?.content || '{}');
+  throw lastErr || new Error('All Groq models failed');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
