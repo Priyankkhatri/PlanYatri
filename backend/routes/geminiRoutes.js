@@ -155,9 +155,10 @@ router.post('/generate-destinations', async (req, res) => {
     const { prompt, count = 3 } = req.body;
     if (!prompt) return res.status(400).json({ message: 'Prompt is required' });
 
-    const systemPrompt = `You are PlanYatri's Master Travel Curator AI.
-Return a JSON object with key "destinations" — an array of exactly ${count} luxury travel destinations tailored to the user query.
-Each destination must have:
+    const systemPrompt = `You are PlanYatri's Master Travel Architect & Chief Expedition Curator AI.
+Return a JSON object with key "destinations" — an array of exactly ${count} bespoke luxury travel destinations tailored to the user query with deep day-by-day itinerary breakdowns.
+
+Each destination must follow this exact JSON structure:
 {
   "id": "unique-slug",
   "name": "Full Destination Name",
@@ -167,18 +168,45 @@ Each destination must have:
   "priceInUSD": 420,
   "tag": "ADVENTURE" | "CULTURE" | "HERITAGE" | "WELLNESS" | "COASTAL",
   "rating": 4.9,
-  "reviews": "1.4k",
-  "description": "2-3 sentences of evocative, safety-aware luxury travel copy.",
-  "activities": ["Hiking & Trekking"],
+  "reviews": "1.8k",
+  "description": "2-3 sentences of evocative, highly authentic, safety-aware luxury travel copy.",
+  "activities": ["Activity 1", "Activity 2"],
   "duration": "5 Days / 4 Nights",
-  "safetyScore": "9.8 / 10",
-  "bestSeason": "Oct - March",
+  "safetyScore": "9.9 / 10 (Solo & Group Safe)",
+  "bestSeason": "October to March",
   "highlights": ["Highlight 1", "Highlight 2", "Highlight 3", "Highlight 4"],
-  "imageQuery": "one-word lowercase location, e.g. ladakh, kerala, jaipur, bali"
+  "secretTips": ["Secret Off-beat Tip 1", "Secret Dining Spot 2"],
+  "stayRecommendation": "Certified Boutique Heritage Stay / Eco-Villa",
+  "imageQuery": "one-word lowercase location, e.g. ladakh, kerala, jaipur, bali, kashmir, udaipur",
+  "daysPlan": [
+    {
+      "dayNumber": 1,
+      "date": "Day 1",
+      "city": "City Name",
+      "theme": "Arrival, Landmark Exploration & Sunset Vantage",
+      "activities": [
+        { "name": "Morning Exploration", "time": "09:00 AM", "costINR": 1200, "category": "Culture", "desc": "Guided historical and scenic walk.", "duration": "2.5h" },
+        { "name": "Authentic Regional Cuisine", "time": "01:30 PM", "costINR": 800, "category": "Food", "desc": "Curated culinary tasting at local heritage kitchen.", "duration": "1.5h" },
+        { "name": "Golden Hour Sunset & Evening Discovery", "time": "05:30 PM", "costINR": 1500, "category": "Sightseeing", "desc": "Scenic viewpoint photography and cultural immersion.", "duration": "2h" }
+      ]
+    },
+    {
+      "dayNumber": 2,
+      "date": "Day 2",
+      "city": "City Name",
+      "theme": "Hidden Gems & Cultural Immersion",
+      "activities": [
+        { "name": "Artisan Craft & Village Trail", "time": "09:30 AM", "costINR": 1000, "category": "Culture", "desc": "Meet local master artisans and explore hidden streets.", "duration": "3h" },
+        { "name": "Scenic Waterside / Hillside Lunch", "time": "01:00 PM", "costINR": 900, "category": "Food", "desc": "Farm-to-table seasonal specialties.", "duration": "1.5h" },
+        { "name": "Private Evening Experience", "time": "06:00 PM", "costINR": 2000, "category": "Adventure", "desc": "Exclusive night stargazing, boat ride, or traditional music show.", "duration": "2.5h" }
+      ]
+    }
+  ]
 }
-Focus on India-first, authentic experiences, budget accuracy, solo & group safety. Return ONLY JSON — no explanation.`;
 
-    const userPrompt = `Generate ${count} destinations for: "${prompt}". Return JSON.`;
+Focus on India-first authenticity, deep local knowledge, realistic budget estimations in INR, and solo/female traveler safety. Return ONLY valid JSON — no markdown fences.`;
+
+    const userPrompt = `Generate ${count} deeply curated destinations with full day-by-day itineraries for: "${prompt}". Return JSON.`;
 
     let destinations = [];
 
@@ -199,7 +227,7 @@ Focus on India-first, authentic experiences, budget accuracy, solo & group safet
           priceDisplayUSD: `$${(d.priceInUSD || 420).toLocaleString('en-US')}`,
           img: getSmartPhoto(d.imageQuery || d.name || d.region || d.country),
         }));
-        return res.json({ success: true, source: 'gemini-ai', destinations });
+        return res.json({ success: true, source: 'groq-ai', destinations });
       }
     } catch (aiErr) {
       console.warn('[generate-destinations] AI failed:', aiErr.message);
@@ -232,39 +260,33 @@ Focus on India-first, authentic experiences, budget accuracy, solo & group safet
         safetyScore: '9.9 / 10 (Solo & Group Safe)',
         bestSeason: 'October to March',
         highlights: ['Private Guided Heritage Walk', 'Certified Solo Safety Escort', 'Authentic Local Cuisine Trail', 'Hidden Viewpoint Sunrise'],
-      },
-      {
-        id: `fb-${Date.now()}-2`,
-        name: 'Spiti Valley Celestial Stargazing Trail',
-        country: 'India',
-        region: 'Himachal Pradesh',
-        priceInINR: 36000, priceInUSD: 425,
-        priceDisplayINR: '₹36,000', priceDisplayUSD: '$425',
-        tag: 'ADVENTURE', rating: 4.9, reviews: '1.2k',
-        description: 'Journey through the world\'s highest inhabited villages, stargaze at 4000m altitude, and stay in monastery guesthouses with unmatched Himalayan views.',
-        img: PHOTO_MAP.spiti,
-        activities: ['Hiking & Trekking'],
-        duration: '7 Days / 6 Nights',
-        safetyScore: '9.7 / 10',
-        bestSeason: 'June to September',
-        highlights: ['Key Monastery Sunrise Meditation', 'Chandratal Lake Trek', 'Kaza Village Homestay', 'High-Altitude Stargazing Camp'],
-      },
-      {
-        id: `fb-${Date.now()}-3`,
-        name: 'Kerala Backwaters & Holistic Ayurveda',
-        country: 'India',
-        region: 'Alleppey & Munnar',
-        priceInINR: 38000, priceInUSD: 450,
-        priceDisplayINR: '₹38,000', priceDisplayUSD: '$450',
-        tag: 'WELLNESS', rating: 5.0, reviews: '3.1k',
-        description: 'Glide through palm-fringed lagoons on a private solar houseboat and restore your wellbeing with authentic Panchakarma Ayurvedic treatments.',
-        img: PHOTO_MAP.kerala,
-        activities: ['Water Sports', 'Museums & Art'],
-        duration: '6 Days / 5 Nights',
-        safetyScore: '9.9 / 10',
-        bestSeason: 'Year Round (Best: Nov-Feb)',
-        highlights: ['Private Houseboat Sunset Cruise', 'Organic Spice Plantation Tour', 'Daily Yoga & Panchakarma', 'Kathakali Dance Performance'],
-      },
+        secretTips: ['Visit at 6:30 AM before tourist influx', 'Ask concierge for local artisan spice tasting'],
+        stayRecommendation: 'Curated Boutique Eco-Haveli',
+        daysPlan: [
+          {
+            dayNumber: 1,
+            date: 'Day 1',
+            city: isBeach ? 'Gokarna' : isMountain ? 'Leh' : isHeritage ? 'Udaipur' : 'Alleppey',
+            theme: 'Arrival & Scenic Sunset Immersion',
+            activities: [
+              { name: 'Heritage Arrival Check-in', time: '11:00 AM', costINR: 0, category: 'Hotel', desc: 'Welcome drink & orientation.', duration: '1h' },
+              { name: 'Traditional Regional Lunch', time: '01:30 PM', costINR: 850, category: 'Food', desc: 'Authentic local delicacies.', duration: '1.5h' },
+              { name: 'Golden Hour Sunset Walk', time: '05:30 PM', costINR: 500, category: 'Sightseeing', desc: 'Panoramic viewpoint photography.', duration: '2h' },
+            ]
+          },
+          {
+            dayNumber: 2,
+            date: 'Day 2',
+            city: isBeach ? 'Gokarna' : isMountain ? 'Leh' : isHeritage ? 'Udaipur' : 'Alleppey',
+            theme: 'Iconic Landmarks & Hidden Trails',
+            activities: [
+              { name: 'Morning Landmark Tour', time: '08:30 AM', costINR: 1200, category: 'Culture', desc: 'Private guided architectural walk.', duration: '3h' },
+              { name: 'Local Market & Artisan Trail', time: '02:00 PM', costINR: 600, category: 'Culture', desc: 'Explore historic bazaars.', duration: '2h' },
+              { name: 'Evening Waterfront Dining', time: '07:30 PM', costINR: 1500, category: 'Food', desc: 'Fresh local fare with scenic views.', duration: '2h' },
+            ]
+          }
+        ]
+      }
     ];
 
     return res.json({ success: true, source: 'curated-fallback', destinations: fallback });
@@ -324,9 +346,9 @@ Return ONLY valid JSON matching this exact structure:
     "isWithinBudget": true
   },
   "aiOptimizationNotes": [
-    "✓ Smart pacing: Morning & afternoon activities geo-clustered for zero transit fatigue.",
-    "✓ Verified local safety escort and authentic regional dining recommendations.",
-    "✓ Optimized for ${travelStyle} travel style and ${interests.join(', ')} interests."
+    "Smart pacing: Morning & afternoon activities geo-clustered for zero transit fatigue.",
+    "Verified local safety escort and authentic regional dining recommendations.",
+    "Optimized for ${travelStyle} travel style and ${interests.join(', ')} interests."
   ]
 }`;
 
@@ -335,7 +357,7 @@ Return ONLY valid JSON matching this exact structure:
     try {
       const result = await callAI(systemPrompt, userPrompt, 'optimize', 25);
       if (result && result.optimizedCities && result.days && result.days.length > 0) {
-        return res.json({ success: true, source: 'gemini-ai', data: result });
+        return res.json({ success: true, source: 'groq-ai', data: result });
       }
     } catch (aiErr) {
       console.warn('[optimize-itinerary] AI failed:', aiErr.message);
@@ -398,10 +420,10 @@ Return ONLY valid JSON matching this exact structure:
           isWithinBudget: total <= target
         },
         aiOptimizationNotes: [
-          `✓ Intelligently sequenced ${cityList.join(' → ')} to cut transit time by 3+ hours.`,
-          `✓ Morning & afternoon stops geo-clustered for effortless navigation without backtracking.`,
-          `✓ Bundled partner passes save ~₹${Math.round(total * 0.12).toLocaleString('en-IN')}.`,
-          `✓ Custom paced for ${travelStyle} style and ${interests.join(', ')} interests.`,
+          `Intelligently sequenced ${cityList.join(' → ')} to cut transit time by 3+ hours.`,
+          `Morning & afternoon stops geo-clustered for effortless navigation without backtracking.`,
+          `Bundled partner passes save ~₹${Math.round(total * 0.12).toLocaleString('en-IN')}.`,
+          `Custom paced for ${travelStyle} style and ${interests.join(', ')} interests.`,
         ],
       },
     });
@@ -419,41 +441,46 @@ router.post('/concierge-reply', async (req, res) => {
   try {
     const { message = 'Hello', contactName = 'Guest' } = req.body;
 
-    const systemPrompt = `You are the elite travel concierge for PlanYatri.
-Respond warmly and helpfully in 1-3 sentences. If the message is a greeting (hi, hey, hello, etc.), introduce yourself as the PlanYatri AI Concierge and invite the traveler to share their travel plans.
-If it's a travel question, answer it specifically and helpfully.
-Return JSON: { "reply": "your response here" }`;
+    const systemPrompt = `You are PlanYatri's Master Travel Architect & Elite Concierge AI.
+Your purpose is to deeply guide travelers from initial dream & destination discovery all the way to complete day-by-day itinerary execution.
+
+Guidance Guidelines:
+1. Maintain an executive, warm, knowledgeable luxury tone — zero emojis.
+2. If the user asks for destination choices, provide 2-3 tailored recommendations with realistic budgets in INR, best visiting months, and safety ratings.
+3. If the user asks for a day-by-day itinerary or trip breakdown, provide an authentic, richly detailed day-by-day plan with specific morning, afternoon, evening activities, realistic cost estimates in INR, certified boutique stay recommendations, and off-beat secret tips.
+4. If the user shares constraints (e.g. 5 days, ₹50,000, 2 travelers), optimize the pacing with zero transit fatigue.
+5. Return ONLY JSON matching: { "reply": "your detailed response here" }`;
 
     const userPrompt = `Traveler (${contactName}) says: "${message}"`;
 
     try {
       const result = await callAI(systemPrompt, userPrompt, 'concierge', 60);
       if (result && result.reply) {
-        return res.json({ success: true, reply: result.reply });
+        return res.json({ success: true, source: 'groq-ai', reply: result.reply });
       }
     } catch (aiErr) {
       console.warn('[concierge-reply] AI failed:', aiErr.message);
     }
 
-    // Smart keyword fallback
+    // Smart fallback
     const t = message.toLowerCase();
     let reply;
     if (['hey', 'hi', 'hello', 'heyy', 'heyyy', 'hii'].some(g => t.startsWith(g))) {
-      reply = `Hello! I'm your PlanYatri AI Concierge. Where would you like to travel? Share a destination, budget, and number of days — I'll craft a bespoke itinerary for you.`;
+      reply = `Hello! I am your PlanYatri Master Travel Concierge. Where would you like to travel? Share a destination, preferred budget, and number of days — I will construct a bespoke, day-by-day itinerary breakdown for you.`;
     } else if (t.includes('thanks') || t.includes('thank')) {
-      reply = `You're most welcome! Feel free to ask anytime — I'm here to craft your perfect journey.`;
+      reply = `You are most welcome. Feel free to ask anytime — I am here to craft and refine your complete journey.`;
     } else if (t.includes('book') || t.includes('reserv')) {
-      reply = `Absolutely! I've flagged your booking request and our team will confirm all arrangements within the hour.`;
+      reply = `I have noted your booking request. You can transition directly to our Bookings hub to review verified boutique properties and flight passes.`;
     } else {
-      reply = `Thank you for reaching out. I've noted your request and our concierge team is coordinating with local partners to ensure everything is in order.`;
+      reply = `I have analyzed your request. Tell me your travel party size and target budget in INR, and I will generate a complete day-by-day schedule with boutique stay recommendations.`;
     }
 
-    return res.json({ success: true, reply });
-  } catch (err) {
-    console.error('[concierge-reply] Fatal:', err);
-    res.json({ success: true, reply: 'Your concierge has received your message and will respond shortly.' });
+    return res.json({ success: true, source: 'concierge-fallback', reply });
+  } catch (error) {
+    console.error('[concierge-reply] Fatal:', error);
+    res.status(500).json({ message: 'Failed to generate concierge response', error: error.message });
   }
 });
 
-
 module.exports = router;
+

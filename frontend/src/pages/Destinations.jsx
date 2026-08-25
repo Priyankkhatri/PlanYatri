@@ -716,9 +716,10 @@ export default function Destinations() {
         initialDest: dest.name,
         initialImg: dest.img,
         initialBudget: dest.totalBudgetINR || (dest.priceINR ? dest.priceINR * (dest.peopleCount || 1) : 50000),
-        initialDays: dest.daysCount || 4,
+        initialDays: dest.daysCount || (dest.daysPlan?.length ? dest.daysPlan.length : 4),
         initialPeople: dest.peopleCount || 4,
         initialDesc: dest.description,
+        initialDaysPlan: dest.daysPlan || null,
         autoOpenCustomizer: true,
       },
     })
