@@ -405,7 +405,7 @@ export default function Trips() {
   }
 
   // ── Delete an Activity ──
-  const handleDeleteActivity = (dayIdx, actIdx) => {
+  const handleDeleteActivity = (dayIdx: any, actIdx: any) => {
     const updatedDaysPlan = [...(selectedItineraryTrip.daysPlan || [])]
     if (updatedDaysPlan[dayIdx]?.activities) {
       updatedDaysPlan[dayIdx].activities.splice(actIdx, 1)
