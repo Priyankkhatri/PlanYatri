@@ -233,7 +233,7 @@ export default function Messages() {
   const callTimerRef = useRef<any>(null)
 
   const activeContact = contacts.find((c: any) => c.id === activeContactId) || contacts[0]
-  const currentMessages = conversations[activeContactId] || []
+  const currentMessages = (conversations as any)[activeContactId] || []
 
   // ── Auto Scroll ──
   useEffect(() => {
