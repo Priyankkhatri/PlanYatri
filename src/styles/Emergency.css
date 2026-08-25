@@ -1,0 +1,6 @@
+/* PlanYatri Emergency SOS Styles */
+.emergency-container { padding: 32px 44px; max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+.sos-banner { background: #FEF2F2; border: 2px solid #FCA5A5; border-radius: 16px; padding: 32px; text-align: center; }
+.sos-button { width: 140px; height: 140px; border-radius: 50%; background: #EF4444; color: #FFFFFF; font-size: 28px; font-weight: 900; border: 6px solid #FCA5A5; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 0 30px rgba(239, 68, 68, 0.4); }
+.sos-button:hover { transform: scale(1.06); box-shadow: 0 0 50px rgba(239, 68, 68, 0.6); }
+.contacts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
