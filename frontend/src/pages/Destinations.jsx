@@ -832,7 +832,8 @@ export default function Destinations() {
                   <div className="ai-hero-badge-container">
                     <span className="ai-luxury-badge">
                       <span className="ai-pulsing-dot" />
-                      ✨ PLANYATRI AI INTELLIGENCE • BESPOKE CURATOR
+                      <SparkleIcon size={12} color="#D4A843" />
+                      <span>PLANYATRI AI INTELLIGENCE • BESPOKE CURATOR</span>
                     </span>
                     <span className="ai-sub-badge">GEMINI 2.0 & GROQ ENGINE</span>
                   </div>
@@ -879,27 +880,35 @@ export default function Destinations() {
 
                   {/* ── Interactive Quick Inspiration Pills ── */}
                   <div className="ai-hero-quick-prompts">
-                    <span className="ai-qp-label">⚡ Trending Inspirations:</span>
+                    <span className="ai-qp-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <CompassIcon size={12} color="#D4A843" />
+                      <span>CURATED INSPIRATIONS:</span>
+                    </span>
                     <div className="ai-qp-chips-row">
                       {[
-                        { label: '🏰 Royal Udaipur & Lake Palace', query: '4-day royal Udaipur luxury palace escape with private boat cruise on Lake Pichola for 2 people' },
-                        { label: '🏔️ Leh High-Pass & Pangong Oasis', query: '6-day Leh Ladakh high-pass and Pangong Tso stargazing adventure for 4 friends, budget 55000' },
-                        { label: '🌿 Kerala Backwaters Houseboat', query: '5-day Alleppey luxury houseboat and Munnar tea plantation retreat, relaxing pace' },
-                        { label: '🏖️ Goa Private Villa & Yacht', query: '4-day South Goa secluded private beach villa and sunset catamaran cruise' },
-                        { label: '🌸 Kashmir Dal Lake & Sonamarg', query: '7-day Srinagar heritage cedar houseboat and Sonamarg glacier expedition' },
-                        { label: '🐪 Jaisalmer Golden Dunes Safari', query: '4-day Thar desert luxury Swiss tent camp, camel safari and stargazing' },
-                      ].map((item, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          className="ai-qp-chip"
-                          onClick={() => {
-                            setAiPrompt(item.query)
-                          }}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
+                        { label: 'Royal Udaipur & Lake Palace', icon: MonumentIcon, query: '4-day royal Udaipur luxury palace escape with private boat cruise on Lake Pichola for 2 people' },
+                        { label: 'Leh High-Pass & Pangong Oasis', icon: MountainIcon, query: '6-day Leh Ladakh high-pass and Pangong Tso stargazing adventure for 4 friends, budget 55000' },
+                        { label: 'Kerala Backwaters Houseboat', icon: WaveIcon, query: '5-day Alleppey luxury houseboat and Munnar tea plantation retreat, relaxing pace' },
+                        { label: 'Goa Private Villa & Yacht', icon: CompassIcon, query: '4-day South Goa secluded private beach villa and sunset catamaran cruise' },
+                        { label: 'Kashmir Dal Lake & Sonamarg', icon: LeafIcon, query: '7-day Srinagar heritage cedar houseboat and Sonamarg glacier expedition' },
+                        { label: 'Jaisalmer Golden Dunes Safari', icon: MapPinIcon, query: '4-day Thar desert luxury Swiss tent camp, camel safari and stargazing' },
+                      ].map((item, idx) => {
+                        const ItemIcon = item.icon
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            className="ai-qp-chip"
+                            onClick={() => {
+                              setAiPrompt(item.query)
+                            }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                          >
+                            <ItemIcon size={12} color="currentColor" />
+                            <span>{item.label}</span>
+                          </button>
+                        )
+                      })}
                     </div>
                   </div>
                 </form>
@@ -928,7 +937,7 @@ export default function Destinations() {
                   {chatHistory.map((msg) => (
                     <div key={msg.id} className={`ai-chat-bubble ${msg.sender}`}>
                       <span className="chat-bubble-sender">
-                        {msg.sender === 'user' ? '👤 YOU' : '✨ PLANYATRI AI CONCIERGE'}
+                        {msg.sender === 'user' ? 'YOU' : 'PLANYATRI AI CONCIERGE'}
                       </span>
                       <p className="chat-bubble-text">{msg.text}</p>
                     </div>
