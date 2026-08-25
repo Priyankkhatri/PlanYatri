@@ -133,7 +133,7 @@ export default function LoginPage() {
       </div>
 
       <motion.div
-        className="form-panel"
+        className="auth-panel"
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: 'spring', stiffness: 260, damping: 26 }}

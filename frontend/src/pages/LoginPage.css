@@ -131,37 +131,47 @@
   line-height: 1.65;
   max-width: 380px;
   font-weight: 300;
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
-.hero-stats {
+.hero-footer {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 14px;
 }
-.h-stat {
+.hero-avatars {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+  align-items: center;
 }
-.h-stat-num {
-  font-family: var(--font-display, serif);
-  font-size: 22px;
-  font-weight: 700;
-  color: white;
-  line-height: 1;
-}
-.h-stat-lbl {
-  font-size: 11px;
-  color: rgba(255,255,255,0.55);
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.h-divider {
-  width: 1px;
+.hero-avatars img {
+  width: 32px;
   height: 32px;
-  background: rgba(255,255,255,0.2);
-  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0a1420;
+  margin-left: -8px;
+}
+.hero-avatars img:first-child {
+  margin-left: 0;
+}
+.hero-avatar-more {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gold, #D4A843);
+  color: #0a1420;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #0a1420;
+  margin-left: -8px;
+}
+.hero-footer-text {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 400;
+  margin: 0;
 }
 
 /* Login trip card — use lp- prefix to avoid conflict with Trips.css */
@@ -225,16 +235,20 @@
 .auth-panel {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 32px 40px;
+  padding: 40px 32px;
   background: #F7F3EE;
   overflow-y: auto;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  margin: auto 0;
+  padding: 10px 0;
   opacity: 0;
   transform: translateY(20px);
   animation: fadeUp 0.65s 0.2s ease forwards;
