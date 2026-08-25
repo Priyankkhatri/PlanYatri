@@ -1,10 +1,11 @@
+import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { GoogleIcon, AppleIcon, EyeIcon, MailIcon, LockIcon, UserIcon } from '../icons/AuthIcons'
 import { useAuth } from '../../context/AuthContext'
 
 export default function AuthForm() {
-  const navigate = useNavigate()
+  const router = useRouter();
   const { signIn, signUp, signInWithOAuth } = useAuth()
 
   const [tab, setTab] = useState('signin')
@@ -35,14 +36,14 @@ export default function AuthForm() {
       if (tab === 'signup') {
         const res = await signUp(form.name, form.email, form.password)
         if (res?.success) {
-          navigate('/dashboard')
+          router.push('/dashboard')
         } else {
           setErrorMsg(res?.error || 'Failed to create account.')
         }
       } else {
         const res = await signIn(form.email, form.password)
         if (res?.success) {
-          navigate('/dashboard')
+          router.push('/dashboard')
         } else {
           setErrorMsg(res?.error || 'Invalid login credentials.')
         }

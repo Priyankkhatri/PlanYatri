@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
-import Sidebar from '../components/Sidebar'
-import api from '../services/api'
-import { supabase } from '../services/supabaseClient'
+import Sidebar from '@/components/Sidebar'
+import api from '@/services/api'
+import { supabase } from '@/services/supabaseClient'
 import {
   SparkleIcon,
   UsersIcon,
@@ -16,7 +16,7 @@ import {
   MonumentIcon,
   LeafIcon,
   CheckCircleIcon,
-} from '../components/icons/LuxuryIcons'
+} from '@/components/icons/LuxuryIcons'
 import './Messages.css'
 
 // ── 1. INITIAL DEMO CONTACTS ──

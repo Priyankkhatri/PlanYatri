@@ -1,16 +1,17 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { useDispatch, useSelector } from 'react-redux'
-import Sidebar from '../components/Sidebar'
-import { logout, updateProfile } from '../store/slices/authSlice'
-import { useToast } from '../context/ToastContext'
-import { usePageTitle } from '../hooks/usePageTitle'
-import { useFavorites } from '../context/FavoritesContext'
+import Sidebar from '@/components/Sidebar'
+import { logout, updateProfile } from '@/store/slices/authSlice'
+import { useToast } from '@/context/ToastContext'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { useFavorites } from '@/context/FavoritesContext'
 import './Profile.css'
 
 export default function Profile() {
-  const navigate = useNavigate()
+  const router = useRouter();
   const dispatch = useDispatch()
   const toast = useToast()
   const { userInfo } = useSelector((state) => state.auth)
@@ -44,7 +45,7 @@ export default function Profile() {
   const handleSignOut = () => {
     dispatch(logout())
     toast.info('Signed out successfully')
-    navigate('/')
+    router.push('/')
   }
 
   return (
@@ -103,7 +104,7 @@ export default function Profile() {
             <div className="prof-bucket-col">
               <div className="prof-section-header">
                 <h2 className="prof-section-title">Bucket List ({favorites.length})</h2>
-                <button className="prof-view-all-link" onClick={() => navigate('/favorites')}>
+                <button className="prof-view-all-link" onClick={() => router.push('/favorites')}>
                   View All ({favorites.length}) →
                 </button>
               </div>
@@ -111,7 +112,7 @@ export default function Profile() {
               {favorites.length === 0 ? (
                 <div style={{ padding: '30px', textAlign: 'center', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <p style={{ color: '#94A3B8', fontSize: '14px', margin: '0 0 12px' }}>Your bucket list is currently empty.</p>
-                  <button onClick={() => navigate('/destinations')} style={{ padding: '8px 16px', background: '#D4A843', color: '#0C1B2A', fontWeight: 600, borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
+                  <button onClick={() => router.push('/destinations')} style={{ padding: '8px 16px', background: '#D4A843', color: '#0C1B2A', fontWeight: 600, borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
                     Explore Destinations →
                   </button>
                 </div>
@@ -121,7 +122,7 @@ export default function Profile() {
                   {favorites[0] && (
                     <div
                       className="prof-priority-card"
-                      onClick={() => navigate('/destinations', { state: { search: favorites[0].name.split(',')[0] } })}
+                      onClick={() => router.push('/destinations', { state: { search: favorites[0].name.split(',')[0] } })}
                     >
                       <img
                         src={favorites[0].img}
@@ -158,7 +159,7 @@ export default function Profile() {
                         <div
                           key={item.id}
                           className="prof-mini-bucket-card"
-                          onClick={() => navigate('/destinations', { state: { search: item.name.split(',')[0] } })}
+                          onClick={() => router.push('/destinations', { state: { search: item.name.split(',')[0] } })}
                         >
                           <div className="prof-mini-img-box">
                             <img src={item.img} alt={item.name} />
@@ -213,7 +214,7 @@ export default function Profile() {
                 </div>
 
                 {/* 2. Security */}
-                <div className="prof-setting-item" onClick={() => navigate('/settings')}>
+                <div className="prof-setting-item" onClick={() => router.push('/settings')}>
                   <div className="prof-setting-icon-box">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -228,7 +229,7 @@ export default function Profile() {
                 </div>
 
                 {/* 3. Notifications */}
-                <div className="prof-setting-item" onClick={() => navigate('/settings')}>
+                <div className="prof-setting-item" onClick={() => router.push('/settings')}>
                   <div className="prof-setting-icon-box">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -243,7 +244,7 @@ export default function Profile() {
                 </div>
 
                 {/* 4. Payment Methods */}
-                <div className="prof-setting-item" onClick={() => navigate('/bookings')}>
+                <div className="prof-setting-item" onClick={() => router.push('/bookings')}>
                   <div className="prof-setting-icon-box">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />

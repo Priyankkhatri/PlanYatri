@@ -1,10 +1,11 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
-import Sidebar from '../components/Sidebar'
-import { useToast } from '../context/ToastContext'
-import { usePageTitle } from '../hooks/usePageTitle'
-import { useFavorites } from '../context/FavoritesContext'
+
+import Sidebar from '@/components/Sidebar'
+import { useToast } from '@/context/ToastContext'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { useFavorites } from '@/context/FavoritesContext'
 import './Favorites.css'
 
 export default function Favorites() {
@@ -12,7 +13,7 @@ export default function Favorites() {
   const [search, setSearch] = useState('')
   const [activeFilter, setActiveFilter] = useState('All Spots')
 
-  const navigate = useNavigate()
+  const router = useRouter();
   const toast = useToast()
   usePageTitle('Favorite Destinations — PlanYatri')
 
@@ -103,7 +104,7 @@ export default function Favorites() {
               <span className="empty-icon">🗺️</span>
               <h3>No saved destinations found</h3>
               <p>Try clearing your search or explore new places to save to your collection.</p>
-              <button className="fav-explore-btn" onClick={() => navigate('/destinations')}>
+              <button className="fav-explore-btn" onClick={() => router.push('/destinations')}>
                 Explore Destinations →
               </button>
             </div>
@@ -115,7 +116,7 @@ export default function Favorites() {
                   <div
                     key={item.id}
                     className={`fav-card-editorial ${isFirst ? 'fav-card-large' : ''}`}
-                    onClick={() => navigate('/destinations', { state: { search: item.name } })}
+                    onClick={() => router.push('/destinations', { state: { search: item.name } })}
                   >
                     <img src={item.img} alt={item.name} className="fav-card-bg-img" />
                     <div className="fav-card-gradient-overlay" />
@@ -152,7 +153,7 @@ export default function Favorites() {
                           className="fav-book-stay-btn"
                           onClick={(e) => {
                             e.stopPropagation()
-                            navigate('/trips', { state: { initialDest: item.name, initialImg: item.img } })
+                            router.push('/trips', { state: { initialDest: item.name, initialImg: item.img } })
                           }}
                         >
                           <span>Book Stay</span>
@@ -210,7 +211,7 @@ export default function Favorites() {
         <button
           className="fav-fab-plus-btn"
           title="Add New Favorite"
-          onClick={() => navigate('/destinations')}
+          onClick={() => router.push('/destinations')}
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19" />

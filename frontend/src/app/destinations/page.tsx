@@ -1,14 +1,15 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useMemo, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import Sidebar from '../components/Sidebar'
-import api from '../services/api'
-import { getRealPlaceImage, WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
-import InteractiveMap from '../components/InteractiveMap'
-import GoogleAnimatedMap from '../components/GoogleAnimatedMap'
-import { useFavorites } from '../context/FavoritesContext'
-import { SparkleIcon, IndiaIcon, MountainIcon, WaveIcon, MonumentIcon, LeafIcon, GlobeIcon, CalendarIcon, ShieldIcon, CompassIcon, MapPinIcon } from '../components/icons/LuxuryIcons'
+import Sidebar from '@/components/Sidebar'
+import api from '@/services/api'
+import { getRealPlaceImage, WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
+import InteractiveMap from '@/components/InteractiveMap'
+import GoogleAnimatedMap from '@/components/GoogleAnimatedMap'
+import { useFavorites } from '@/context/FavoritesContext'
+import { SparkleIcon, IndiaIcon, MountainIcon, WaveIcon, MonumentIcon, LeafIcon, GlobeIcon, CalendarIcon, ShieldIcon, CompassIcon, MapPinIcon } from '@/components/icons/LuxuryIcons'
 import './Destinations.css'
 
 /* ── Animation Variants ── */
@@ -394,8 +395,8 @@ const INITIAL_DESTINATIONS = [
 ]
 
 export default function Destinations() {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const router = useRouter();
+  const pathname = usePathname();
 
   // ── Currency State (INR / USD) ──
   const [currency, setCurrency] = useState('INR') // Default INR as requested
@@ -700,7 +701,7 @@ export default function Destinations() {
   const visibleDestinations = showAllJourneys ? filtered : filtered.slice(0, 6)
 
   const handlePlanJourney = (dest) => {
-    navigate('/trips', {
+    router.push('/trips', {
       state: {
         initialDest: dest.name,
         initialImg: dest.img,
@@ -780,14 +781,14 @@ export default function Destinations() {
             </div>
 
             {/* Notifications & Saved */}
-            <button className="dest-icon-btn" title="Saved Escapes" onClick={() => navigate('/favorites')}>
+            <button className="dest-icon-btn" title="Saved Escapes" onClick={() => router.push('/favorites')}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
               </svg>
             </button>
 
             {/* User Profile */}
-            <div className="dest-avatar-circle" onClick={() => navigate('/profile')} title="My Profile">
+            <div className="dest-avatar-circle" onClick={() => router.push('/profile')} title="My Profile">
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&q=80&auto=format&fit=crop"
                 alt="User"

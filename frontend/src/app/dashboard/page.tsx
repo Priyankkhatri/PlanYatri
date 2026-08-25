@@ -1,13 +1,14 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
-import Sidebar from '../components/Sidebar'
-import { fetchTrips } from '../store/slices/tripSlice'
-import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
-import { usePageTitle } from '../hooks/usePageTitle'
-import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon } from '../components/icons/LuxuryIcons'
+import Sidebar from '@/components/Sidebar'
+import { fetchTrips } from '@/store/slices/tripSlice'
+import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon } from '@/components/icons/LuxuryIcons'
 import './Dashboard.css'
 
 /* ── Animation Variants ── */
@@ -34,7 +35,7 @@ export default function Dashboard() {
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterSuccess, setNewsletterSuccess] = useState(false)
 
-  const navigate = useNavigate()
+  const router = useRouter();
   const dispatch = useDispatch()
   const { userInfo } = useSelector((state) => state.auth)
 
@@ -57,7 +58,7 @@ export default function Dashboard() {
   const handleSearchSubmit = (e) => {
     e.preventDefault()
     if (search.trim()) {
-      navigate('/destinations', { state: { search: search.trim() } })
+      router.push('/destinations', { state: { search: search.trim() } })
     }
   }
 
@@ -111,7 +112,7 @@ export default function Dashboard() {
               <span className="db-notif-dot" />
             </button>
 
-            <div className="db-user-chip" onClick={() => navigate('/profile')}>
+            <div className="db-user-chip" onClick={() => router.push('/profile')}>
               <img
                 src={userInfo?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&q=80&auto=format&fit=crop'}
                 className="db-user-avatar"
@@ -186,7 +187,7 @@ export default function Dashboard() {
             {/* Clean & Elegant Travel Planner Button */}
             <button
               className="widget-center-planner-btn"
-              onClick={() => navigate('/destinations')}
+              onClick={() => router.push('/destinations')}
               title="Plan Your Journey"
             >
               <div className="planner-icon-box">
@@ -226,14 +227,14 @@ export default function Dashboard() {
           <motion.section className="db-section" variants={fadeUp}>
             <div className="db-section-hdr">
               <h2 className="db-section-title">Recommended For You</h2>
-              <button className="db-view-all" onClick={() => navigate('/destinations')}>
+              <button className="db-view-all" onClick={() => router.push('/destinations')}>
                 View All →
               </button>
             </div>
 
             <motion.div className="db-rec-grid" variants={staggerContainer} initial="initial" animate="animate">
               {/* Card 1: Maldives */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['maldives']} alt="Maldives" />
                   <button className={`rec-heart-btn ${liked['maldives'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'maldives')}>
@@ -250,7 +251,7 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 2: Switzerland */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['switzerland']} alt="Switzerland" />
                   <button className={`rec-heart-btn ${liked['swiss'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'swiss')}>
@@ -267,7 +268,7 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 3: Greece */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['greece']} alt="Greece" />
                   <button className={`rec-heart-btn ${liked['greece'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'greece')}>
@@ -284,7 +285,7 @@ export default function Dashboard() {
               </motion.div>
 
               {/* Card 4: Bali */}
-              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => navigate('/destinations')}>
+              <motion.div className="rec-card" variants={cardVariant} whileHover={{ y: -6, scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 350, damping: 22 }} onClick={() => router.push('/destinations')}>
                 <div className="rec-img-wrap">
                   <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
                   <button className={`rec-heart-btn ${liked['bali'] ? 'active' : ''}`} onClick={(e) => toggleHeart(e, 'bali')}>
@@ -349,7 +350,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <button className="adv-cta-btn" onClick={() => navigate('/trips')}>
+                  <button className="adv-cta-btn" onClick={() => router.push('/trips')}>
                     <span>Let's Plan Your Trip</span>
                     <span className="adv-arrow">→</span>
                   </button>
@@ -378,14 +379,14 @@ export default function Dashboard() {
           <motion.section className="db-section" variants={fadeUp}>
             <div className="db-section-hdr">
               <h2 className="db-section-title">Your Upcoming Trips</h2>
-              <button className="db-view-all" onClick={() => navigate('/trips')}>
+              <button className="db-view-all" onClick={() => router.push('/trips')}>
                 View All →
               </button>
             </div>
 
             <div className="db-upcoming-layout">
               {/* Main Feature Trip: Bali */}
-              <div className="upcoming-main-card" onClick={() => navigate('/trips')}>
+              <div className="upcoming-main-card" onClick={() => router.push('/trips')}>
                 <div className="upcoming-img-box">
                   <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
                 </div>
@@ -415,7 +416,7 @@ export default function Dashboard() {
 
               {/* Side Mini Trips */}
               <div className="upcoming-side-list">
-                <div className="upcoming-side-item" onClick={() => navigate('/trips')}>
+                <div className="upcoming-side-item" onClick={() => router.push('/trips')}>
                   <div className="side-thumb-box">
                     <img src={WIKIMEDIA_REAL_IMAGES['switzerland']} alt="Switzerland" />
                   </div>
@@ -430,7 +431,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="upcoming-side-item" onClick={() => navigate('/trips')}>
+                <div className="upcoming-side-item" onClick={() => router.push('/trips')}>
                   <div className="side-thumb-box">
                     <img src={WIKIMEDIA_REAL_IMAGES['bali']} alt="Bali" />
                   </div>
@@ -452,13 +453,13 @@ export default function Dashboard() {
           <motion.section className="db-section" variants={fadeUp}>
             <div className="db-section-hdr">
               <h2 className="db-section-title">Travel Inspiration</h2>
-              <button className="db-view-all" onClick={() => navigate('/experiences')}>
+              <button className="db-view-all" onClick={() => router.push('/experiences')}>
                 View All →
               </button>
             </div>
 
             <div className="db-blog-grid">
-              <div className="blog-article-card" onClick={() => navigate('/experiences')}>
+              <div className="blog-article-card" onClick={() => router.push('/experiences')}>
                 <img src="https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=600&h=400&q=85&auto=format&fit=crop" alt="Cappadocia" className="blog-card-img" />
                 <div className="blog-card-body">
                   <h4 className="blog-card-title">A Complete Guide to Cappadocia</h4>
@@ -467,7 +468,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="blog-article-card" onClick={() => navigate('/experiences')}>
+              <div className="blog-article-card" onClick={() => router.push('/experiences')}>
                 <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&h=400&q=85&auto=format&fit=crop" alt="Coastal Towns" className="blog-card-img" />
                 <div className="blog-card-body">
                   <h4 className="blog-card-title">10 Most Beautiful Coastal Towns</h4>
@@ -476,7 +477,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="blog-article-card" onClick={() => navigate('/experiences')}>
+              <div className="blog-article-card" onClick={() => router.push('/experiences')}>
                 <img src="https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&h=400&q=85&auto=format&fit=crop" alt="Hidden Gems in Asia" className="blog-card-img" />
                 <div className="blog-card-body">
                   <h4 className="blog-card-title">Top 7 Hidden Gems in Asia</h4>

@@ -1,12 +1,13 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useMemo, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+
 import { useSelector } from 'react-redux'
-import Sidebar from '../components/Sidebar'
-import { useToast } from '../context/ToastContext'
-import { usePageTitle } from '../hooks/usePageTitle'
-import { PlaneIcon, HotelIcon, ShieldIcon, WaveIcon, MountainIcon, CompassIcon } from '../components/icons/LuxuryIcons'
-import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
+import Sidebar from '@/components/Sidebar'
+import { useToast } from '@/context/ToastContext'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { PlaneIcon, HotelIcon, ShieldIcon, WaveIcon, MountainIcon, CompassIcon } from '@/components/icons/LuxuryIcons'
+import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
 import './Bookings.css'
 
 const INITIAL_BOOKINGS = [
@@ -103,8 +104,8 @@ const INITIAL_BOOKINGS = [
 ]
 
 export default function Bookings() {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const router = useRouter();
+  const pathname = usePathname();
   const toast = useToast()
   usePageTitle('Travel Bookings & Logistics — PlanYatri')
 
@@ -243,7 +244,7 @@ export default function Bookings() {
                 </button>
                 <button
                   className="bhl-btn-secondary"
-                  onClick={() => navigate('/messages')}
+                  onClick={() => router.push('/messages')}
                 >
                   <CompassIcon size={14} color="currentColor" />
                   <span>Travel Concierge</span>

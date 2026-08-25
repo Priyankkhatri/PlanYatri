@@ -1,15 +1,16 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom'
-import Sidebar from '../components/Sidebar'
-import api from '../services/api'
-import { fetchTrips, createTrip, updateTrip, deleteTrip } from '../store/slices/tripSlice'
-import { useToast } from '../context/ToastContext'
-import { usePageTitle } from '../hooks/usePageTitle'
-import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
-import InteractiveMap from '../components/InteractiveMap'
-import { CalendarIcon, UsersIcon, MapPinIcon, PlaneIcon, SparkleIcon, TrashIcon, UtensilsIcon, HotelIcon, CompassIcon, CheckCircleIcon, FlameIcon, BookIcon, ShareIcon, CultureIcon, MountainIcon } from '../components/icons/LuxuryIcons'
+
+import Sidebar from '@/components/Sidebar'
+import api from '@/services/api'
+import { fetchTrips, createTrip, updateTrip, deleteTrip } from '@/store/slices/tripSlice'
+import { useToast } from '@/context/ToastContext'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
+import InteractiveMap from '@/components/InteractiveMap'
+import { CalendarIcon, UsersIcon, MapPinIcon, PlaneIcon, SparkleIcon, TrashIcon, UtensilsIcon, HotelIcon, CompassIcon, CheckCircleIcon, FlameIcon, BookIcon, ShareIcon, CultureIcon, MountainIcon } from '@/components/icons/LuxuryIcons'
 import './Trips.css'
 
 // Initial Curated Multi-City Journeys
@@ -132,8 +133,8 @@ const DEFAULT_INITIAL_JOURNEYS = [
 ]
 
 export default function Trips() {
-  const location = useLocation()
-  const navigate = useNavigate()
+  const pathname = usePathname();
+  const router = useRouter();
   const dispatch = useDispatch()
   const toast = useToast()
 
@@ -479,7 +480,7 @@ export default function Trips() {
       setShowPaymentModal(false)
       toast.success(`💳 Payment Successful! Confirmed reservations for ${selectedItineraryTrip.dest}`)
 
-      navigate('/bookings', {
+      router.push('/bookings', {
         state: {
           newBookings: [
             {

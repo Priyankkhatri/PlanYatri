@@ -1,8 +1,9 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
-import { useNavigate } from 'react-router-dom'
+
 
 export default function Sidebar({ activeNav, setActiveNav }) {
-  const navigate = useNavigate()
+  const router = useRouter();
 
   return (
     <aside className="w-[248px] shrink-0 bg-charcoal flex flex-col p-[26px_16px] h-screen overflow-hidden relative border-r border-white/5 before:content-[''] before:absolute before:-top-[60px] before:-left-[60px] before:w-[220px] before:h-[220px] before:bg-[radial-gradient(circle,rgba(201,150,58,0.09)_0%,transparent_70%)] before:pointer-events-none">
@@ -46,7 +47,7 @@ export default function Sidebar({ activeNav, setActiveNav }) {
           <p className="text-[13px] font-semibold text-white whitespace-nowrap overflow-hidden text-ellipsis">Ananya Sharma</p>
           <p className="text-[11px] text-white/40 whitespace-nowrap overflow-hidden text-ellipsis mt-[1px]">ananya@example.com</p>
         </div>
-        <button className="border-none bg-transparent text-white/30 cursor-pointer p-[7px] rounded-[8px] flex transition-colors duration-200 hover:text-white/85 hover:bg-white/5" onClick={() => navigate('/')} title="Sign out">
+        <button className="border-none bg-transparent text-white/30 cursor-pointer p-[7px] rounded-[8px] flex transition-colors duration-200 hover:text-white/85 hover:bg-white/5" onClick={() => router.push('/')} title="Sign out">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
             <polyline points="16 17 21 12 16 7"/>

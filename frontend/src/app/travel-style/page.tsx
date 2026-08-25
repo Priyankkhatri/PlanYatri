@@ -1,10 +1,11 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import Sidebar from '../components/Sidebar'
-import { useToast } from '../context/ToastContext'
-import { usePageTitle } from '../hooks/usePageTitle'
+import Sidebar from '@/components/Sidebar'
+import { useToast } from '@/context/ToastContext'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import './TravelStyle.css'
 
 const QUESTIONS = [
@@ -336,7 +337,7 @@ const ARCHETYPES = {
 }
 
 export default function TravelStyle() {
-  const navigate = useNavigate()
+  const router = useRouter();
   const toast = useToast()
   usePageTitle('Travel Style & Persona Discovery — GlobeTrotter')
 
@@ -365,7 +366,7 @@ export default function TravelStyle() {
   }
 
   const handlePlanInTrips = (dest) => {
-    navigate('/trips', {
+    router.push('/trips', {
       state: {
         initialDest: `${dest.name}, ${dest.country}`,
         initialImg: dest.img,
@@ -549,7 +550,7 @@ export default function TravelStyle() {
                     <button className="rac-btn-retake" onClick={() => setStep(1)}>
                       ↻ Retake Assessment
                     </button>
-                    <button className="rac-btn-destinations" onClick={() => navigate('/destinations')}>
+                    <button className="rac-btn-destinations" onClick={() => router.push('/destinations')}>
                       Browse All 12 Curated Escapes →
                     </button>
                   </div>

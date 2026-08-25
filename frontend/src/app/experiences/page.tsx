@@ -1,12 +1,13 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import Sidebar from '../components/Sidebar'
-import { useToast } from '../context/ToastContext'
-import { usePageTitle } from '../hooks/usePageTitle'
-import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
-import { SparkleIcon, MountainIcon, CultureIcon, LeafIcon, BeachIcon } from '../components/icons/LuxuryIcons'
+import Sidebar from '@/components/Sidebar'
+import { useToast } from '@/context/ToastContext'
+import { usePageTitle } from '@/hooks/usePageTitle'
+import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
+import { SparkleIcon, MountainIcon, CultureIcon, LeafIcon, BeachIcon } from '@/components/icons/LuxuryIcons'
 import './Destinations.css'
 import './Experiences.css'
 
@@ -54,7 +55,7 @@ const headerEnter = {
 }
 
 export default function Experiences() {
-  const navigate = useNavigate()
+  const router = useRouter();
   const toast = useToast()
   usePageTitle('Experiences — PlanYatri')
   const [mounted, setMounted] = useState(false)
@@ -65,7 +66,7 @@ export default function Experiences() {
 
   const handleBookExperience = (exp) => {
     toast.success(`🎉 Booking ${exp.name}... Redirecting to confirmation!`)
-    navigate('/bookings', {
+    router.push('/bookings', {
       state: {
         newBooking: {
           id: `bk-exp-${Date.now()}`,

@@ -1,14 +1,15 @@
+import { useRouter, usePathname } from 'next/navigation';
 'use client';
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as Yup from 'yup'
-import { login, register, loginDemo, clearError } from '../store/slices/authSlice'
-import { useToast } from '../context/ToastContext'
-import { useAuth } from '../context/AuthContext'
-import { usePageTitle } from '../hooks/usePageTitle'
+import { login, register, loginDemo, clearError } from '@/store/slices/authSlice'
+import { useToast } from '@/context/ToastContext'
+import { useAuth } from '@/context/AuthContext'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import './LoginPage.css'
 
 /* ── Real travel photos ── */
@@ -47,7 +48,7 @@ function EyeIcon({ open }) {
 }
 
 export default function LoginPage() {
-  const navigate = useNavigate()
+  const router = useRouter();
   const dispatch = useDispatch()
   const toast = useToast()
   const { signInWithOAuth } = useAuth()
@@ -62,7 +63,7 @@ export default function LoginPage() {
   const [imgLoaded, setImgLoaded] = useState(false)
 
   useEffect(() => {
-    if (userInfo) navigate('/dashboard', { replace: true })
+    if (userInfo) router.push('/dashboard', { replace: true })
   }, [userInfo, navigate])
 
   useEffect(() => {
