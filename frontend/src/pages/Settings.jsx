@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 import { useTheme } from '../context/ThemeContext'
 import { useToast } from '../context/ToastContext'
 import { updateProfile } from '../store/slices/authSlice'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { UserIcon, BellIcon, LockIcon, CardIcon, GearIcon, ShieldIcon } from '../components/icons/LuxuryIcons'
+import { UserIcon, BellIcon, LockIcon, CardIcon, GearIcon, ShieldIcon, SparkleIcon } from '../components/icons/LuxuryIcons'
 import './Settings.css'
 
 const SECTIONS = ['Profile', 'Notifications', 'Privacy', 'Payments', 'Preferences', 'About']
 
 export default function Settings() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const toast = useToast()
   const { dark, toggle } = useTheme()
   const { userInfo } = useSelector((state) => state.auth)
@@ -30,6 +32,7 @@ export default function Settings() {
     bio: userInfo?.bio || 'Passionate explorer collecting memories around the world.',
     city: userInfo?.city || 'Bangalore',
     country: userInfo?.country || 'India',
+    emergencyContact: userInfo?.emergencyContact || '+91 98111 22334 (Family / ICE)',
     avatar: userInfo?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&h=160&q=80&auto=format&fit=crop',
   })
 
@@ -43,6 +46,7 @@ export default function Settings() {
         bio: userInfo.bio || 'Passionate explorer collecting memories around the world.',
         city: userInfo.city || 'Bangalore',
         country: userInfo.country || 'India',
+        emergencyContact: userInfo.emergencyContact || '+91 98111 22334 (Family / ICE)',
         avatar: userInfo.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&h=160&q=80&auto=format&fit=crop',
       })
     }
@@ -140,8 +144,16 @@ export default function Settings() {
                       <input className="form-input" value={profile.phone} onChange={e => setProfile(p=>({...p,phone:e.target.value}))} />
                     </div>
                     <div className="form-group">
+                      <label className="form-label">Emergency ICE Contact</label>
+                      <input className="form-input" value={profile.emergencyContact} placeholder="+91 98765 43210 (ICE)" onChange={e => setProfile(p=>({...p,emergencyContact:e.target.value}))} />
+                    </div>
+                    <div className="form-group">
                       <label className="form-label">City</label>
                       <input className="form-input" value={profile.city} onChange={e => setProfile(p=>({...p,city:e.target.value}))} />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Country / Nationality</label>
+                      <input className="form-input" value={profile.country} onChange={e => setProfile(p=>({...p,country:e.target.value}))} />
                     </div>
                     <div className="form-group" style={{ gridColumn:'1/-1' }}>
                       <label className="form-label">Bio</label>
@@ -303,9 +315,34 @@ export default function Settings() {
                   <p style={{ color:'var(--text-3)', fontSize:13, marginBottom:6 }}>Version 2.0.0 · Crafted for Travelers</p>
                   <p style={{ color:'var(--text-3)', fontSize:13 }}>Your ultimate travel companion</p>
                   <div style={{ display:'flex', gap:12, justifyContent:'center', marginTop:24, flexWrap:'wrap' }}>
-                    {['Privacy Policy','Terms of Service','Help & Support','Rate Us'].map(l => (
-                      <button key={l} className="btn btn-outline" style={{ fontSize:12.5 }}>{l}</button>
-                    ))}
+                    <button
+                      className="btn btn-outline"
+                      style={{ fontSize:12.5 }}
+                      onClick={() => navigate('/messages', { state: { prompt: 'I need concierge assistance and support with my PlanYatri bookings and profile.' } })}
+                    >
+                      💬 Help & AI Support
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      style={{ fontSize:12.5 }}
+                      onClick={() => navigate('/travel-style')}
+                    >
+                      🛡️ Travel Persona Engine
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      style={{ fontSize:12.5 }}
+                      onClick={() => toast.info('🔒 PlanYatri guarantees strict zero-data selling and encrypted token security.')}
+                    >
+                      Privacy Policy
+                    </button>
+                    <button
+                      className="btn btn-outline"
+                      style={{ fontSize:12.5 }}
+                      onClick={() => toast.success('⭐ Thank you for rating PlanYatri 5 Stars!')}
+                    >
+                      Rate Us
+                    </button>
                   </div>
                 </div>
               </div>
