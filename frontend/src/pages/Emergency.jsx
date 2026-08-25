@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -347,6 +348,10 @@ function ContactModal({ initial, onSave, onClose }) {
 
 export default function Emergency() {
   usePageTitle('Emergency SOS & Expedition Safety Hub — PlanYatri')
+
+  const navigate = useNavigate()
+  const location = useLocation()
+  const activeCity = location.state?.tripCity || location.state?.city || ''
 
   const [mounted, setMounted] = useState(false)
   const [userPos, setUserPos] = useState([28.6139, 77.209]) // Default New Delhi
@@ -772,7 +777,7 @@ export default function Emergency() {
                   </motion.div>
                 )}
 
-                <div className="em-beacon-buttons">
+                <div className="em-beacon-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                   <button
                     className={`em-beacon-btn ${isAudioSirenActive ? 'active' : ''}`}
                     onClick={toggleAudioSiren}
@@ -787,6 +792,28 @@ export default function Emergency() {
                   >
                     <SunThermoIcon size={15} />
                     <span>{isStrobeActive ? 'Stop Rescue Strobe' : 'Rescue Screen Strobe'}</span>
+                  </button>
+
+                  <button
+                    className="em-beacon-btn"
+                    onClick={() =>
+                      navigate('/messages', {
+                        state: {
+                          prompt: `URGENT SAFETY CONSULTATION: I am currently in ${activeCity || 'my travel destination'}. Please list nearby certified trauma hospitals, emergency response steps, and local embassy contact assistance.`,
+                        },
+                      })
+                    }
+                    style={{ background: '#1C1917', color: '#D4A843', borderColor: 'rgba(212, 168, 67, 0.4)' }}
+                  >
+                    <span>✨ AI Safety Concierge</span>
+                  </button>
+
+                  <button
+                    className="em-beacon-btn"
+                    onClick={() => navigate('/settings')}
+                    title="Manage ICE Contacts in Settings"
+                  >
+                    <span>⚙️ Settings Profile</span>
                   </button>
                 </div>
               </div>
