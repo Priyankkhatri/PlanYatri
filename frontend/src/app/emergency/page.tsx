@@ -1,4 +1,6 @@
 'use client';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -8,6 +10,7 @@ import Sidebar from '@/components/Sidebar'
 import { fetchContacts, addContact, removeContact } from '@/store/slices/emergencySlice'
 import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
+
 
 // ── Clean Luxury Bespoke Icons (Zero Emojis / Zero AI-Slop) ──
 const ShieldSafeIcon = ({ size = 18, color = 'currentColor', className = '' }) => (
@@ -253,7 +256,7 @@ const FIRST_AID_PROTOCOLS = [
 ]
 
 // ── Contact Modal Component ──
-function ContactModal({ initial, onSave, onClose }) {
+function ContactModal({ initial, onSave, onClose }: { initial?: any; onSave?: any; onClose?: any }) {
   const [form, setForm] = useState(
     initial || { name: '', relation: 'Family', phone: '' }
   )
@@ -491,7 +494,7 @@ export default function Emergency() {
     let interval
     if (isHolding && !isSOSActive) {
       interval = setInterval(() => {
-        setHoldProgress((prev) => {
+        setHoldProgress((prev: any) => {
           if (prev >= 100) {
             triggerSOS()
             return 0
@@ -601,7 +604,7 @@ export default function Emergency() {
 
   // 6. Visual Screen Strobe
   const toggleStrobe = () => {
-    setIsStrobeActive((prev) => !prev)
+    setIsStrobeActive((prev: any) => !prev)
     if (!isStrobeActive) {
       toast.warning('Rescue Screen Strobe Active. Click anywhere to dismiss.')
     }
@@ -642,14 +645,14 @@ export default function Emergency() {
     }
   }
 
-  const handleAddContact = async (c) => {
+  const handleAddContact = async (c: any) => {
     const result = await dispatch(addContact(c))
     if (addContact.fulfilled.match(result)) {
       toast.success('Guardian contact registered.')
     }
   }
 
-  const handleDeleteContact = async (id) => {
+  const handleDeleteContact = async (id: any) => {
     const result = await dispatch(removeContact(id))
     if (removeContact.fulfilled.match(result)) {
       setDeleteId(null)
@@ -657,7 +660,7 @@ export default function Emergency() {
     }
   }
 
-  const filteredFacilities = VERIFIED_FACILITIES.filter((f: any) => {
+  const filteredFacilities = VERIFIED_FACILITIES.filter((f) => {
     const matchesSearch =
       f.name.toLowerCase().includes(facilitySearch.toLowerCase()) ||
       f.address.toLowerCase().includes(facilitySearch.toLowerCase())
@@ -814,7 +817,7 @@ export default function Emergency() {
                   onMouseDown={() => setIsHolding(true)}
                   onMouseUp={() => setIsHolding(false)}
                   onMouseLeave={() => setIsHolding(false)}
-                  onTouchStart={(e) => {
+                  onTouchStart={(e: any) => {
                     e.preventDefault()
                     setIsHolding(true)
                   }}
