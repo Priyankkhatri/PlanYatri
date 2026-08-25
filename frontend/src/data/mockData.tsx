@@ -1,4 +1,38 @@
-const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
+import React from 'react';
+
+const IMG = (seed: string, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`;
+
+export const MOCK_TRIPS = [
+  {
+    id: 'trip-1',
+    title: 'Alpine Escape & Spa Retreat',
+    destination: 'Swiss Alps, Switzerland',
+    startDate: '2026-09-10',
+    endDate: '2026-09-18',
+    status: 'upcoming' as const,
+    budget: 4500,
+    spent: 2100,
+    image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=800&q=80',
+    travelers: 2
+  },
+  {
+    id: 'trip-2',
+    title: 'Leh Ladakh Expedition',
+    destination: 'Leh Ladakh, India',
+    startDate: '2026-10-01',
+    endDate: '2026-10-08',
+    status: 'upcoming' as const,
+    budget: 1200,
+    spent: 450,
+    image: 'https://images.unsplash.com/photo-1581793745862-99fde7fa73d2?auto=format&fit=crop&w=800&q=80',
+    travelers: 1
+  }
+];
+
+export const MOCK_EMERGENCY_CONTACTS = [
+  { id: 'ec-1', name: 'Himalayan Mountain Rescue', relation: 'Emergency Squad', phone: '108', isPrimary: true },
+  { id: 'ec-2', name: 'Tourist Police Leh', relation: 'Regional Helpline', phone: '112', isPrimary: false }
+];
 
 export const TRIPS = [
   {
@@ -41,7 +75,7 @@ export const TRIPS = [
     img: IMG('patagonia'),
     color: '#82C485',
   },
-]
+];
 
 export const STATS = [
   {
@@ -98,16 +132,16 @@ export const STATS = [
     change: '+12k this year',
     changeType: 'up',
   },
-]
+];
 
 export const EXPLORE = [
   { name: 'Amalfi Coast', country: 'Italy', img: 'https://images.unsplash.com/photo-1568454537842-d933259bb258?w=500&q=80&fit=crop', tag: 'Trending' },
   { name: 'Machu Picchu', country: 'Peru', img: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=500&q=80&fit=crop', tag: 'Bucket list' },
   { name: 'Maldives', country: 'South Asia', img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=500&q=80&fit=crop', tag: 'Popular' },
-]
+];
 
-export function statusLabel(status) {
-  if (status === 'upcoming') return 'Upcoming'
-  if (status === 'planning') return 'Planning'
-  return 'Wishlist'
+export function statusLabel(status: string) {
+  if (status === 'upcoming') return 'Upcoming';
+  if (status === 'planning') return 'Planning';
+  return 'Wishlist';
 }
