@@ -10,6 +10,7 @@ import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon } from '../
 import WeatherWidget from '../components/WeatherWidget'
 import CurrencyConverter from '../components/CurrencyConverter'
 import FlightTracker from '../components/FlightTracker'
+import AIJourneyPlannerModal from '../components/AIJourneyPlannerModal'
 import './Dashboard.css'
 
 /* ── Animation Variants ── */
@@ -35,6 +36,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState('')
   const [newsletterEmail, setNewsletterEmail] = useState('')
   const [newsletterSuccess, setNewsletterSuccess] = useState(false)
+  const [showAIPlannerModal, setShowAIPlannerModal] = useState(false)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -188,7 +190,7 @@ export default function Dashboard() {
             {/* Clean & Elegant Travel Planner Button */}
             <button
               className="widget-center-planner-btn"
-              onClick={() => navigate('/destinations')}
+              onClick={() => setShowAIPlannerModal(true)}
               title="Plan Your Journey"
             >
               <div className="planner-icon-box">
@@ -541,6 +543,11 @@ export default function Dashboard() {
           </motion.section>
         </motion.div>
       </div>
+
+      {/* AI Journey Planner Modal */}
+      {showAIPlannerModal && (
+        <AIJourneyPlannerModal onClose={() => setShowAIPlannerModal(false)} />
+      )}
     </div>
   )
 }
