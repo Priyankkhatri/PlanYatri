@@ -2,8 +2,18 @@
 @import "../styles/Dashboard.css";
 @import "../styles/Trips.css";
 @import "../styles/Bookings.css";
+@import "../styles/Destinations.css";
 @import "../styles/Emergency.css";
+@import "../styles/Experiences.css";
+@import "../styles/Favorites.css";
 @import "../styles/LoginPage.css";
+@import "../styles/Messages.css";
+@import "../styles/Profile.css";
+@import "../styles/Settings.css";
+@import "../styles/TravelStyle.css";
+@import "../styles/Sidebar.css";
+@import "../styles/Topbar.css";
+@import "../styles/Skeleton.css";
 
 :root {
   --background: #FAF8F5;
