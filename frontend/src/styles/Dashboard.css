@@ -1,0 +1,2 @@
+.db-root { display: flex; min-height: 100vh; background: #FAF8F5; }
+.db-main { flex: 1; display: flex; flex-direction: column; }
