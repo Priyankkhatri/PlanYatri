@@ -75,7 +75,7 @@ async function callGemini(systemPrompt, userPrompt) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// GROQ — Fallback (llama3-8b-8192, reliable free tier)
+// GROQ — Ultra-Fast AI (llama-3.3-70b-versatile & llama-3.1-8b-instant)
 // ─────────────────────────────────────────────────────────────────────────────
 async function callGroq(systemPrompt, userPrompt) {
   if (!GROQ_API_KEY) throw new Error('No GROQ_API_KEY');
@@ -87,20 +87,42 @@ async function callGroq(systemPrompt, userPrompt) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'llama3-8b-8192',
+      model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user',   content: userPrompt   },
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.5,
-      max_tokens: 2048,
+      temperature: 0.4,
+      max_tokens: 3000,
     }),
   });
 
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Groq error ${res.status}: ${err}`);
+    // Try fast fallback
+    const res2 = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt   },
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.4,
+        max_tokens: 3000,
+      }),
+    });
+    if (!res2.ok) {
+      const err = await res.text();
+      throw new Error(`Groq error: ${err}`);
+    }
+    const data2 = await res2.json();
+    return JSON.parse(data2.choices?.[0]?.message?.content || '{}');
   }
 
   const data = await res.json();
