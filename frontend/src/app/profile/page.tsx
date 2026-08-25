@@ -123,7 +123,7 @@ export default function Profile() {
                   {favorites[0] && (
                     <div
                       className="prof-priority-card"
-                      onClick={() => router.push('/destinations', { state: { search: favorites[0].name.split(',')[0] } })}
+                      onClick={() => router.push('/destinations')}
                     >
                       <img
                         src={favorites[0].img}
@@ -160,7 +160,7 @@ export default function Profile() {
                         <div
                           key={item.id}
                           className="prof-mini-bucket-card"
-                          onClick={() => router.push('/destinations', { state: { search: item.name.split(',')[0] } })}
+                          onClick={() => router.push('/destinations')}
                         >
                           <div className="prof-mini-img-box">
                             <img src={item.img} alt={item.name} />
