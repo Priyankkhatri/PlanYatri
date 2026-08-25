@@ -1,8 +1,10 @@
 'use client';
+import Link from 'next/link';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Sidebar from '@/components/Sidebar'
-import Topbar from '@/components/Header'
+import Topbar from '@/components/Topbar'
 import { useTheme } from '@/context/ThemeContext'
 import { useToast } from '@/context/ToastContext'
 import { updateProfile } from '@/store/slices/authSlice'

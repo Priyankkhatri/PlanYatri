@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react'
 
@@ -8,6 +9,8 @@ import { useToast } from '@/context/ToastContext'
 import { usePageTitle } from '@/hooks/usePageTitle'
 import { WIKIMEDIA_REAL_IMAGES } from '@/services/placeImageService'
 import { SparkleIcon, MountainIcon, CultureIcon, LeafIcon, BeachIcon } from '@/components/icons/LuxuryIcons'
+
+
 
 const EXPERIENCES = [
   { name: 'Hot Air Balloon — Cappadocia', location: 'Turkey', cat: 'Adventure', duration: '3h', price: '₹15,000', rating: 4.9, reviews: 840, img: WIKIMEDIA_REAL_IMAGES['cappadocia'], tag: 'Bestseller' },
@@ -62,27 +65,9 @@ export default function Experiences() {
 
   const filtered = EXPERIENCES.filter(e => cat === 'All' || e.cat === cat)
 
-  const handleBookExperience = (exp) => {
+  const handleBookExperience = (exp: any) => {
     toast.success(`🎉 Booking ${exp.name}... Redirecting to confirmation!`)
-    router.push('/bookings', {
-      state: {
-        newBooking: {
-          id: `bk-exp-${Date.now()}`,
-          type: 'Activity',
-          title: exp.name,
-          subtitle: `${exp.location} · Duration: ${exp.duration}`,
-          dates: 'Confirmed Reservation',
-          time: 'Check voucher details',
-          terminal: '★ CURATED EXPERIENCE',
-          status: 'Confirmed',
-          isCompleted: false,
-          price: exp.price,
-          ref: `EXP-${Math.floor(1000 + Math.random() * 9000)}`,
-          img: exp.img,
-          icon: '🎯',
-        },
-      },
-    })
+    router.push('/bookings')
   }
 
   return (
@@ -131,7 +116,7 @@ export default function Experiences() {
               animate="animate"
               exit={{ opacity: 0, transition: { duration: 0.15 } }}
             >
-              {filtered.map((exp) => {
+              {filtered.map((exp: any) => {
                 const ts = TAG_COLORS[exp.tag] || {}
                 return (
                   <motion.div

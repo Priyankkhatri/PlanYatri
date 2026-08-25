@@ -1,5 +1,6 @@
 'use client';
-import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -100,7 +101,7 @@ export default function LoginPage() {
     },
   })
 
-  const switchTab = (t) => {
+  const switchTab = (t: any) => {
     setTab(t)
     dispatch(clearError())
     formik.resetForm()

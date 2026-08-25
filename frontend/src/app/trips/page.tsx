@@ -1,5 +1,6 @@
 'use client';
-import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -133,7 +134,7 @@ const DEFAULT_INITIAL_JOURNEYS = [
 ]
 
 export default function Trips() {
-  const pathname = usePathname();
+  const searchParams = useSearchParams(); const location: any = {};
   const router = useRouter();
   const dispatch = useDispatch<any>()
   const toast = useToast()
@@ -277,7 +278,7 @@ export default function Trips() {
           foodINR: Math.round(incomingBudget * 0.15),
         },
       }
-      setJourneys((prev) => [added, ...prev])
+      setJourneys((prev: any) => [added, ...prev])
       setSelectedItineraryTrip(added) // DIRECTLY OPENS THE INTERACTIVE ITINERARY CUSTOMIZER!
       toast.success(`✨ Opened custom itinerary builder for ${location.state.initialDest}!`)
       window.history.replaceState({}, document.title)
@@ -290,7 +291,7 @@ export default function Trips() {
     const daysPlan = selectedItineraryTrip.daysPlan || []
     
     let totalActivitiesCost = 0
-    daysPlan.forEach((d) => {
+    daysPlan.forEach((d: any) => {
       ;(d.activities || []).forEach((a) => {
         totalActivitiesCost += Number(a.costINR) || 0
       })
@@ -320,7 +321,7 @@ export default function Trips() {
   }, [selectedItineraryTrip])
 
   // ── AI Smart Trip Optimizer Execution ──
-  const handleRunAIOptimizer = async (e) => {
+  const handleRunAIOptimizer = async (e: any) => {
     e.preventDefault()
     setIsOptimizing(true)
     try {
@@ -359,7 +360,7 @@ export default function Trips() {
           aiNotes: opt.aiOptimizationNotes || [],
         }
 
-        setJourneys((prev) => [newOptimizedTrip, ...prev])
+        setJourneys((prev: any) => [newOptimizedTrip, ...prev])
         setSelectedItineraryTrip(newOptimizedTrip)
         setShowAIOptimizerModal(false)
         toast.success('✨ AI Smart Trip Optimizer generated your complete itinerary!')
@@ -396,7 +397,7 @@ export default function Trips() {
 
     const updatedTrip = { ...selectedItineraryTrip, daysPlan: updatedDaysPlan }
     setSelectedItineraryTrip(updatedTrip)
-    setJourneys((prev) => prev.map((j) => (j._id === updatedTrip._id ? updatedTrip : j)))
+    setJourneys((prev: any) => prev.map((j: any) => (j._id === updatedTrip._id ? updatedTrip : j)))
     setShowAddActivityModal(false)
     setNewActName('')
     setNewActDesc('')
@@ -410,7 +411,7 @@ export default function Trips() {
       updatedDaysPlan[dayIdx].activities.splice(actIdx, 1)
       const updatedTrip = { ...selectedItineraryTrip, daysPlan: updatedDaysPlan }
       setSelectedItineraryTrip(updatedTrip)
-      setJourneys((prev) => prev.map((j) => (j._id === updatedTrip._id ? updatedTrip : j)))
+      setJourneys((prev: any) => prev.map((j: any) => (j._id === updatedTrip._id ? updatedTrip : j)))
       toast.info('🗑️ Activity removed. Budget recalculated.')
     }
   }
@@ -437,7 +438,7 @@ export default function Trips() {
     }
 
     setSelectedItineraryTrip(updatedTrip)
-    setJourneys((prev) => prev.map((j) => (j._id === updatedTrip._id ? updatedTrip : j)))
+    setJourneys((prev: any) => prev.map((j: any) => (j._id === updatedTrip._id ? updatedTrip : j)))
     setShowAddCityModal(false)
     setNewCityName('')
     toast.success(`📍 Added ${newCityObj.name} to multi-city route!`)
@@ -452,7 +453,7 @@ export default function Trips() {
       dest: `${selectedItineraryTrip.dest} (My Copy)`,
       statusTag: 'PLANNING',
     }
-    setJourneys((prev) => [duplicated, ...prev])
+    setJourneys((prev: any) => [duplicated, ...prev])
     setSelectedItineraryTrip(duplicated)
     setShowShareModal(false)
     toast.success('📋 Cloned trip to your personal journeys successfully!')
@@ -480,29 +481,7 @@ export default function Trips() {
       setShowPaymentModal(false)
       toast.success(`💳 Payment Successful! Confirmed reservations for ${selectedItineraryTrip.dest}`)
 
-      router.push('/bookings', {
-        state: {
-          newBookings: [
-            {
-              id: `bk-stay-${Date.now()}`,
-              type: 'Stay',
-              title: `${selectedItineraryTrip.dest} Luxury Villa Stay`,
-              subtitle: `Primary Stay in ${mainCity} (${selectedItineraryTrip.days || 7} Days)`,
-              dates: selectedItineraryTrip.dates || 'Upcoming Immersion',
-              time: 'Check-in 03:00 PM',
-              terminal: '★ LUXURY RESIDENCE',
-              status: 'Confirmed',
-              isCompleted: false,
-              price: `₹${hotelCost.toLocaleString('en-IN')}`,
-              ref: `HST-${Math.floor(1000 + Math.random() * 9000)}`,
-              img: selectedItineraryTrip.img,
-              icon: '🏨',
-            },
-            {
-              id: `bk-flt-${Date.now() + 1}`,
-              type: 'Flight',
-              title: `Flight to ${mainCity}`,
-              subtitle: `Inter-City Express Flight (${selectedItineraryTrip.subtitle || mainCity})`,
+      router.push('/bookings')`,
               dates: selectedItineraryTrip.dates || 'Upcoming Immersion',
               time: 'Confirmed Booking',
               terminal: 'Terminal 3 • Gate B12',
@@ -553,13 +532,13 @@ export default function Trips() {
       expenses: { transportINR: 12000, hotelINR: 20000, activitiesINR: 4000, foodINR: 8000 },
     }
 
-    setJourneys((prev) => [newObj, ...prev])
+    setJourneys((prev: any) => [newObj, ...prev])
     setShowCreateModal(false)
     setNewTripDest('')
     toast.success(`🎉 Created itinerary for ${newObj.dest}!`)
   }
 
-  const activeJourneysList = journeys.filter((j) =>
+  const activeJourneysList = journeys.filter((j: any) =>
     filterTab === 'Upcoming' ? j.status !== 'Past' : j.status === 'Past'
   )
 
@@ -663,7 +642,7 @@ export default function Trips() {
                           <button
                             className="text-danger"
                             onClick={() => {
-                              setJourneys((prev) => prev.filter((j) => j._id !== journey._id))
+                              setJourneys((prev: any) => prev.filter((j: any) => j._id !== journey._id))
                               setMenuOpenId(null)
                               toast.info('Journey removed.')
                             }}
@@ -1290,8 +1269,8 @@ export default function Trips() {
                             type="checkbox"
                             checked={aiInterests.includes(intr)}
                             onChange={(e: any) => {
-                              if (e.target.checked) setAiInterests((p) => [...p, intr])
-                              else setAiInterests((p) => p.filter((x) => x !== intr))
+                              if (e.target.checked) setAiInterests((p: any) => [...p, intr])
+                              else setAiInterests((p: any) => p.filter((x) => x !== intr))
                             }}
                           />
                           <span>{intr}</span>

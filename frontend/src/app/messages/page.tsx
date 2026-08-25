@@ -1,4 +1,6 @@
 'use client';
+import Link from 'next/link';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import Sidebar from '@/components/Sidebar'
@@ -230,7 +232,7 @@ export default function Messages() {
   const messagesEndRef = useRef<any>(null)
   const callTimerRef = useRef<any>(null)
 
-  const activeContact = contacts.find((c) => c.id === activeContactId) || contacts[0]
+  const activeContact = contacts.find((c: any) => c.id === activeContactId) || contacts[0]
   const currentMessages = conversations[activeContactId] || []
 
   // ── Auto Scroll ──
@@ -261,7 +263,7 @@ export default function Messages() {
             })
           })
 
-          setConversations((prev) => {
+          setConversations((prev: any) => {
             const merged = { ...prev }
             Object.keys(remoteGrouped).forEach((cid) => {
               merged[cid] = [...(prev[cid] || []), ...remoteGrouped[cid]]
@@ -293,7 +295,7 @@ export default function Messages() {
               time: new Date(row.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             }
 
-            setConversations((prev) => {
+            setConversations((prev: any) => {
               const currentList = prev[cid] || []
               if (currentList.some((m) => m.id === incomingMsg.id)) return prev
               return {
@@ -316,7 +318,7 @@ export default function Messages() {
     if (showCallModal) {
       setCallDuration(0)
       callTimerRef.current = setInterval(() => {
-        setCallDuration((d) => d + 1)
+        setCallDuration((d: any) => d + 1)
       }, 1000)
     } else {
       if (callTimerRef.current) clearInterval(callTimerRef.current)
@@ -333,7 +335,7 @@ export default function Messages() {
   }
 
   // ── 3. SEND MESSAGE HANDLER ──
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = async (e: any) => {
     e.preventDefault()
     if (!messageInput.trim()) return
 
@@ -348,14 +350,14 @@ export default function Messages() {
     }
 
     // 1. Optimistic UI update
-    setConversations((prev) => ({
+    setConversations((prev: any) => ({
       ...prev,
       [activeContactId]: [...(prev[activeContactId] || []), localMsg],
     }))
     setMessageInput('')
 
     // 2. Update contact preview snippet
-    setContacts((prev) =>
+    setContacts((prev: any) =>
       prev.map((c: any) => (c.id === activeContactId ? { ...c, lastMsg: textToSend, time: nowTime } : c))
     )
 
@@ -394,12 +396,12 @@ export default function Messages() {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           }
 
-          setConversations((prev) => ({
+          setConversations((prev: any) => ({
             ...prev,
             [1]: [...(prev[1] || []), aiReply],
           }))
 
-          setContacts((prev) =>
+          setContacts((prev: any) =>
             prev.map((c: any) => (c.id === 1 ? { ...c, lastMsg: replyContent, time: aiReply.time } : c))
           )
 
@@ -428,7 +430,7 @@ export default function Messages() {
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         }
 
-        setConversations((prev) => ({
+        setConversations((prev: any) => ({
           ...prev,
           [activeContactId]: [...(prev[activeContactId] || []), replyBuddy],
         }))
@@ -438,7 +440,7 @@ export default function Messages() {
 
   // ── 4. CONNECT WITH DISCOVERED TRAVEL BUDDY ──
   const handleConnectWithPerson = (person) => {
-    const existingContact = contacts.find((c) => c.name === person.name)
+    const existingContact = contacts.find((c: any) => c.name === person.name)
     let targetId = existingContact ? existingContact.id : person.id
 
     if (!existingContact) {
@@ -454,9 +456,9 @@ export default function Messages() {
         online: person.online,
         category: 'Buddy',
       }
-      setContacts((prev) => [newContact, ...prev])
+      setContacts((prev: any) => [newContact, ...prev])
 
-      setConversations((prev) => ({
+      setConversations((prev: any) => ({
         ...prev,
         [person.id]: [
           {
@@ -475,13 +477,13 @@ export default function Messages() {
 
   // Filter contacts by search
   const filteredContacts = contacts.filter(
-    (c) =>
+    (c: any) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.role.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   // Filter people directory
-  const filteredPeople = PEOPLE_DIRECTORY.filter((p) => {
+  const filteredPeople = PEOPLE_DIRECTORY.filter((p: any) => {
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -652,7 +654,7 @@ export default function Messages() {
                 </span>
               </div>
 
-              {currentMessages.map((msg) => {
+              {currentMessages.map((msg: any) => {
                 const isMe = msg.from === 'me'
                 return (
                   <div key={msg.id} className={`msg-bubble-row ${isMe ? 'me' : 'them'}`}>

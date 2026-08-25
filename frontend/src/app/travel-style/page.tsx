@@ -1,5 +1,6 @@
 'use client';
-import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
@@ -356,7 +357,7 @@ export default function TravelStyle() {
   }, [answers.landscape])
 
   const handleSelectOption = (dimension, val) => {
-    setAnswers((prev) => ({ ...prev, [dimension]: val }))
+    setAnswers((prev: any) => ({ ...prev, [dimension]: val }))
     if (step < 4) {
       setStep((s) => s + 1)
     } else {
@@ -366,13 +367,7 @@ export default function TravelStyle() {
   }
 
   const handlePlanInTrips = (dest) => {
-    router.push('/trips', {
-      state: {
-        initialDest: `${dest.name}, ${dest.country}`,
-        initialImg: dest.img,
-        initialBudget: parseInt(dest.priceINR.replace(/[^0-9]/g, '')) || 45000,
-      },
-    })
+    router.push('/trips')
   }
 
   return (
@@ -457,7 +452,7 @@ export default function TravelStyle() {
                 </div>
 
                 <div className="sc-traits-bars">
-                  {activeArchetype.traits.map((t: any, idx: any) => (
+                  {activeArchetype.traits.map((t, idx) => (
                     <div key={idx} className="sc-trait-line">
                       <div className="sc-trait-hdr">
                         <span>{t.name}</span>
@@ -502,7 +497,7 @@ export default function TravelStyle() {
                 </div>
 
                 <div className="tqw-options-grid">
-                  {QUESTIONS[step - 1].options.map((opt) => {
+                  {QUESTIONS[step - 1].options.map((opt: any) => {
                     const isSelected = answers[QUESTIONS[step - 1].dimension] === opt.val
                     return (
                       <div
