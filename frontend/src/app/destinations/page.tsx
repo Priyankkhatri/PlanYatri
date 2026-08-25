@@ -553,7 +553,7 @@ export default function Destinations() {
       const res = await api.post('/gemini/generate-destinations', { prompt: currentPrompt, count: 3 })
       if (res.data?.success && Array.isArray(res.data.destinations) && res.data.destinations.length > 0) {
         generatedDests = await Promise.all(
-          res.data.destinations.map(async (d) => {
+          res.data.destinations.map(async (d: any) => {
             const realImg = await getRealPlaceImage(d.imageQuery || d.name || currentPrompt, d.img)
             return {
               ...d,
@@ -619,7 +619,7 @@ export default function Destinations() {
     setAiSearchTag(currentPrompt)
     setDestList((prev: any) => [
       ...generatedDests,
-      ...prev.filter((p) => !generatedDests.some((n) => n.id === p.id)),
+      ...prev.filter((p: any) => !generatedDests.some((n: any) => n.id === p.id)),
     ])
 
     setChatHistory((prev: any) => [
@@ -702,17 +702,7 @@ export default function Destinations() {
   const visibleDestinations = showAllJourneys ? filtered : filtered.slice(0, 6)
 
   const handlePlanJourney = (dest: any) => {
-    router.push('/trips', {
-      state: {
-        initialDest: dest.name,
-        initialImg: dest.img,
-        initialBudget: dest.totalBudgetINR || (dest.priceINR ? dest.priceINR * (dest.peopleCount || 1) : 50000),
-        initialDays: dest.daysCount || 4,
-        initialPeople: dest.peopleCount || 4,
-        initialDesc: dest.description,
-        autoOpenCustomizer: true,
-      },
-    })
+    router.push('/trips')
   }
 
   return (
@@ -986,7 +976,7 @@ export default function Destinations() {
                 <span className="refine-label">ACTIVITY STYLE</span>
                 <div className="refine-checkbox-list">
                   {Object.keys(activities).map((act: any) => {
-                    const checked = activities[act]
+                    const checked = (activities as any)[act]
                     return (
                       <label key={act} className="refine-check-item" onClick={() => toggleActivity(act)}>
                         <span className={`refine-custom-checkbox ${checked ? 'checked' : ''}`}>
@@ -1039,7 +1029,7 @@ export default function Destinations() {
               {/* ── AI SPOTLIGHT HERO SHOWCASE (When AI generates tailored itinerary) ── */}
               <AnimatePresence>
               {aiSpotlight && (
-                <motion.section className="ai-spotlight-card" variants={spotlightEnter} initial="initial" animate="animate" exit="exit">
+                <motion.section className="ai-spotlight-card" variants={spotlightEnter as any} initial="initial" animate="animate" exit="exit">
                   <div className="asc-img-wrap">
                     <img src={aiSpotlight.img} alt={aiSpotlight.name} className="asc-img" />
                     <div className="asc-badge-floating">
@@ -1155,7 +1145,7 @@ export default function Destinations() {
               {/* Destination Cards 3-Column Grid */}
               <motion.div
                 className="curated-grid"
-                variants={staggerGrid}
+                variants={staggerGrid as any}
                 initial="animate"
                 animate="animate"
                 key={activeCategory + activeTags.join('') + sortOption}
@@ -1163,7 +1153,7 @@ export default function Destinations() {
                 {visibleDestinations.map((dest: any) => {
                   const isHearted = isFavorite(dest.id) || liked[dest.id]
                   return (
-                    <motion.article key={dest.id} className="escape-card" variants={cardEnter} whileHover={{ y: -7, scale: 1.015 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 340, damping: 22 }} onClick={() => setSelectedModalDest(dest)}>
+                    <motion.article key={dest.id} className="escape-card" variants={cardEnter as any} whileHover={{ y: -7, scale: 1.015 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 340, damping: 22 }} onClick={() => setSelectedModalDest(dest)}>
                       {/* Image Frame */}
                       <div className="escape-img-container">
                         <img
