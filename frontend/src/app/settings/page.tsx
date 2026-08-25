@@ -51,7 +51,7 @@ export default function Settings() {
     }
   }, [userInfo])
 
-  const [notifPrefs, setNotifPrefs] = useState({ bookingUpdates:true, priceAlerts:true, tripReminders:true, newsletters:false, smsAlerts:false, pushNotif:true })
+  const [notifPrefs, setNotifPrefs] = useState<Record<string, any>>({ bookingUpdates:true, priceAlerts:true, tripReminders:true, newsletters:false, smsAlerts:false, pushNotif:true })
   const [privacy, setPrivacy] = useState({ profilePublic:true, showTrips:true, showReviews:true, dataSharing:false })
   const [prefs, setPrefs] = useState({ currency:'INR', language:'English', units:'Metric', seatPref:'Window', mealPref:'Vegetarian' })
 
