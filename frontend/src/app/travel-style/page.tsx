@@ -452,7 +452,7 @@ export default function TravelStyle() {
                 </div>
 
                 <div className="sc-traits-bars">
-                  {activeArchetype.traits.map((t, idx) => (
+                  {activeArchetype.traits.map((t: any, idx: any) => (
                     <div key={idx} className="sc-trait-line">
                       <div className="sc-trait-hdr">
                         <span>{t.name}</span>
