@@ -89,7 +89,7 @@ export default function Settings() {
     toast.success('📦 Travel data export downloaded!')
   }
 
-  const Toggle = ({ checked, onChange }) => (
+  const Toggle = ({ checked, onChange }: { checked?: any; onChange?: any }) => (
     <button className={`settings-toggle ${checked ? 'settings-toggle--on' : ''}`} onClick={onChange}>
       <span className="settings-toggle-thumb" />
     </button>
