@@ -50,7 +50,7 @@ export default function Dashboard() {
     return () => clearTimeout(t)
   }, [dispatch])
 
-  const toggleHeart = (e, id) => {
+  const toggleHeart = (e: any, id: any) => {
     e.stopPropagation()
     setLiked((prev) => ({ ...prev, [id]: !prev[id] }))
   }
