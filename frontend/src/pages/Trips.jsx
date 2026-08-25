@@ -140,7 +140,7 @@ export default function Trips() {
   const dispatch = useDispatch()
   const toast = useToast()
 
-  usePageTitle('My Journeys — GlobeTrotter')
+  usePageTitle('My Journeys — PlanYatri')
 
   const { userInfo } = useSelector((state) => state.auth)
   const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
@@ -393,7 +393,7 @@ export default function Trips() {
       }
     } catch (err) {
       console.error(err)
-      toast.info('Generated itinerary using GlobeTrotter optimization engine.')
+      toast.info('Generated itinerary using PlanYatri optimization engine.')
     } finally {
       setIsOptimizing(false)
     }
@@ -604,7 +604,7 @@ export default function Trips() {
             <header className="journeys-top-header">
               <div className="journeys-title-group">
                 <div className="badge-hackathon-row">
-                  <span className="badge-hackathon">GLOBETROTTER MULTI-CITY ENGINE</span>
+                  <span className="badge-hackathon">PLANYATRI MULTI-CITY ENGINE</span>
                   <span className="badge-ai-live" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                     <SparkleIcon size={12} color="#D4A843" /> PLANYATRI AI OPTIMIZER READY
                   </span>

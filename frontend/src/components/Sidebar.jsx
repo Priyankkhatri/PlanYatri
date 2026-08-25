@@ -55,12 +55,12 @@ export default function Sidebar() {
       <div className="sb-logo" onClick={() => navigate('/dashboard')}>
         {!collapsed ? (
           <div className="sb-logo-wanderlust">
-            <span className="sb-logo-title">Y A T R A W A Y</span>
+            <span className="sb-logo-title">P L A N Y A T R I</span>
             <span className="sb-logo-subtitle">CURATED TRAVEL</span>
           </div>
         ) : (
           <div className="sb-logo-mark">
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: '#1A1A1A' }}>Y</span>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: '#1A1A1A' }}>P</span>
           </div>
         )}
         <button className="sb-collapse-btn" onClick={e => { e.stopPropagation(); setCollapsed(p => !p) }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points={collapsed ? "9 18 15 12 9 6" : "15 18 9 12 15 6"}/></svg></button>

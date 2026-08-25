@@ -337,26 +337,42 @@ const ARCHETYPES = {
 export default function TravelStyle() {
   const navigate = useNavigate()
   const toast = useToast()
-  usePageTitle('Travel Style & Persona Discovery — GlobeTrotter')
+  usePageTitle('Travel Style & Persona Discovery — PlanYatri')
 
-  const [step, setStep] = useState(0) // 0 = Dashboard/Intro, 1-4 = Quiz Steps, 5 = Archetype Result
-  const [answers, setAnswers] = useState({
-    landscape: 'mountain',
-    pace: 'slow',
-    budget: 'boutique',
-    companion: 'solo',
+  const { userInfo } = useSelector((state) => state.auth)
+  const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
+  const userKey = isDemo ? 'demo' : (userInfo?.id || userInfo?._id || 'user')
+
+  const [step, setStep] = useState(0) // 0: Overview, 1-4: Questions, 5: Results
+  const [answers, setAnswers] = useState(() => {
+    try {
+      const storageKey = `planyatri_style_${userKey}`
+      const saved = localStorage.getItem(storageKey)
+      if (saved) return JSON.parse(saved)
+      return { landscape: 'mountain', pace: 'active', budget: 'smart', companion: 'solo' }
+    } catch {
+      return { landscape: 'mountain', pace: 'active', budget: 'smart', companion: 'solo' }
+    }
   })
 
-  // Computed Archetype
+  useEffect(() => {
+    try {
+      const storageKey = `planyatri_style_${userKey}`
+      localStorage.setItem(storageKey, JSON.stringify(answers))
+    } catch (err) {
+      console.warn('Failed to save travel style:', err)
+    }
+  }, [answers, userKey])
+
   const activeArchetype = useMemo(() => {
-    const key = answers.landscape || 'mountain'
-    return ARCHETYPES[key] || ARCHETYPES.mountain
+    const primary = answers.landscape || 'mountain'
+    return ARCHETYPES[primary] || ARCHETYPES.mountain
   }, [answers.landscape])
 
   const handleSelectOption = (dimension, val) => {
     setAnswers((prev) => ({ ...prev, [dimension]: val }))
     if (step < 4) {
-      setStep((s) => s + 1)
+      setStep((prev) => prev + 1)
     } else {
       setStep(5)
       toast.success('✨ Your Travel Style Archetype & Curated Matches are ready!')
@@ -394,9 +410,9 @@ export default function TravelStyle() {
 
             {step !== 0 && (
               <button
-                className="ts-btn-reset-quiz"
+                className="ts-restart-btn"
                 onClick={() => {
-                  setStep(0)
+                  setStep(1)
                   toast.info('Assessment restarted.')
                 }}
               >
@@ -416,7 +432,7 @@ export default function TravelStyle() {
                   <span className="tac-sub-tag">PERSONALIZED DISCOVERY</span>
                   <h2 className="tac-title">What Kind of Explorer Are You?</h2>
                   <p className="tac-desc">
-                    Answer 4 thoughtful questions regarding your ideal landscapes, daily cadence, budget tier, and companionship style. GlobeTrotter will calculate your unique Travel DNA and generate bespoke recommendations.
+                    Answer 4 thoughtful questions regarding your ideal landscapes, daily cadence, budget tier, and companionship style. PlanYatri will calculate your unique Travel DNA and generate bespoke recommendations.
                   </p>
 
                   <div className="tac-points-row">
