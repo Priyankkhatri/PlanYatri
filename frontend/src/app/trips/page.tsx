@@ -140,7 +140,7 @@ export default function Trips() {
 
   usePageTitle('My Journeys — GlobeTrotter')
 
-  const { userInfo } = useSelector((state) => state.auth)
+  const { userInfo } = useSelector((state: any) => state.auth)
   const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
   const userKey = isDemo ? 'demo' : (userInfo?.id || userInfo?._id || 'user')
 

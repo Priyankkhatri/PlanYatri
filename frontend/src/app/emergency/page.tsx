@@ -370,7 +370,7 @@ export default function Emergency() {
   const sirenIntervalRef = useRef(null)
 
   const dispatch = useDispatch()
-  const { contacts = [], loading } = useSelector((state) => state.emergency)
+  const { contacts = [], loading } = useSelector((state: any) => state.emergency)
   const toast = useToast()
 
   // 1. Initialise Redux & Geolocation

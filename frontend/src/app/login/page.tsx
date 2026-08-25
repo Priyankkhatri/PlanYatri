@@ -54,7 +54,7 @@ export default function LoginPage() {
   const { signInWithOAuth } = useAuth()
   usePageTitle('Sign In')
 
-  const { userInfo, loading, error } = useSelector((state) => state.auth)
+  const { userInfo, loading, error } = useSelector((state: any) => state.auth)
 
   const [tab,       setTab]       = useState('signin')
   const [showPass,  setShowPass]  = useState(false)

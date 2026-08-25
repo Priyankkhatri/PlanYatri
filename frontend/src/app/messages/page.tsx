@@ -180,7 +180,7 @@ const PEOPLE_DIRECTORY = [
 ]
 
 export default function Messages() {
-  const { userInfo } = useSelector((state) => state.auth)
+  const { userInfo } = useSelector((state: any) => state.auth)
   const isDemo = !userInfo || userInfo.isDemo || userInfo.email === 'ananya@example.com'
   const userName = userInfo?.name ? userInfo.name.split(' ')[0] : 'Explorer'
 

@@ -14,7 +14,7 @@ export default function Profile() {
   const router = useRouter();
   const dispatch = useDispatch()
   const toast = useToast()
-  const { userInfo } = useSelector((state) => state.auth)
+  const { userInfo } = useSelector((state: any) => state.auth)
   const { favorites, removeFavorite } = useFavorites()
 
   usePageTitle('Profile — Wanderlust')

@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   const router = useRouter();
   const dispatch = useDispatch()
-  const { userInfo } = useSelector((state) => state.auth)
+  const { userInfo } = useSelector((state: any) => state.auth)
 
   usePageTitle('Dashboard — Wanderlust')
 

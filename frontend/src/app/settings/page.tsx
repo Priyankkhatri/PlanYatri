@@ -16,7 +16,7 @@ export default function Settings() {
   const dispatch = useDispatch()
   const toast = useToast()
   const { dark, toggle } = useTheme()
-  const { userInfo } = useSelector((state) => state.auth)
+  const { userInfo } = useSelector((state: any) => state.auth)
   usePageTitle('Account Settings — PlanYatri')
 
   const [mounted, setMounted] = useState(false)
