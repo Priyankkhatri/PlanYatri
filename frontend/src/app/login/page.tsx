@@ -65,7 +65,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (userInfo) router.replace('/dashboard')
-  }, [userInfo, navigate])
+  }, [userInfo, router])
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50)
