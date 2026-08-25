@@ -601,7 +601,7 @@ export default function TravelStyle() {
                       <div className="mc-inclusions-box">
                         <span className="mc-inc-lbl">SIGNATURE HIGHLIGHTS</span>
                         <ul className="mc-inc-list">
-                          {match.highlights.map((h, i) => (
+                          {match.highlights.map((h: any, i: any) => (
                             <li key={i}>✦ {h}</li>
                           ))}
                         </ul>
