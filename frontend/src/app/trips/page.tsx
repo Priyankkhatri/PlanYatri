@@ -292,7 +292,7 @@ export default function Trips() {
     
     let totalActivitiesCost = 0
     daysPlan.forEach((d: any) => {
-      ;(d.activities || []).forEach((a) => {
+      ;(d.activities || []).forEach((a: any) => {
         totalActivitiesCost += Number(a.costINR) || 0
       })
     })

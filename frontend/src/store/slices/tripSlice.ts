@@ -6,6 +6,10 @@ export const fetchTrips = createAsyncThunk('trips/fetchTrips', async () => {
   return MOCK_TRIPS;
 });
 
+export const createTrip = createAsyncThunk('trips/createTrip', async (tripData: any) => {
+  return { id: `trip-${Date.now()}`, ...tripData };
+});
+
 export const tripSlice = createSlice({
   name: 'trips',
   initialState: { trips: MOCK_TRIPS, loading: false },
@@ -22,6 +26,11 @@ export const tripSlice = createSlice({
         state.trips[idx] = { ...state.trips[idx], ...action.payload };
       }
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(createTrip.fulfilled, (state, action: any) => {
+      state.trips.unshift(action.payload);
+    });
   }
 });
 
