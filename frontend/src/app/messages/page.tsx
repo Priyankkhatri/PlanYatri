@@ -297,7 +297,7 @@ export default function Messages() {
 
             setConversations((prev: any) => {
               const currentList = prev[cid] || []
-              if (currentList.some((m) => m.id === incomingMsg.id)) return prev
+              if (currentList.some((m: any) => m.id === incomingMsg.id)) return prev
               return {
                 ...prev,
                 [cid]: [...currentList, incomingMsg],
