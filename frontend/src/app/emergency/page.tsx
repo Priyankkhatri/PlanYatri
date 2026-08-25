@@ -654,7 +654,7 @@ export default function Emergency() {
 
   const handleDeleteContact = async (id: any) => {
     const result = await dispatch(removeContact(id))
-    if (removeContact.fulfilled.match(result)) {
+    if (result) {
       setDeleteId(null)
       toast.info('Guardian record removed.')
     }
