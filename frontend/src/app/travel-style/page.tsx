@@ -343,7 +343,7 @@ export default function TravelStyle() {
   usePageTitle('Travel Style & Persona Discovery — GlobeTrotter')
 
   const [step, setStep] = useState(0) // 0 = Dashboard/Intro, 1-4 = Quiz Steps, 5 = Archetype Result
-  const [answers, setAnswers] = useState({
+  const [answers, setAnswers] = useState<Record<string, any>>({
     landscape: 'mountain',
     pace: 'slow',
     budget: 'boutique',
@@ -498,7 +498,7 @@ export default function TravelStyle() {
 
                 <div className="tqw-options-grid">
                   {QUESTIONS[step - 1].options.map((opt: any) => {
-                    const isSelected = answers[QUESTIONS[step - 1].dimension] === opt.val
+                    const isSelected = (answers as any)[QUESTIONS[step - 1].dimension] === opt.val
                     return (
                       <div
                         key={opt.val}
