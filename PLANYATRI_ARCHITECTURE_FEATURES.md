@@ -1,6 +1,6 @@
 # 🏔️ PlanYatri — Architectural Documentation & Feature Deep-Dive
 
-Welcome to the definitive architectural guide for **PlanYatri** (`Priyankkhatri/PlanYatri`), the unified luxury travel orchestration platform result of migrating and refactoring **YatraWay** into Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, Supabase, Redux Toolkit, and Google Gemini AI.
+Welcome to the definitive architectural guide for **PlanYatri** (`Priyankkhatri/PlanYatri`), the unified luxury travel orchestration platform built on Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, Supabase, Redux Toolkit, and Google Gemini AI.
 
 ---
 
@@ -121,7 +121,7 @@ PlanYatri employs an **Editorial Luxury Aesthetics Palette**:
 - **Commits Executed**: 110+ Granular Conventional Commits (`feat`, `style`, `types`, `refactor`, `docs`, `chore`).
 - **Language Upgrade**: 100% React JS/JSX converted into strongly typed TypeScript (`.ts`/`.tsx`).
 - **Architecture**: Converted Vite SPA routing into Next.js 16 App Router file-system routes and API handlers.
-- **Zero Downtime**: All existing PlanYatri wizard components preserved and seamlessly merged with YatraWay telemetry!
+- **Zero Downtime**: All existing PlanYatri wizard components preserved and seamlessly merged with telemetry!
 
 ---
 *Generated automatically by Antigravity DevOps Migration Engine.*

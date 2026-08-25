@@ -1,6 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "tailwindcss";
 
+@import "../styles/Dashboard.css";
+@import "../styles/Trips.css";
+@import "../styles/Bookings.css";
+@import "../styles/Destinations.css";
+@import "../styles/Emergency.css";
+@import "../styles/Experiences.css";
+@import "../styles/Favorites.css";
+@import "../styles/LoginPage.css";
+@import "../styles/Messages.css";
+@import "../styles/Profile.css";
+@import "../styles/Settings.css";
+@import "../styles/Sidebar.css";
+@import "../styles/Skeleton.css";
+@import "../styles/Topbar.css";
+@import "../styles/TravelStyle.css";
+
 :root {
   --background: #f9f9f9;
   --foreground: #1a1c1c;
@@ -117,4 +133,3 @@ body {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
-

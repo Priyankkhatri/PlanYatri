@@ -1,7 +1,5 @@
 import React from 'react';
 import { Destination } from '@/types';
-import '@/styles/Destinations.css';
-
 export const DestinationCard: React.FC<{ destination: Destination }> = ({ destination }) => {
   return (
     <div className="dest-card">

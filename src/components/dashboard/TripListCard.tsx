@@ -1,7 +1,5 @@
 import React from 'react';
 import { Trip } from '@/types';
-import '@/styles/Trips.css';
-
 export const TripListCard: React.FC<{ trip: Trip }> = ({ trip }) => {
   return (
     <div className="trip-card">

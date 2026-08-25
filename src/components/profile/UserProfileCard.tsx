@@ -1,7 +1,5 @@
 import React from 'react';
 import { UserProfile } from '@/types';
-import '@/styles/Profile.css';
-
 export const UserProfileCard: React.FC<{ user: UserProfile }> = ({ user }) => {
   return (
     <div className="profile-card">

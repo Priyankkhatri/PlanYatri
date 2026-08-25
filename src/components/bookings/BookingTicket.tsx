@@ -1,7 +1,5 @@
 import React from 'react';
 import { Booking } from '@/types';
-import '@/styles/Bookings.css';
-
 export const BookingTicket: React.FC<{ booking: Booking }> = ({ booking }) => {
   return (
     <div className="booking-ticket">

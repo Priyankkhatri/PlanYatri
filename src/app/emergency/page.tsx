@@ -4,8 +4,6 @@ import React from 'react';
 import { SOSButton } from '@/components/emergency/SOSButton';
 import { MOCK_EMERGENCY_CONTACTS } from '@/data/mockData';
 import { EmergencyContactCard } from '@/components/emergency/EmergencyContactCard';
-import '@/styles/Emergency.css';
-
 export default function EmergencyPage() {
   const handleSOS = () => {
     alert('SOS Alert Sent to Primary Contacts and Local Response Services!');

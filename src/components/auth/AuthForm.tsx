@@ -3,8 +3,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { GoogleIcon } from '../icons/AuthIcons';
-import '@/styles/LoginPage.css';
-
 export const AuthForm: React.FC = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');

@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import { StyleCard } from '@/components/travel-style/StyleCard';
-import '@/styles/TravelStyle.css';
-
 export default function TravelStylePage() {
   const [selected, setSelected] = useState('luxury');
 

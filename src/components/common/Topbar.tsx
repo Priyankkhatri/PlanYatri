@@ -2,8 +2,6 @@
 
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
-import '@/styles/Topbar.css';
-
 export const Topbar: React.FC = () => {
   const { user } = useAuth();
 

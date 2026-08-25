@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import { SettingsToggle } from '@/components/settings/SettingsToggle';
-import '@/styles/Settings.css';
-
 export default function SettingsPage() {
   const [emailNotif, setEmailNotif] = useState(true);
 

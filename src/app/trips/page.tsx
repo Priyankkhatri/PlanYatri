@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import { MOCK_TRIPS } from '@/data/mockData';
 import { TripCard } from '@/components/trips/TripCard';
 import { TripFilter } from '@/components/trips/TripFilter';
-import '@/styles/Trips.css';
-
 export default function TripsPage() {
   const [filter, setFilter] = useState('all');
 

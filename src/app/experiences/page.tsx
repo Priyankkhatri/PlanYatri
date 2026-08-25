@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import '@/styles/Experiences.css';
-
 export default function ExperiencesPage() {
   return (
     <div className="experiences-container">

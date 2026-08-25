@@ -3,11 +3,16 @@
 import React, { useState } from 'react';
 import { ChatBubble } from '@/components/messages/ChatBubble';
 import { ChatInput } from '@/components/messages/ChatInput';
-import '@/styles/Messages.css';
+
+interface ChatMsg {
+  id: string;
+  text: string;
+  senderType: 'user' | 'contact';
+}
 
 export default function MessagesPage() {
-  const [messages, setMessages] = useState([
-    { id: '1', text: 'Hello! I am your PlanYatri Travel Concierge.', senderType: 'contact' as const }
+  const [messages, setMessages] = useState<ChatMsg[]>([
+    { id: '1', text: 'Hello! I am your PlanYatri Travel Concierge.', senderType: 'contact' }
   ]);
 
   const handleSend = (text: string) => {

@@ -4,8 +4,6 @@ import React, { useState } from 'react';
 import { MOCK_DESTINATIONS } from '@/data/mockData';
 import { DestinationCard } from '@/components/destinations/DestinationCard';
 import { DestinationSearch } from '@/components/destinations/DestinationSearch';
-import '@/styles/Destinations.css';
-
 export default function DestinationsPage() {
   const [search, setSearch] = useState('');
 

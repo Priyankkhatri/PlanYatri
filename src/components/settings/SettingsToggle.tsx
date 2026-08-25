@@ -1,6 +1,4 @@
 import React from 'react';
-import '@/styles/Settings.css';
-
 export const SettingsToggle: React.FC<{ label: string; checked: boolean; onChange: () => void }> = ({
   label,
   checked,

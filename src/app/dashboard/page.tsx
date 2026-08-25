@@ -5,8 +5,6 @@ import { StatCards } from '@/components/dashboard/StatCards';
 import { ExplorationMap } from '@/components/dashboard/ExplorationMap';
 import { MOCK_TRIPS } from '@/data/mockData';
 import { TripListCard } from '@/components/dashboard/TripListCard';
-import '@/styles/Dashboard.css';
-
 export default function DashboardPage() {
   return (
     <div className="db-scroll-body">

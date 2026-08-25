@@ -1,6 +1,4 @@
 import React from 'react';
-import '@/styles/Favorites.css';
-
 export const FavoriteItem: React.FC<{ title: string; image: string }> = ({ title, image }) => {
   return (
     <div className="fav-item">

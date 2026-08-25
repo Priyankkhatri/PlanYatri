@@ -3,8 +3,6 @@
 import React from 'react';
 import { MOCK_BOOKINGS } from '@/data/mockData';
 import { BookingTicket } from '@/components/bookings/BookingTicket';
-import '@/styles/Bookings.css';
-
 export default function BookingsPage() {
   return (
     <div className="bookings-container">

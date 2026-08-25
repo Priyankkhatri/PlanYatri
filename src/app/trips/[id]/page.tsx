@@ -4,8 +4,6 @@ import React from 'react';
 import { useParams } from 'next/navigation';
 import { MOCK_TRIPS } from '@/data/mockData';
 import { InteractiveMap } from '@/components/maps/InteractiveMap';
-import '@/styles/Trips.css';
-
 export default function TripDetailPage() {
   const params = useParams();
   const trip = MOCK_TRIPS.find((t) => t.id === params?.id) || MOCK_TRIPS[0];

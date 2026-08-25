@@ -1,6 +1,4 @@
 import React from 'react';
-import '@/styles/LoginPage.css';
-
 export const AuthHero: React.FC = () => {
   return (
     <div className="auth-hero">

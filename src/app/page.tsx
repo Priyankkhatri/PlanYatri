@@ -10,7 +10,7 @@ export default function Home() {
         Next-Generation Intelligent Travel Orchestration
       </h1>
       <p className="text-lg text-[#71717A] max-w-2xl font-sans">
-        Seamlessly combining YatraWay's rich telemetry &amp; emergency SOS services with PlanYatri's Next.js 16 AI wizard &amp; itinerary engine.
+        Seamlessly combining PlanYatri's rich telemetry &amp; emergency SOS services with Next.js 16 AI wizard &amp; itinerary engine.
       </p>
       
       <div className="flex flex-wrap gap-4 justify-center pt-4">
