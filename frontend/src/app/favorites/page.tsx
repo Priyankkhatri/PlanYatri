@@ -18,7 +18,7 @@ export default function Favorites() {
   const toast = useToast()
   usePageTitle('Favorite Destinations — PlanYatri')
 
-  const toggleHeart = (e, id, name) => {
+  const toggleHeart = (e: any, id: any, name: any) => {
     e.stopPropagation()
     removeFavorite(id)
     toast.info(`Removed ${name} from favorites & bucket list`)
