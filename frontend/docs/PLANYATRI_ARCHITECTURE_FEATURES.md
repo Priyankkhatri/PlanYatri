@@ -1,127 +1,161 @@
 # 🏔️ PlanYatri — Architectural Documentation & Feature Deep-Dive
 
-Welcome to the definitive architectural guide for **PlanYatri** (`Priyankkhatri/PlanYatri`), the unified luxury travel orchestration platform built on Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS, Supabase, Redux Toolkit, and Google Gemini AI.
+Welcome to the definitive architectural guide for **PlanYatri** (`Priyankkhatri/PlanYatri`), an enterprise-grade luxury travel orchestration platform built with Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4, Redux Toolkit, and Google Gemini AI.
 
 ---
 
 ## 📐 System Architecture Overview
 
-PlanYatri unites real-time telemetry, offline/online fallback state, emergency dispatch, and AI itinerary generation into a unified Next.js App Router architecture.
+PlanYatri provides an end-to-end intelligent travel planning pipeline, combining a multi-step travel wizard, a multi-tier AI cost comparison matrix, interactive destination itineraries, and live velocity telemetry.
 
 ```mermaid
 graph TD
     A[Client User Browser] --> B[Next.js 16 App Router Shell]
     
-    subgraph Frontend Core & State
-        B --> C[AppProviders Wrapper]
-        C --> D[Redux Toolkit Store]
-        C --> E[React Context Layer]
-        E --> E1[AuthContext]
-        E --> E2[FavoritesContext]
-        E --> E3[ToastContext]
-        E --> E4[ThemeContext]
+    subgraph Core UI & Shell
+        B --> C[Header & Luxury Navigation]
+        B --> D[Interactive Sidebar]
+        B --> E[Footer & System Telemetry]
+        B --> F[VelocityPulse Motion Graphics]
     end
 
-    subgraph Feature Modules
-        B --> F[Dashboard Telemetry & Maps]
-        B --> G[Interactive Travel Wizard]
-        B --> H[Trip & Booking Management]
-        B --> I[Emergency SOS Engine]
-        B --> J[Realtime Buddy Chat]
+    subgraph PlanYatri Travel Wizard Module
+        B --> G1[Destination Selection /wizard/destination]
+        G1 --> G2[Travel Dates Selector /wizard/dates]
+        G2 --> G3[Companions & Travelers /wizard/travelers]
+        G3 --> G4[Comfort & Budget Level /wizard/comfort]
+        G4 --> G5[Accommodation & Stays /wizard/stays]
+        G5 --> G6[Transport Options /wizard/transport]
+        G6 --> G7[Velocity Telemetry Loading /wizard/loading]
+        G7 --> G8[Multi-Tier AI Comparison Matrix /wizard/comparison]
     end
 
-    subgraph Backend API Routes & Services
-        F --> K[App API Route Handlers]
-        G --> K
+    subgraph Itinerary & Analytics Suite
+        B --> H[Dynamic Itinerary Engine /itinerary/destination]
+        B --> I[Travel Dashboard /dashboard]
+        B --> J[Cost & Telemetry Analytics /dashboard/analytics]
+    end
+
+    subgraph Backend & API Services
+        G8 --> K[Express REST API / Node.js]
         H --> K
         I --> K
-        J --> L[Supabase Realtime Engine]
-        K --> M[Google Gemini 2.5 Flash API]
-        K --> N[PostgreSQL / Supabase Auth & DB]
+        K --> L[Google Gemini 2.5 Flash AI Engine]
+        K --> M[Supabase PostgreSQL Database]
     end
 ```
 
 ---
 
-## ⚡ Unified Feature Breakdown
+## ⚡ PlanYatri Core Feature Breakdown
 
-### 1. 🧙‍♂️ Interactive Travel Wizard (`/wizard/...`)
-- **Multi-step Travel Configurator**: Dynamic step wizard covering destination selection, travel dates, companion profile, comfort preferences, stay style, transport modes, and AI comparison matrices.
-- **Motion Graphics Telemetry**: Integrated **VelocityPulse** component rendering smooth real-time pulsing animations for telemetry calculations.
+### 1. 🧙‍♂️ Multi-Step Interactive Travel Wizard (`/wizard/...`)
+PlanYatri features an interactive multi-step configurator that captures user travel parameters before invoking AI itinerary generation:
+
+1. **Destination Selector (`/wizard/destination`)**: Searchable global destination picker with high-resolution visual previews.
+2. **Date Configurator (`/wizard/dates`)**: Interactive date-range calendar picker for trip duration.
+3. **Companion & Traveler Selector (`/wizard/travelers`)**: Single, Couple, Family, or Group traveler profile config.
+4. **Comfort & Budget Level (`/wizard/comfort`)**: Slider & card controls for budget flexibility (Nomad vs Explorer vs Sovereign).
+5. **Accommodation & Stays (`/wizard/stays`)**: Hotel, Boutique Resort, Lakeside Tents, or Heritage Glamping options.
+6. **Transport Modes (`/wizard/transport`)**: Shared Transfer, Private SUV (Innova/Xylo), or Luxury 4x4 Off-roader (Fortuner).
+7. **Velocity Telemetry Loading (`/wizard/loading`)**: Animated loading state powered by `VelocityPulse`.
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor User
-    participant Wizard as Wizard UI
-    participant API as /api/gemini
-    participant AI as Gemini 2.5 Engine
-    participant Store as Redux Trip Store
+    participant Wizard as Travel Wizard
+    participant Telemetry as VelocityPulse Loading
+    participant Engine as PlanYatri AI Engine
+    participant Matrix as Comparison Matrix UI
 
-    User->>Wizard: Select Destination & Preferences
-    Wizard->>API: POST /api/gemini (payload)
-    API->>AI: Generate Luxe Itinerary
-    AI-->>API: JSON Itinerary & Cost Matrix
-    API-->>Wizard: Return Optimized Itinerary
-    Wizard->>Store: Dispatch addTrip(newTrip)
-    Wizard-->>User: Render Interactive Itinerary
+    User->>Wizard: Select Destination, Dates, Stays & Transport
+    Wizard->>Telemetry: Trigger Realtime Calculation Animation
+    Telemetry->>Engine: Send Config Payload (Destination + Preferences)
+    Engine->>Engine: Run Tier Cost & Activity Allocation Matrix
+    Engine-->>Matrix: Return 3 Tiers (Nomad, Explorer, Sovereign)
+    Matrix-->>User: Display Comparison Cards & Budget Allocation Graphs
 ```
 
 ---
 
-### 2. 🚨 Emergency SOS & Concierge Dispatch (`/emergency`)
-- **Instant SOS Signal**: Pulsing, high-visibility emergency trigger sending location coordinates directly to pre-configured emergency contacts and regional tourist helplines.
-- **Offline Protocol**: Graceful fallback storing emergency telemetry locally via `useStorage` when network connectivity drops.
+### 2. 💎 Multi-Tier AI Comparison Matrix (`/wizard/comparison`)
+PlanYatri automatically generates a 3-tier comparative matrix so travelers can evaluate budget vs luxury options:
+
+| Tier | Name | Estimated Price | Key Transportation | Accommodation Style |
+| :--- | :--- | :--- | :--- | :--- |
+| **Budget** | **The Nomad** | ₹35,000 / person | Shared Taxi / Group Transfers | Authentic Homestays & Hostels |
+| **Balanced** | **The Explorer** *(Most Popular)* | ₹78,000 / person | Private Xylo / Innova SUV | 3-Star Boutique Hotels & Tents |
+| **Luxury** | **The Sovereign** | ₹1,55,000 / person | Private 4x4 Fortuner Off-roader | Luxury Heritage Camps with Butler |
+
+#### 📊 Cost Analytics & Allocation Engine
+- **Transportation Allocation**: 35% of overall budget.
+- **Accommodation Allocation**: 45% of overall budget.
+- **Potential Savings Calculator**: Instant calculation of savings delta (e.g., ₹35,500 potential saving).
+- **Luxury Delta Metric**: Highlights premium add-ons (+ ₹77,000 for butler & private glamping).
+
+---
+
+### 3. 🗺️ Destination Itinerary Engine (`/itinerary/[destination]`)
+- **Day-by-Day Activity Timelines**: Hour-by-hour schedules covering arrival, hotel check-in, guided tours, and dining.
+- **Interactive Map Visualizer**: Integrated map rendering activity coordinates and route polylines.
+- **Altitude & Climate Telemetry**: Real-time environmental metrics for high-altitude destinations.
+
+---
+
+### 4. 📈 Telemetry Dashboard & Analytics Suite (`/dashboard` & `/dashboard/analytics`)
+- **Active Trip Monitoring**: Instant tracking of upcoming expeditions, budget vs spent metrics, and reservation vouchers.
+- **Velocity Analytics Graphs**: Interactive breakdown of spending patterns, trip progress, and potential saving alerts.
+
+---
+
+## 🎨 Motion Graphics & Luxury Design System
+
+PlanYatri employs an **Editorial Luxury Design Tokens Engine**:
 
 ```mermaid
 flowchart LR
-    A[User Presses SOS Button] --> B{Network Available?}
-    B -- Yes --> C[POST /api/emergency]
-    C --> D[Supabase Realtime Broadcast]
-    D --> E[Emergency Responders & Primary Contacts Notified]
-    B -- No --> F[Store Alert in LocalStorage]
-    F --> G[Background Sync when Online]
+    A[Tailwind CSS v4 Engine] --> B[Material Symbols Iconset]
+    A --> C[CSS Theme Tokens]
+    C --> D[Surface Low / Container High Palette]
+    C --> E[Glassmorphism Blur Panels]
+    C --> F[VelocityPulse Shimmer Canvas]
 ```
 
----
+### Color Palette Tokens
+- **Primary Brand Purple**: `#4D41DF` (`var(--color-primary)`)
+- **Luxury Gold Accent**: `#D4A843` / `#B65C00` (`var(--color-tertiary)`)
+- **Warm Editorial Background**: `#FAF8F5` (`var(--color-background)`)
+- **Surface Container**: `#EEEEEE` (`var(--color-surface-container)`)
+- **Obsidian Typography**: `#18181B` (`var(--color-on-surface)`)
 
-### 3. 🗺️ Exploration Map & Visual Telemetry (`/dashboard`)
-- **Dual Map Engine**: Combines **Leaflet Interactive Maps** with custom **Google Animated Map** vector overlays.
-- **Metric Cards**: Real-time spending tracker, active trip progress indicators, and saved luxury destination bookmarks.
-
----
-
-### 4. 💬 Realtime Companion Chat & Travel Buddies (`/messages`)
-- **Supabase Realtime Sync**: Instant messaging channel allowing solo travelers and tour groups to coordinate excursions in real-time.
-- **Automated Profile Trigger**: PostgreSQL database trigger `on_auth_user_created` automatically provisions user profiles upon signup.
-
----
-
-## 🎨 Design System & Motion Graphics
-
-PlanYatri employs an **Editorial Luxury Aesthetics Palette**:
-
-| Color Name | Hex Code | Purpose |
-| :--- | :--- | :--- |
-| **Warm Canvas** | `#FAF8F5` | Primary Application Background |
-| **Obsidian Slate** | `#18181B` | Primary Typography & Dark UI Panels |
-| **Champagne Gold** | `#D4A843` | Luxury Badges & Accent Highlights |
-| **Paper Border** | `#EFEAE2` | Subtle Divider & Card Boundaries |
-| **Crimson SOS** | `#EF4444` | High-Priority Emergency Signals |
-
-### Motion Graphics & Animations
-- **Framer Motion PageTransitions**: Smooth opacity & Y-axis translation on route changes.
-- **VelocityPulse**: Canvas/SVG shimmer animations depicting live telemetry updates.
-- **Card Hover Elevation**: Cubic-bezier transition curves on destination cards.
+### Motion Graphics Components
+- **`VelocityPulse`**: Live canvas & SVG pulsing status indicator rendering real-time telemetry updates.
+- **Framer Motion Route Animations**: Smooth page transitions with vertical y-axis translation and cubic-bezier easing curves.
+- **Elevation Hover States**: Subtle hover elevation (`hover:translate-y-[-4px]`) on comparison cards.
 
 ---
 
-## 📦 Migration Summary Highlights
+## 🛠️ Project Workspace Structure
 
-- **Commits Executed**: 110+ Granular Conventional Commits (`feat`, `style`, `types`, `refactor`, `docs`, `chore`).
-- **Language Upgrade**: 100% React JS/JSX converted into strongly typed TypeScript (`.ts`/`.tsx`).
-- **Architecture**: Converted Vite SPA routing into Next.js 16 App Router file-system routes and API handlers.
-- **Zero Downtime**: All existing PlanYatri wizard components preserved and seamlessly merged with telemetry!
+\`\`\`text
+PlanYatri/
+├── frontend/                     👉 Next.js 16 App Router Frontend (React 19, TypeScript, Tailwind)
+│   ├── src/app/                  👉 App Router Pages (/wizard/..., /itinerary/[destination], /dashboard, etc.)
+│   ├── src/components/           👉 UI Components (VelocityPulse, Header, Sidebar, Footer, StatCards, etc.)
+│   ├── docs/                     👉 System Architecture Documentation (PLANYATRI_ARCHITECTURE_FEATURES.md)
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── backend/                      👉 Express REST API & AI Gemini Microservice (TypeScript)
+│   ├── src/controllers/          👉 Controllers (trips, bookings, emergency, gemini)
+│   ├── src/routes/               👉 Endpoint Routes (/api/trips, /api/gemini, /api/emergency)
+│   ├── sql/                      👉 Supabase SQL Schema (supabase_migration.sql)
+│   ├── package.json
+│   └── tsconfig.json
+│
+└── README.md                     👉 Root Monorepo Developer Quickstart Guide
+\`\`\`
 
 ---
-*Generated automatically by Antigravity DevOps Migration Engine.*
+*PlanYatri Architectural Documentation v2.0.*
