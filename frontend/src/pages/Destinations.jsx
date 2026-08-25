@@ -7,7 +7,8 @@ import { getRealPlaceImage, WIKIMEDIA_REAL_IMAGES } from '../services/placeImage
 import InteractiveMap from '../components/InteractiveMap'
 import GoogleAnimatedMap from '../components/GoogleAnimatedMap'
 import { useFavorites } from '../context/FavoritesContext'
-import { SparkleIcon, IndiaIcon, MountainIcon, WaveIcon, MonumentIcon, LeafIcon, GlobeIcon, CalendarIcon, ShieldIcon, CompassIcon, MapPinIcon } from '../components/icons/LuxuryIcons'
+import { useToast } from '../context/ToastContext'
+import { SparkleIcon, IndiaIcon, MountainIcon, WaveIcon, MonumentIcon, LeafIcon, GlobeIcon, CalendarIcon, ShieldIcon, CompassIcon, MapPinIcon, PlaneIcon } from '../components/icons/LuxuryIcons'
 import './Destinations.css'
 
 /* ── Animation Variants ── */
@@ -402,12 +403,28 @@ export default function Destinations() {
   // ── Core Filters ──
   const [destList, setDestList] = useState(INITIAL_DESTINATIONS)
   const [search, setSearch] = useState(location.state?.search || '')
+  const toast = useToast()
 
   useEffect(() => {
     if (location.state?.search) {
       setSearch(location.state.search)
     }
-  }, [location.state])
+    if (location.state?.selectedDest) {
+      const target = location.state.selectedDest.toLowerCase()
+      const found = destList.find(
+        (d) =>
+          d.name.toLowerCase().includes(target) ||
+          d.region?.toLowerCase().includes(target) ||
+          d.country?.toLowerCase().includes(target)
+      )
+      if (found) {
+        setSelectedModalDest(found)
+      } else {
+        setSearch(location.state.selectedDest)
+      }
+    }
+  }, [location.state, destList])
+
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeTags, setActiveTags] = useState(['ADVENTURE', 'CULTURE', 'HERITAGE', 'WELLNESS', 'COASTAL'])
   const [budgetMax, setBudgetMax] = useState(150000) // in INR default
@@ -457,6 +474,12 @@ export default function Destinations() {
   const toggleHeart = (e, dest) => {
     e.stopPropagation()
     toggleFavorite(dest)
+    const currentlyFav = isFavorite(dest.id) || liked[dest.id]
+    if (!currentlyFav) {
+      toast.success(`❤️ Saved ${dest.name} to Favorites!`)
+    } else {
+      toast.info(`Removed ${dest.name} from Favorites.`)
+    }
     setLiked((prev) => ({ ...prev, [dest.id]: !prev[dest.id] }))
   }
 
@@ -1372,13 +1395,55 @@ export default function Destinations() {
                 </ul>
               </div>
 
-              <div className="dest-modal-actions">
+              <div className="dest-modal-actions" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 <button
                   className="dest-modal-plan-btn"
                   onClick={() => handlePlanJourney(selectedModalDest)}
                 >
                   PLAN THIS ESCAPE IN MY TRIPS ({formatPrice(selectedModalDest)}) →
                 </button>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button
+                    onClick={() => navigate('/bookings', { state: { initialDest: selectedModalDest.name, city: selectedModalDest.region || selectedModalDest.name } })}
+                    style={{
+                      flex: 1,
+                      padding: '12px 16px',
+                      background: '#F4EFE6',
+                      color: '#18181B',
+                      border: '1px solid #E5DFD5',
+                      borderRadius: 12,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                    }}
+                  >
+                    <PlaneIcon size={14} color="#D4A843" /> Book Flights & Stays
+                  </button>
+                  <button
+                    onClick={() => navigate('/messages', { state: { prompt: `Tell me insider tips, hidden gems, and best places to eat in ${selectedModalDest.name}` } })}
+                    style={{
+                      flex: 1,
+                      padding: '12px 16px',
+                      background: '#18181B',
+                      color: '#D4A843',
+                      border: '1px solid rgba(212, 168, 67, 0.3)',
+                      borderRadius: 12,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                    }}
+                  >
+                    <SparkleIcon size={13} color="#D4A843" /> Ask AI Concierge
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
