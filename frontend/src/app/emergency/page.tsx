@@ -647,7 +647,7 @@ export default function Emergency() {
 
   const handleAddContact = async (c: any) => {
     const result = await dispatch(addContact(c))
-    if (addContact.fulfilled.match(result)) {
+    if (result) {
       toast.success('Guardian contact registered.')
     }
   }
