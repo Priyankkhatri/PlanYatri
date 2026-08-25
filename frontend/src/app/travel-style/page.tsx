@@ -554,7 +554,7 @@ export default function TravelStyle() {
                 <div className="rac-right-traits">
                   <h4 className="rac-traits-title">DNA Alignment Breakdown</h4>
                   <div className="rac-traits-list">
-                    {activeArchetype.traits.map((tr, i) => (
+                    {activeArchetype.traits.map((tr: any, i: any) => (
                       <div key={i} className="rac-trait-item">
                         <div className="rac-ti-header">
                           <span>{tr.name}</span>
