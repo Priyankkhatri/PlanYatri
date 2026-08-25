@@ -4,6 +4,13 @@
 
 ---
 
+## 📖 Architectural Specifications & Feature Deep-Dive
+
+Detailed system flowcharts, database schemas, and feature deep-dives are documented in:
+👉 **[`frontend/docs/PLANYATRI_ARCHITECTURE_FEATURES.md`](file:///D:/Migrated_Desktop_Projects/PlanYatri/frontend/docs/PLANYATRI_ARCHITECTURE_FEATURES.md)**
+
+---
+
 ## 🏗️ Repository Architecture
 
 The project is organized into a clean monorepo structure:
@@ -11,6 +18,7 @@ The project is organized into a clean monorepo structure:
 ```text
 PlanYatri/
 ├── frontend/             # Vite + React 18, Tailwind CSS, Redux Toolkit, Framer Motion
+│   ├── docs/             # PLANYATRI_ARCHITECTURE_FEATURES.md
 │   ├── src/
 │   │   ├── components/   # Modular UI components & interactive maps
 │   │   ├── context/      # Auth, Theme, Favorites, Toast, Storage contexts
