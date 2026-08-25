@@ -353,10 +353,10 @@ export default function TravelStyle() {
   // Computed Archetype
   const activeArchetype = useMemo(() => {
     const key = answers.landscape || 'mountain'
-    return ARCHETYPES[key] || ARCHETYPES.mountain
+    return (ARCHETYPES as any)[key] || ARCHETYPES.mountain
   }, [answers.landscape])
 
-  const handleSelectOption = (dimension, val) => {
+  const handleSelectOption = (dimension: any, val: any) => {
     setAnswers((prev: any) => ({ ...prev, [dimension]: val }))
     if (step < 4) {
       setStep((s) => s + 1)
