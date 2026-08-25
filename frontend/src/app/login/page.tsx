@@ -241,8 +241,8 @@ export default function LoginPage() {
 
             <div className="or-divider"><span>or continue with</span></div>
             <div className="social-row">
-              <button type="button" onClick={() => signInWithOAuth('google')} className="social-btn"><GoogleIcon /><span>Google</span></button>
-              <button type="button" onClick={() => signInWithOAuth('apple')} className="social-btn"><AppleIcon /><span>Apple</span></button>
+              <button type="button" onClick={() => signInWithOAuth?.('google')} className="social-btn"><GoogleIcon /><span>Google</span></button>
+              <button type="button" onClick={() => signInWithOAuth?.('apple')} className="social-btn"><AppleIcon /><span>Apple</span></button>
             </div>
           </form>
 
