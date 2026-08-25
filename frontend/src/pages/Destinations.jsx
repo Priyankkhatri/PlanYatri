@@ -521,6 +521,19 @@ export default function Destinations() {
     return `I'm your luxury travel concierge — share a destination, budget, or trip idea and I'll curate a personalized plan just for you!`
   }
 
+  const isConversationalQuery = (text) => {
+    const t = text.toLowerCase().trim()
+    const greetings = ['hey', 'heyy', 'heyyy', 'hi', 'hii', 'hiii', 'hello', 'yo', 'sup', 'howdy', 'whats up', 'what\'s up', 'who are you', 'help', 'help me', 'guide me', 'what can you do', 'good morning', 'good evening', 'namaste', 'test', 'testing']
+    if (greetings.some(g => t === g || t.startsWith(g + ' ') || t === g + '!' || t === g + '?')) {
+      return true
+    }
+    if (t.startsWith('how') || t.startsWith('what') || t.startsWith('why') || t.startsWith('who') || t.startsWith('can you') || t.startsWith('where should i') || t.startsWith('recommend me')) {
+      const hasSpecificDest = ['udaipur', 'jaipur', 'ladakh', 'leh', 'kerala', 'kashmir', 'goa', 'spiti', 'manali', 'rishikesh', 'varanasi', 'jaisalmer', 'andaman', 'bali', 'paris', 'tokyo', 'dubai', 'maldives', 'switzerland'].some(d => t.includes(d))
+      if (!hasSpecificDest) return true
+    }
+    return false
+  }
+
   const handleGenerateAI = async (e) => {
     e?.preventDefault()
     if (!aiPrompt.trim()) return
@@ -532,10 +545,31 @@ export default function Destinations() {
     const userMsg = { id: Date.now(), sender: 'user', text: currentPrompt }
     setChatHistory((prev) => [...prev, userMsg])
     setAiPrompt('')
-
-    // ── LIVE MULTI-MODEL AI INTEGRATION (Groq / Gemini) ──
     setIsGeneratingAI(true)
 
+    // ── CONVERSATIONAL / ADVISORY INTENT ──
+    if (isConversationalQuery(currentPrompt)) {
+      try {
+        const res = await api.post('/gemini/concierge-reply', {
+          message: currentPrompt,
+          contactName: userInfo?.name || 'Traveler',
+        })
+        const replyText = res.data?.reply || 'Hello! I am your PlanYatri Master Travel Concierge. Tell me your dream destination, budget, or preferred pace, and I will curate a personalized day-by-day expedition for you.'
+        setChatHistory((prev) => [
+          ...prev,
+          { id: Date.now() + 1, sender: 'ai', text: replyText },
+        ])
+      } catch (err) {
+        setChatHistory((prev) => [
+          ...prev,
+          { id: Date.now() + 1, sender: 'ai', text: 'Hello! I am your PlanYatri Travel Concierge. Share a destination, number of days, and budget — I will curate a bespoke day-by-day itinerary breakdown for you.' },
+        ])
+      }
+      setIsGeneratingAI(false)
+      return
+    }
+
+    // ── SPECIFIC TRIP / ITINERARY CURATION INTENT ──
     const daysMatch   = currentPrompt.match(/(\d+)\s*(?:day|days|d|nights)/i)
     const peopleMatch = currentPrompt.match(/(\d+)\s*(?:people|person|traveler|travelers|guests|members)/i)
 
