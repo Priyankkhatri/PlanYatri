@@ -581,7 +581,7 @@ export default function TravelStyle() {
 
               {/* 3-Column Destination Matches Grid */}
               <div className="ts-matches-grid">
-                {activeArchetype.matches.map((match) => (
+                {activeArchetype.matches.map((match: any) => (
                   <div key={match.id} className="ts-match-card">
                     <div className="mc-media-frame">
                       <img src={match.img} alt={match.name} className="mc-img" />
