@@ -1,35 +1,22 @@
 {
-  "name": "planyatri",
-  "version": "0.1.0",
+  "name": "planyatri-monorepo",
+  "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@reduxjs/toolkit": "^2.11.2",
-    "@supabase/supabase-js": "^2.112.3",
-    "axios": "^1.7.9",
-    "framer-motion": "^12.0.0",
-    "leaflet": "^1.9.4",
-    "lucide-react": "^0.475.0",
-    "next": "16.2.3",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "react-redux": "^9.2.0"
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "npm --prefix apps/backend run dev",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "build:web": "npm --prefix apps/web run build",
+    "build:api": "npm --prefix apps/backend run build",
+    "build": "npm run build:web && npm run build:api",
+    "start:web": "npm --prefix apps/web run start",
+    "start:api": "npm --prefix apps/backend run start"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.3",
-    "postcss": "^8.5.26",
-    "source-map-js": "1.2.1",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^5"
+    "concurrently": "^9.1.0"
   }
 }
