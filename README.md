@@ -1,39 +1,54 @@
-# 🏔️ PlanYatri Enterprise Monorepo
+# 🏔️ PlanYatri — Developer Quickstart Guide
 
-Welcome to **PlanYatri**, an enterprise-grade full-stack travel orchestration platform.
+Welcome to **PlanYatri**, the luxury travel orchestration platform built with a clean **Frontend & Backend** full-stack structure.
 
-## 📂 Repository Structure
+---
 
-```
+## 📂 Project Architecture
+
+```text
 PlanYatri/
-├── apps/
-│   ├── web/        # Next.js 16 App Router Frontend (React 19, TSX, Tailwind)
-│   └── backend/    # Node.js Express REST API & Gemini AI Microservice (TS)
-├── packages/
-│   ├── types/      # Shared TypeScript contracts & interfaces
-│   ├── config/     # Shared ESLint & TSConfig base definitions
-│   └── database/   # Supabase SQL schemas, migrations & database seeders
-├── package.json    # Monorepo workspace configuration
-└── README.md
+├── frontend/                     👉 Next.js 16 App Router (React 19, TypeScript, Tailwind)
+│   ├── src/app/                  👉 App Router File-System Pages (/dashboard, /trips, /emergency, etc.)
+│   ├── src/components/           👉 UI Component Library (StatCards, SOSButton, VelocityPulse, etc.)
+│   ├── src/context/              👉 React Context Providers (Auth, Theme, Toast, Favorites)
+│   ├── src/store/                👉 Redux Toolkit Global Store (authSlice, tripSlice, emergencySlice)
+│   ├── src/types/                👉 TypeScript Interface Contracts
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── backend/                      👉 Express REST API & Gemini AI Microservice (Node.js, TypeScript)
+│   ├── src/controllers/          👉 API Controllers (auth, trips, bookings, emergency, gemini)
+│   ├── src/routes/               👉 Router Endpoints (/api/auth, /api/trips, /api/emergency, etc.)
+│   ├── src/middleware/           👉 JWT Auth & Error Handling Middlewares
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── supabase_migration.sql        👉 PostgreSQL & Supabase Database Migration Schema
+├── PLANYATRI_ARCHITECTURE_FEATURES.md 👉 Architectural Diagrams & Feature Deep-Dive
+└── README.md                     👉 Root Developer Documentation
 ```
 
-## 🚀 Quickstart Commands
+---
 
-### 1. Frontend Web App (Next.js)
+## 🚀 How to Run the Project
+
+### 1. Run Frontend App (Next.js)
 ```bash
-cd apps/web
+cd frontend
+npm install
 npm run dev
 ```
-Runs on **http://localhost:3000**.
+Server starts at **http://localhost:3000**.
 
-### 2. Backend Express API
+### 2. Run Backend API (Express Node.js)
 ```bash
-cd apps/backend
+cd backend
+npm install
 npm run dev
 ```
-Runs on **http://localhost:5000**.
+Server starts at **http://localhost:5000**.
 
-### 3. Run Both Concurrently (Root)
-```bash
-npm run dev
-```
+---
+
+*Built with ❤️ by PlanYatri Engineering Team.*
