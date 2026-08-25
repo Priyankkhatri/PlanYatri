@@ -559,12 +559,36 @@ export default function TravelStyle() {
                   <p className="rac-tagline">"{activeArchetype.tagline}"</p>
                   <p className="rac-desc">{activeArchetype.description}</p>
 
-                  <div className="rac-actions-row">
+                  <div className="rac-actions-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                     <button className="rac-btn-retake" onClick={() => setStep(1)}>
                       ↻ Retake Assessment
                     </button>
                     <button className="rac-btn-destinations" onClick={() => navigate('/destinations')}>
-                      Browse All 12 Curated Escapes →
+                      Browse All Curated Escapes →
+                    </button>
+                    <button
+                      onClick={() =>
+                        navigate('/messages', {
+                          state: {
+                            prompt: `I am aligned with the "${activeArchetype.title}" archetype (${activeArchetype.tagline}). What bespoke luxury destinations, packing tips, and hidden trails do you recommend for my travel persona?`,
+                          },
+                        })
+                      }
+                      style={{
+                        padding: '10px 18px',
+                        background: '#18181B',
+                        color: '#D4A843',
+                        border: '1px solid rgba(212, 168, 67, 0.4)',
+                        borderRadius: 12,
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                      }}
+                    >
+                      <span>✨ Consult AI on My Persona</span>
                     </button>
                   </div>
                 </div>
@@ -630,10 +654,28 @@ export default function TravelStyle() {
                         <span className="mc-meta-item">🌤️ {match.bestSeason}</span>
                       </div>
 
-                      <button className="mc-btn-plan" onClick={() => handlePlanInTrips(match)}>
-                        <span>⚡ Plan in My Journeys</span>
-                        <span>→</span>
-                      </button>
+                      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+                        <button className="mc-btn-plan" style={{ flex: 1 }} onClick={() => handlePlanInTrips(match)}>
+                          <span>⚡ Plan Itinerary</span>
+                          <span>→</span>
+                        </button>
+                        <button
+                          onClick={() => navigate('/bookings', { state: { initialDest: match.name } })}
+                          style={{
+                            padding: '10px 14px',
+                            background: '#F4EFE6',
+                            color: '#18181B',
+                            border: '1px solid #E5DFD5',
+                            borderRadius: 10,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                          title="Book Flights & Stays"
+                        >
+                          <span>🎟️ Book</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
