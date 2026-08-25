@@ -328,7 +328,7 @@ export default function Messages() {
     }
   }, [showCallModal])
 
-  const formatCallTimer = (sec) => {
+  const formatCallTimer = (sec: any) => {
     const m = Math.floor(sec / 60)
     const s = sec % 60
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
