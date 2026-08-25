@@ -55,14 +55,14 @@ export default function Dashboard() {
     setLiked((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
-  const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = (e: any) => {
     e.preventDefault()
     if (search.trim()) {
       router.push('/destinations', { state: { search: search.trim() } })
     }
   }
 
-  const handleNewsletter = (e) => {
+  const handleNewsletter = (e: any) => {
     e.preventDefault()
     if (newsletterEmail) {
       setNewsletterSuccess(true)

@@ -177,7 +177,7 @@ export default function Bookings() {
     })
   }, [bookings, search, activeTab])
 
-  const handleCreateBooking = (e) => {
+  const handleCreateBooking = (e: any) => {
     e.preventDefault()
     if (!newTitle.trim()) return
 

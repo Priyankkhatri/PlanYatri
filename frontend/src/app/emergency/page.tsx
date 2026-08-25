@@ -258,7 +258,7 @@ function ContactModal({ initial, onSave, onClose }) {
     initial || { name: '', relation: 'Family', phone: '' }
   )
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault()
     if (!form.name.trim() || !form.phone.trim()) return
     onSave({

@@ -373,7 +373,7 @@ export default function Trips() {
   }
 
   // ── Add New Activity to a Specific Day ──
-  const handleAddActivity = (e) => {
+  const handleAddActivity = (e: any) => {
     e.preventDefault()
     if (!newActName.trim() || !selectedItineraryTrip) return
 
@@ -416,7 +416,7 @@ export default function Trips() {
   }
 
   // ── Add New City Stop ──
-  const handleAddCityStop = (e) => {
+  const handleAddCityStop = (e: any) => {
     e.preventDefault()
     if (!newCityName.trim() || !selectedItineraryTrip) return
 
@@ -521,7 +521,7 @@ export default function Trips() {
   }
 
   // ── Quick Itinerary Creation ──
-  const handleCreateNewTrip = (e) => {
+  const handleCreateNewTrip = (e: any) => {
     e.preventDefault()
     if (!newTripDest.trim()) return
 
