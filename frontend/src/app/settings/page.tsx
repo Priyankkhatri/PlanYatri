@@ -53,7 +53,7 @@ export default function Settings() {
 
   const [notifPrefs, setNotifPrefs] = useState<Record<string, any>>({ bookingUpdates:true, priceAlerts:true, tripReminders:true, newsletters:false, smsAlerts:false, pushNotif:true })
   const [privacy, setPrivacy] = useState<Record<string, any>>({ profilePublic:true, showTrips:true, showReviews:true, dataSharing:false })
-  const [prefs, setPrefs] = useState({ currency:'INR', language:'English', units:'Metric', seatPref:'Window', mealPref:'Vegetarian' })
+  const [prefs, setPrefs] = useState<Record<string, any>>({ currency:'INR', language:'English', units:'Metric', seatPref:'Window', mealPref:'Vegetarian' })
 
   // Modals
   const [showPhotoModal, setShowPhotoModal] = useState(false)
@@ -286,7 +286,7 @@ export default function Settings() {
                     ].map(item => (
                       <div key={item.key} className="form-group">
                         <label className="form-label">{item.label}</label>
-                        <select className="form-input" value={prefs[item.key]} onChange={e => setPrefs(p=>({...p,[item.key]:e.target.value}))}>
+                        <select className="form-input" value={(prefs as any)[item.key]} onChange={e => setPrefs(p=>({...p,[item.key]:e.target.value}))}>
                           {item.options.map(o => <option key={o}>{o}</option>)}
                         </select>
                       </div>
