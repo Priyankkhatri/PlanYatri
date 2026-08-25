@@ -78,7 +78,7 @@ export default function LoginPage() {
     ...(tab === 'signup' && {
       name: Yup.string().required('Required'),
       confirm: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .oneOf([Yup.ref('password') as any], 'Passwords must match')
         .required('Required'),
     }),
   })
