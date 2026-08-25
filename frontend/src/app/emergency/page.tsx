@@ -553,7 +553,7 @@ export default function Emergency() {
       setIsAudioSirenActive(true)
       toast.error('Audio Rescue Siren Active.')
 
-      const playTone = (freq, duration, delay) => {
+      const playTone = (freq: any, duration: any, delay: any) => {
         setTimeout(() => {
           if (!audioCtxRef.current) return
           const osc = audioCtxRef.current.createOscillator()
