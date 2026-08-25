@@ -544,7 +544,7 @@ export default function Emergency() {
 
   const startAudioSiren = () => {
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext
       if (!AudioCtx) {
         toast.error('Web Audio not supported.')
         return
