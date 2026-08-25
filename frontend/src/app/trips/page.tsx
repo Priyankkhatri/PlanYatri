@@ -161,7 +161,7 @@ export default function Trips() {
     try {
       const storageKey = `planyatri_trips_${userKey}`
       localStorage.setItem(storageKey, JSON.stringify(journeys))
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Failed to save journeys:', err)
     }
   }, [journeys, userKey])
@@ -365,7 +365,7 @@ export default function Trips() {
         setShowAIOptimizerModal(false)
         toast.success('✨ AI Smart Trip Optimizer generated your complete itinerary!')
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
       toast.info('Generated itinerary using GlobeTrotter optimization engine.')
     } finally {

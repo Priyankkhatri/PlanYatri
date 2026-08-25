@@ -370,7 +370,7 @@ export default function Messages() {
           text: textToSend,
         },
       ])
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Supabase insert message skipped:', err.message)
     }
 
@@ -417,7 +417,7 @@ export default function Messages() {
             // fallback
           }
         }, 1200)
-      } catch (err) {
+      } catch (err: any) {
         setIsTyping(false)
       }
     } else {
