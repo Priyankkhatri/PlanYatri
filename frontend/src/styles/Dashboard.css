@@ -1,2 +1,1094 @@
-.db-root { display: flex; min-height: 100vh; background: #FAF8F5; }
-.db-main { flex: 1; display: flex; flex-direction: column; }
+/* ═══════════════════════════════════════════════════════════════════
+   DASHBOARD — Editorial Luxury Design Matching Figma
+═══════════════════════════════════════════════════════════════════ */
+
+.db-root {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #FAF8F5;
+  color: #1A1A1A;
+  font-family: 'Plus Jakarta Sans', 'DM Sans', -apple-system, sans-serif;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.db-on {
+  opacity: 1;
+}
+
+.db-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #FAF8F5;
+}
+
+/* ── Top Header ── */
+.db-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 44px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EFEAE2;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.db-search-form {
+  flex: 1;
+  max-width: 480px;
+}
+
+.db-search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #F6F4F0;
+  border-radius: 9999px;
+  padding: 8px 18px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.db-search-box:focus-within {
+  background: #FFFFFF;
+  border-color: #18181B;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+}
+
+.db-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: #1A1A1A;
+  width: 100%;
+}
+
+.db-search-input::placeholder {
+  color: #8C867A;
+}
+
+.db-search-submit {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #18181B;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.db-search-submit:hover {
+  transform: scale(1.08);
+}
+
+.db-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.db-notif-btn {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid #EFEAE2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555048;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.db-notif-btn:hover {
+  background: #F6F4F0;
+  color: #18181B;
+}
+
+.db-notif-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  background: #EF4444;
+  border-radius: 50%;
+  border: 1.5px solid #FFFFFF;
+}
+
+.db-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.db-user-chip:hover {
+  background: #F6F4F0;
+}
+
+.db-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #FFFFFF;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.db-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.db-user-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #18181B;
+  line-height: 1.2;
+}
+
+.db-user-sub {
+  font-size: 11px;
+  color: #8C867A;
+  font-weight: 500;
+}
+
+/* ── Scrollable Body ── */
+.db-scroll-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px 44px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.db-scroll-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.db-scroll-body::-webkit-scrollbar-thumb {
+  background: #DDD7CE;
+  border-radius: 3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. HERO SECTION ("EXPLORE MORE LIVE MORE") — Grander & Spacious
+═══════════════════════════════════════════════════════════════════ */
+.db-hero-section {
+  position: relative;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAF5ED 100%);
+  border-radius: 4px;
+  border: 1px solid #EFEAE2;
+  padding: 64px 72px;
+  min-height: 380px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.db-hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+}
+
+.db-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 2;
+}
+
+.db-hero-h1 {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: clamp(52px, 6vw, 84px);
+  font-weight: 800;
+  line-height: 0.92;
+  color: #18181B;
+  letter-spacing: 0.03em;
+  display: flex;
+  flex-direction: column;
+}
+
+.db-hero-cursive {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 32px;
+  color: #A39B8E;
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+/* Collect Moments Badge */
+.db-collect-badge {
+  position: absolute;
+  left: 45%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid #E5DFD5;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 4;
+}
+
+.badge-star {
+  font-size: 13px;
+  color: #C9963A;
+  margin-bottom: 2px;
+}
+
+.badge-text {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #18181B;
+  line-height: 1.2;
+}
+
+/* Hero Tilted Cards */
+.db-hero-cards {
+  position: relative;
+  width: 440px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.db-hero-card-tilt {
+  position: absolute;
+  width: 210px;
+  height: 270px;
+  padding: 10px 10px 24px 10px;
+  background: #FFFFFF;
+  border-radius: 2px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+}
+
+.db-hero-card-tilt img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.card-tilt-1 {
+  transform: rotate(-8deg) translate(-40px, -10px);
+  z-index: 1;
+}
+
+.card-tilt-2 {
+  transform: rotate(9deg) translate(45px, 15px);
+  z-index: 2;
+}
+
+.db-hero-cards:hover .card-tilt-1 {
+  transform: rotate(-11deg) translate(-50px, -16px);
+}
+
+.db-hero-cards:hover .card-tilt-2 {
+  transform: rotate(12deg) translate(55px, 20px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. LOCATION & NEXT TRIP WIDGET
+═══════════════════════════════════════════════════════════════════ */
+.db-widget-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border: 1px solid #EFEAE2;
+  border-radius: 4px;
+  padding: 16px 36px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.widget-loc-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.widget-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.widget-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8C867A;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.widget-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: #18181B;
+  margin-top: 2px;
+}
+
+/* ── Clean & Elegant Travel Planner Center Button ── */
+.widget-center-planner-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  background: #18181B;
+  border: 1px solid #27272A;
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.widget-center-planner-btn:hover {
+  background: #27272A;
+  border-color: #3F3F46;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.widget-center-planner-btn:active {
+  transform: translateY(0);
+}
+
+.planner-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #D4A843;
+}
+
+.planner-btn-label {
+  color: #F4F4F5;
+  font-weight: 600;
+}
+
+.planner-btn-arrow {
+  color: #A1A1AA;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.widget-center-planner-btn:hover .planner-btn-arrow {
+  transform: translateX(3px);
+  color: #FFFFFF;
+}
+
+.widget-trip-item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.widget-cal-tag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #F6F4F0;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 1px solid #EFEAE2;
+}
+
+.cal-sub {
+  font-size: 10.5px;
+  color: #8C867A;
+  display: block;
+}
+
+.cal-days {
+  font-size: 13px;
+  font-weight: 700;
+  color: #18181B;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. RECOMMENDED FOR YOU
+═══════════════════════════════════════════════════════════════════ */
+.db-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.db-section-hdr {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.db-section-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: #18181B;
+}
+
+.db-view-all {
+  background: transparent;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #18181B;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.db-view-all:hover {
+  opacity: 0.7;
+}
+
+.db-rec-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.rec-card {
+  background: #FFFFFF;
+  border: 1px solid #EFEAE2;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.rec-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  border-color: #DDD7CE;
+}
+
+.rec-img-wrap {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.rec-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.rec-card:hover .rec-img-wrap img {
+  transform: scale(1.06);
+}
+
+.rec-heart-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rec-heart-btn:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: scale(1.1);
+}
+
+.rec-heart-btn.active {
+  background: #FFFFFF;
+}
+
+.rec-body {
+  padding: 14px 16px 18px;
+}
+
+.rec-name {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #18181B;
+}
+
+.rec-tag {
+  font-size: 12px;
+  color: #8C867A;
+  margin: 3px 0 8px;
+}
+
+.rec-rating {
+  font-size: 12px;
+  font-weight: 700;
+  color: #18181B;
+}
+
+.rec-rating .star {
+  color: #EAB308;
+}
+
+.rec-rating .reviews {
+  font-weight: 400;
+  color: #8C867A;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. PLAN YOUR NEXT ADVENTURE
+═══════════════════════════════════════════════════════════════════ */
+.db-adv-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.adv-left-card {
+  display: flex;
+  background: #FAF8F5;
+  border: 1px solid #EFEAE2;
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 280px;
+}
+
+.adv-graphic-half {
+  flex: 1;
+  background: #0C1B2A;
+  overflow: hidden;
+}
+
+.mountain-vector-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adv-content-half {
+  flex: 1.2;
+  background: #FAF8F5;
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.adv-h3 {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #18181B;
+  line-height: 1.15;
+}
+
+.adv-sub {
+  font-size: 13px;
+  color: #736B5E;
+  margin: 10px 0 20px;
+  line-height: 1.45;
+}
+
+.adv-steps-row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.adv-step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adv-step-icon {
+  font-size: 14px;
+  color: #18181B;
+}
+
+.adv-step-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #8C867A;
+}
+
+.adv-cta-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  padding: 12px 24px;
+  background: #18181B;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 2px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adv-cta-btn:hover {
+  background: #2E2E33;
+  transform: translateY(-1px);
+}
+
+.adv-right-quote-card {
+  position: relative;
+  background: #F4F0E8;
+  border: 1px solid #EFEAE2;
+  border-radius: 4px;
+  padding: 40px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.quote-watermark-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.watermark-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adv-quote-wrapper {
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.adv-quote-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 23px;
+  font-weight: 600;
+  color: #18181B;
+  text-align: center;
+  line-height: 1.35;
+}
+
+.adv-quote-author {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #C9963A;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. YOUR UPCOMING TRIPS
+═══════════════════════════════════════════════════════════════════ */
+.db-upcoming-layout {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 20px;
+}
+
+.upcoming-main-card {
+  display: flex;
+  background: #FFFFFF;
+  border: 1px solid #EFEAE2;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.upcoming-main-card:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  border-color: #DDD7CE;
+}
+
+.upcoming-img-box {
+  width: 42%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.upcoming-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upcoming-main-info {
+  flex: 1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.upcoming-main-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: #18181B;
+}
+
+.upcoming-dates {
+  font-size: 12.5px;
+  color: #8C867A;
+  margin-top: 4px;
+}
+
+.upcoming-meta-row {
+  display: flex;
+  gap: 16px;
+  font-size: 12.5px;
+  color: #555048;
+  font-weight: 500;
+}
+
+.upcoming-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prog-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8C867A;
+}
+
+.prog-bar-bg {
+  width: 100%;
+  height: 5px;
+  background: #EFEAE2;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.prog-bar-fill {
+  height: 100%;
+  background: #C9963A;
+  border-radius: 3px;
+}
+
+.upcoming-side-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.upcoming-side-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #FFFFFF;
+  border: 1px solid #EFEAE2;
+  border-radius: 4px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upcoming-side-item:hover {
+  border-color: #DDD7CE;
+  transform: translateY(-2px);
+}
+
+.side-thumb-box {
+  width: 58px;
+  height: 58px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.side-thumb-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.side-item-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #18181B;
+}
+
+.side-item-dates {
+  font-size: 11.5px;
+  color: #8C867A;
+  margin: 2px 0 4px;
+}
+
+.side-item-meta {
+  font-size: 11px;
+  color: #555048;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. TRAVEL INSPIRATION
+═══════════════════════════════════════════════════════════════════ */
+.db-blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.blog-article-card {
+  background: #FFFFFF;
+  border: 1px solid #EFEAE2;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.blog-article-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  border-color: #DDD7CE;
+}
+
+.blog-card-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.blog-card-body {
+  padding: 16px;
+}
+
+.blog-card-title {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #18181B;
+  line-height: 1.25;
+}
+
+.blog-card-desc {
+  font-size: 12.5px;
+  color: #736B5E;
+  margin: 6px 0 12px;
+}
+
+.blog-card-date {
+  font-size: 11px;
+  color: #8C867A;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. NEWSLETTER BANNER ("GET TRAVEL UPDATES") — Grand & Spacious
+═══════════════════════════════════════════════════════════════════ */
+.db-newsletter-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F4EFE6;
+  border: 1px solid #EFEAE2;
+  border-radius: 6px;
+  padding: 56px 64px;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 10px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+}
+
+.nl-stamp-left .vintage-postmark {
+  width: 84px;
+  height: 84px;
+  border: 2px dashed #3B82F6;
+  border-radius: 50%;
+  color: #3B82F6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  transform: rotate(-15deg);
+  opacity: 0.85;
+}
+
+.nl-content-center {
+  flex: 1;
+  max-width: 620px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.nl-heading {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #18181B;
+  letter-spacing: 0.05em;
+}
+
+.nl-desc {
+  font-size: 14px;
+  color: #736B5E;
+  margin: 8px 0 24px;
+  line-height: 1.5;
+}
+
+.nl-form-row {
+  display: flex;
+  gap: 10px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.nl-input-field {
+  flex: 1;
+  background: #FFFFFF;
+  border: 1px solid #E5DFD5;
+  border-radius: 4px;
+  padding: 12px 18px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.nl-submit-btn {
+  background: #18181B;
+  color: #FFFFFF;
+  border: none;
+  padding: 0 28px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nl-submit-btn:hover {
+  background: #2E2E33;
+  transform: translateY(-1px);
+}
+
+.nl-stamp-right .vintage-seal-circle {
+  width: 92px;
+  height: 92px;
+  border: 2px solid #DDD7CE;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #8C867A;
+  opacity: 0.65;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN
+═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 1200px) {
+  .db-rec-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .db-adv-grid,
+  .db-upcoming-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .db-scroll-body {
+    padding: 20px 20px 80px;
+  }
+  .db-topbar {
+    padding: 14px 20px;
+  }
+  .db-hero-section {
+    padding: 30px 24px;
+  }
+  .db-hero-cards {
+    display: none;
+  }
+  .db-collect-badge {
+    display: none;
+  }
+  .db-widget-bar {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .db-blog-grid {
+    grid-template-columns: 1fr;
+  }
+  .db-newsletter-box {
+    padding: 24px 20px;
+  }
+  .nl-stamp-left,
+  .nl-stamp-right {
+    display: none;
+  }
+}
