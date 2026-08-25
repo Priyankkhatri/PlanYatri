@@ -7,6 +7,9 @@ import { fetchTrips } from '../store/slices/tripSlice'
 import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { CalendarIcon, UsersIcon, FlameIcon, SparkleIcon, MapPinIcon } from '../components/icons/LuxuryIcons'
+import WeatherWidget from '../components/WeatherWidget'
+import CurrencyConverter from '../components/CurrencyConverter'
+import FlightTracker from '../components/FlightTracker'
 import './Dashboard.css'
 
 /* ── Animation Variants ── */
@@ -486,7 +489,20 @@ export default function Dashboard() {
             </div>
           </motion.section>
 
-          {/* 7. NEWSLETTER BANNER */}
+          {/* 7. LIVE TRAVEL TOOLS */}
+          <motion.section className="db-section" variants={fadeUp}>
+            <div className="db-section-hdr">
+              <h2 className="db-section-title">Live Travel Tools</h2>
+              <span className="db-section-badge">Real-Time Data</span>
+            </div>
+            <div className="db-tools-grid">
+              <WeatherWidget />
+              <CurrencyConverter />
+              <FlightTracker />
+            </div>
+          </motion.section>
+
+          {/* 8. NEWSLETTER BANNER */}
           <motion.section className="db-newsletter-box" variants={fadeUp}>
             <div className="nl-stamp-left">
               <div className="vintage-postmark">
