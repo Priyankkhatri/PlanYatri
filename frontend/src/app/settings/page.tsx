@@ -52,7 +52,7 @@ export default function Settings() {
   }, [userInfo])
 
   const [notifPrefs, setNotifPrefs] = useState<Record<string, any>>({ bookingUpdates:true, priceAlerts:true, tripReminders:true, newsletters:false, smsAlerts:false, pushNotif:true })
-  const [privacy, setPrivacy] = useState({ profilePublic:true, showTrips:true, showReviews:true, dataSharing:false })
+  const [privacy, setPrivacy] = useState<Record<string, any>>({ profilePublic:true, showTrips:true, showReviews:true, dataSharing:false })
   const [prefs, setPrefs] = useState({ currency:'INR', language:'English', units:'Metric', seatPref:'Window', mealPref:'Vegetarian' })
 
   // Modals
@@ -219,7 +219,7 @@ export default function Settings() {
                           <p className="settings-list-label">{item.label}</p>
                           <p className="settings-list-sub">{item.sub}</p>
                         </div>
-                        <Toggle checked={privacy[item.key]} onChange={() => setPrivacy(p=>({...p,[item.key]:!p[item.key]}))} />
+                        <Toggle checked={(privacy as any)[item.key]} onChange={() => setPrivacy(p=>({...p,[item.key]:!p[item.key]}))} />
                       </div>
                     ))}
                   </div>
