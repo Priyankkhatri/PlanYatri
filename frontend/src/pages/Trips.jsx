@@ -12,7 +12,7 @@ import GroupExpenseSplitter from '../components/GroupExpenseSplitter'
 import TripInviteModal from '../components/TripInviteModal'
 import PackingChecklistModal from '../components/PackingChecklistModal'
 import AIJourneyPlannerModal from '../components/AIJourneyPlannerModal'
-import { CalendarIcon, UsersIcon, MapPinIcon, PlaneIcon, SparkleIcon, TrashIcon, UtensilsIcon, HotelIcon, CompassIcon, CheckCircleIcon, FlameIcon, BookIcon, ShareIcon, CultureIcon, MountainIcon } from '../components/icons/LuxuryIcons'
+import { CalendarIcon, UsersIcon, MapPinIcon, PlaneIcon, SparkleIcon, TrashIcon, UtensilsIcon, HotelIcon, CompassIcon, CheckCircleIcon, FlameIcon, BookIcon, ShareIcon, CultureIcon, MountainIcon, SunIcon, MessageSquareIcon, ShieldSafeIcon, LuggageIcon, PrinterIcon, ReceiptIcon } from '../components/icons/LuxuryIcons'
 import './Trips.css'
 
 // Initial Curated Multi-City Journeys
@@ -844,7 +844,7 @@ export default function Trips() {
                   style={{ background: 'rgba(212, 168, 67, 0.15)', borderColor: 'rgba(212, 168, 67, 0.4)', color: '#D4A843' }}
                 >
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                    <UsersIcon size={13} color="#D4A843" /> 👥 Invite (QR)
+                    <UsersIcon size={13} color="#D4A843" /> <span>Invite (QR)</span>
                   </span>
                 </button>
 
@@ -853,7 +853,9 @@ export default function Trips() {
                   onClick={() => navigate('/messages', { state: { tripId: selectedItineraryTrip._id, tripName: selectedItineraryTrip.dest } })}
                   title="Open Co-Traveler & Concierge Chat for this Trip"
                 >
-                  <span>💬 Group Chat</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <MessageSquareIcon size={13} color="currentColor" /> <span>Group Chat</span>
+                  </span>
                 </button>
 
                 <button
@@ -862,28 +864,36 @@ export default function Trips() {
                   style={{ color: '#EF4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
                   title="Emergency SOS & Solo Safe Guide"
                 >
-                  <span>🛡️ Solo Safe SOS</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <ShieldSafeIcon size={13} color="#EF4444" /> <span>Solo Safe SOS</span>
+                  </span>
                 </button>
 
                 <button
                   className="itin-pill-city-btn"
                   onClick={() => setShowPackingModal(true)}
                 >
-                  <span>🎒 Packing List</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <LuggageIcon size={13} color="currentColor" /> <span>Packing List</span>
+                  </span>
                 </button>
 
                 <button
                   className="itin-pill-city-btn"
                   onClick={() => window.print()}
                 >
-                  <span>📄 Print / PDF</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <PrinterIcon size={13} color="currentColor" /> <span>Print / PDF</span>
+                  </span>
                 </button>
 
                 <button
                   className="itin-pill-share-btn"
                   onClick={() => setShowShareModal(true)}
                 >
-                  <span>Share</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <ShareIcon size={13} color="currentColor" /> <span>Share</span>
+                  </span>
                 </button>
 
                 <button
@@ -901,33 +911,11 @@ export default function Trips() {
                   onClick={() => setShowLogisticsModal(true)}
                 >
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                    <PlaneIcon size={14} color="#D4A843" /> Logistics & Stay
+                    <HotelIcon size={14} color="#D4A843" /> Logistics & Stay
                   </span>
                 </button>
               </div>
             </div>
-
-            {/* Active Journeys Switcher Bar */}
-            {journeys.length > 1 && (
-              <div className="itin-trips-switcher-bar">
-                <span className="its-label">My Expeditions:</span>
-                <div className="its-pills">
-                  {journeys.map(j => (
-                    <button
-                      key={j._id}
-                      className={`its-pill ${selectedItineraryTrip?._id === j._id ? 'active' : ''}`}
-                      onClick={() => setSelectedItineraryTrip(j)}
-                    >
-                      <span>{j.dest}</span>
-                      <span className="its-pill-days">{j.days}d</span>
-                    </button>
-                  ))}
-                  <button className="its-add-new-pill" onClick={() => setShowAIPlannerModal(true)}>
-                    + Plan Next Trip
-                  </button>
-                </div>
-              </div>
-            )}
 
             {/* 1. Large Hero Banner */}
             <div className="itin-hero-panorama">
@@ -945,7 +933,7 @@ export default function Trips() {
                   <span className="glass-days-left">{selectedItineraryTrip.days} Days Multi-City</span>
                   {destWeather && (
                     <span className="glass-weather-badge">
-                      🌤️ {destWeather.temp}°C ({destWeather.city}) · 💧 {destWeather.humidity}%
+                      <SunIcon size={12} color="#38BDF8" /> {destWeather.temp}°C ({((destWeather.city || '').split('&')[0].split('—')[0].split(',')[0].split(' ')[0]) || 'Local'}) · {destWeather.humidity}% Humidity
                     </span>
                   )}
                 </div>
@@ -978,13 +966,13 @@ export default function Trips() {
 
                   <button className="glass-btn-outline" onClick={() => setShowInviteQRModal(true)}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                      <UsersIcon size={13} color="#D4A843" /> 👥 Invite / QR
+                      <UsersIcon size={13} color="#D4A843" /> <span>Invite / QR</span>
                     </span>
                   </button>
 
                   <button className="glass-btn-outline" onClick={() => setShowAIOptimizerModal(true)}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                      <SparkleIcon size={13} color="#D4A843" /> Optimize Route
+                      <SparkleIcon size={13} color="#D4A843" /> <span>Optimize Route</span>
                     </span>
                   </button>
                 </div>
@@ -1002,7 +990,11 @@ export default function Trips() {
                   {tab === 'Daily Schedule' && 'Day-Wise Itinerary'}
                   {tab === 'Calendar & Timeline' && 'Calendar & Timeline'}
                   {tab === 'Automatic Budget Breakdown' && 'Automatic Budget Breakdown'}
-                  {tab === 'Group Expenses' && '💸 Group Expenses'}
+                  {tab === 'Group Expenses' && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      <ReceiptIcon size={13} color="#15803D" /> Group Expenses
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

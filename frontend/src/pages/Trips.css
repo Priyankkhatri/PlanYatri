@@ -439,6 +439,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .itin-back-btn {
@@ -448,6 +451,14 @@
   font-weight: 700;
   color: #18181B;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.2s;
+}
+
+.itin-back-btn:hover {
+  transform: translateX(-3px);
 }
 
 .itin-top-action-pills {
