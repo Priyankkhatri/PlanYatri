@@ -99,12 +99,21 @@ export default function Favorites() {
         <div className="fav-scroll-container">
           {filteredFavorites.length === 0 ? (
             <div className="fav-empty-state">
-              <span className="empty-icon">🗺️</span>
-              <h3>No saved destinations found</h3>
-              <p>Try clearing your search or explore new places to save to your collection.</p>
-              <button className="fav-explore-btn" onClick={() => navigate('/destinations')}>
-                Explore Destinations →
-              </button>
+              <span className="empty-icon">🧭</span>
+              <h3>Your Travel Bucket List is Empty</h3>
+              <p>Save serene backwaters, royal palaces, and alpine escapes as you browse destinations across India and worldwide.</p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 8 }}>
+                <button className="fav-explore-btn" onClick={() => navigate('/destinations')}>
+                  Explore Curated Escapes →
+                </button>
+                <button
+                  className="fav-explore-btn"
+                  onClick={() => navigate('/messages', { state: { prompt: 'Recommend top 5 luxury travel destinations tailored for my profile.' } })}
+                  style={{ background: '#18181B', color: '#D4A843', borderColor: 'rgba(212, 168, 67, 0.4)' }}
+                >
+                  ✨ Ask AI to Recommend Gems
+                </button>
+              </div>
             </div>
           ) : (
             <div className="fav-editorial-grid">
@@ -114,7 +123,7 @@ export default function Favorites() {
                   <div
                     key={item.id}
                     className={`fav-card-editorial ${isFirst ? 'fav-card-large' : ''}`}
-                    onClick={() => navigate('/destinations', { state: { search: item.name } })}
+                    onClick={() => navigate('/destinations', { state: { selectedDest: item.name, search: item.name } })}
                   >
                     <img src={item.img} alt={item.name} className="fav-card-bg-img" />
                     <div className="fav-card-gradient-overlay" />
@@ -123,9 +132,9 @@ export default function Favorites() {
                     <button
                       className="fav-heart-circle"
                       onClick={(e) => toggleHeart(e, item.id, item.name)}
-                      title="Save / Unsave"
+                      title="Remove from Saved Favorites"
                     >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="2">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#EF4444" stroke="#EF4444" strokeWidth="2">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                       </svg>
                     </button>
@@ -138,26 +147,49 @@ export default function Favorites() {
                           <circle cx="12" cy="10" r="3" />
                         </svg>
                         <span>{item.country}</span>
+                        {item.category && <span style={{ opacity: 0.7 }}>• {item.category}</span>}
                       </div>
 
                       <h3 className="fav-destination-title">{item.name}</h3>
 
-                      {isFirst && item.desc && (
-                        <p className="fav-destination-desc">{item.desc}</p>
+                      {item.desc && (
+                        <p className="fav-destination-desc" style={{ display: isFirst ? 'block' : '-webkit-box', WebkitLineClamp: isFirst ? 3 : 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {item.desc}
+                        </p>
                       )}
 
-                      {isFirst && (
+                      <div className="fav-card-actions-row" style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                         <button
                           className="fav-book-stay-btn"
                           onClick={(e) => {
                             e.stopPropagation()
                             navigate('/trips', { state: { initialDest: item.name, initialImg: item.img } })
                           }}
+                          title="Open in Multi-City Itinerary Builder"
                         >
-                          <span>Book Stay</span>
-                          <span>→</span>
+                          <span>Plan Trip →</span>
                         </button>
-                      )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigate('/bookings', { state: { initialDest: item.name } })
+                          }}
+                          style={{
+                            padding: '6px 12px',
+                            background: 'rgba(255, 255, 255, 0.15)',
+                            backdropFilter: 'blur(10px)',
+                            color: '#FFFFFF',
+                            border: '1px solid rgba(255, 255, 255, 0.25)',
+                            borderRadius: 20,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                          title="Book Flights and Stays"
+                        >
+                          <span>🎟️ Book</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )
