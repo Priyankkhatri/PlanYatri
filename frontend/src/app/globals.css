@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@import "../styles/Dashboard.css";
+@import "../styles/Trips.css";
+@import "../styles/Bookings.css";
+@import "../styles/Emergency.css";
+@import "../styles/LoginPage.css";
+
+:root {
+  --background: #FAF8F5;
+  --foreground: #18181B;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
