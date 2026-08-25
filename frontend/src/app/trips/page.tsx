@@ -583,7 +583,7 @@ export default function Trips() {
 
             {/* Journeys 2-Column Grid */}
             <div className="journeys-editorial-grid">
-              {activeJourneysList.map((journey) => (
+              {activeJourneysList.map((journey: any) => (
                 <div key={journey._id} className="journey-card-editorial">
                   <div className="jc-image-container">
                     <img src={journey.img} alt={journey.dest} className="jc-cover-img" />
