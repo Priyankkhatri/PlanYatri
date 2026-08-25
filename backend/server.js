@@ -99,14 +99,27 @@ app.get('/api/currency/:base', async (req, res) => {
   }
 });
 
-// ── Weather Proxy (Open-Meteo — completely free, no key needed) ──
+// ── Weather Proxy (Open-Meteo with 10-min in-memory cache) ──
+const weatherCache = new Map();
+const WEATHER_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
 app.get('/api/weather', async (req, res) => {
   try {
     const { lat = 28.6139, lon = 77.209, city = 'New Delhi' } = req.query;
+    const cacheKey = `${city}_${lat}_${lon}`;
+    const cached = weatherCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < WEATHER_CACHE_TTL) {
+      return res.json(cached.data);
+    }
+
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=7&timezone=auto`;
     const resp = await fetch(url);
     const data = await resp.json();
-    res.json({ city, ...data });
+    const payload = { city, ...data };
+
+    weatherCache.set(cacheKey, { timestamp: Date.now(), data: payload });
+    res.json(payload);
   } catch (e) {
     res.status(500).json({ error: 'Weather fetch failed' });
   }

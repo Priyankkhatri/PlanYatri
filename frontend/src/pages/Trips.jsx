@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
@@ -209,18 +209,29 @@ export default function Trips() {
   const [newTripBudget, setNewTripBudget] = useState(60000)
   const [inviteEmail, setInviteEmail] = useState('')
 
+  const lastFetchedWeatherCityRef = useRef('')
+
   // ── Live Destination Weather Engine ──
+  const activeTripDestCity = selectedItineraryTrip?.dest
+    ? selectedItineraryTrip.dest.split(/[,→-]/)[0].trim()
+    : ''
+
   useEffect(() => {
-    if (!selectedItineraryTrip?.dest) {
+    if (!activeTripDestCity) {
       setDestWeather(null)
+      lastFetchedWeatherCityRef.current = ''
       return
     }
-    const cityName = selectedItineraryTrip.dest.split(/[,→-]/)[0].trim()
-    api.get(`/weather?city=${encodeURIComponent(cityName)}`)
+    if (lastFetchedWeatherCityRef.current === activeTripDestCity) {
+      return // Avoid redundant fetching loop
+    }
+    lastFetchedWeatherCityRef.current = activeTripDestCity
+
+    api.get(`/weather?city=${encodeURIComponent(activeTripDestCity)}`)
       .then(res => {
         if (res.data?.current) {
           setDestWeather({
-            city: res.data.city || cityName,
+            city: res.data.city || activeTripDestCity,
             temp: Math.round(res.data.current.temperature_2m),
             wind: Math.round(res.data.current.windspeed_10m),
             humidity: res.data.current.relative_humidity_2m,
@@ -228,7 +239,7 @@ export default function Trips() {
         }
       })
       .catch(() => setDestWeather(null))
-  }, [selectedItineraryTrip])
+  }, [activeTripDestCity])
 
   useEffect(() => {
     dispatch(fetchTrips())
