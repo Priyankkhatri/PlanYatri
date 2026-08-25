@@ -11,6 +11,7 @@ import InteractiveMap from '../components/InteractiveMap'
 import GroupExpenseSplitter from '../components/GroupExpenseSplitter'
 import TripInviteModal from '../components/TripInviteModal'
 import PackingChecklistModal from '../components/PackingChecklistModal'
+import AIJourneyPlannerModal from '../components/AIJourneyPlannerModal'
 import { CalendarIcon, UsersIcon, MapPinIcon, PlaneIcon, SparkleIcon, TrashIcon, UtensilsIcon, HotelIcon, CompassIcon, CheckCircleIcon, FlameIcon, BookIcon, ShareIcon, CultureIcon, MountainIcon } from '../components/icons/LuxuryIcons'
 import './Trips.css'
 
@@ -177,6 +178,8 @@ export default function Trips() {
   const [showShareModal, setShowShareModal] = useState(false)
   const [showInviteQRModal, setShowInviteQRModal] = useState(false)
   const [showPackingModal, setShowPackingModal] = useState(false)
+  const [showAIPlannerModal, setShowAIPlannerModal] = useState(false)
+  const [destWeather, setDestWeather] = useState(null)
   const [menuOpenId, setMenuOpenId] = useState(null)
 
   // AI Optimizer State
@@ -207,6 +210,27 @@ export default function Trips() {
   const [newTripDays, setNewTripDays] = useState(7)
   const [newTripBudget, setNewTripBudget] = useState(60000)
   const [inviteEmail, setInviteEmail] = useState('')
+
+  // ── Live Destination Weather Engine ──
+  useEffect(() => {
+    if (!selectedItineraryTrip?.dest) {
+      setDestWeather(null)
+      return
+    }
+    const cityName = selectedItineraryTrip.dest.split(/[,→-]/)[0].trim()
+    api.get(`/weather?city=${encodeURIComponent(cityName)}`)
+      .then(res => {
+        if (res.data?.current) {
+          setDestWeather({
+            city: res.data.city || cityName,
+            temp: Math.round(res.data.current.temperature_2m),
+            wind: Math.round(res.data.current.windspeed_10m),
+            humidity: res.data.current.relative_humidity_2m,
+          })
+        }
+      })
+      .catch(() => setDestWeather(null))
+  }, [selectedItineraryTrip])
 
   useEffect(() => {
     dispatch(fetchTrips())
@@ -729,15 +753,15 @@ export default function Trips() {
             </div>
 
             {/* Create New Itinerary Big Dashed Card */}
-            <div className="create-itinerary-dashed-box" onClick={() => setShowCreateModal(true)}>
+            <div className="create-itinerary-dashed-box" onClick={() => setShowAIPlannerModal(true)}>
               <div className="create-plus-icon-circle">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#18181B" strokeWidth="2.5">
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
               </div>
-              <h3 className="create-box-title">Create New Trip Plan</h3>
-              <p className="create-box-sub">Add cities, assign dates, search activities, and auto-calculate budgets.</p>
+              <h3 className="create-box-title">✨ Design New Trip with AI Architect</h3>
+              <p className="create-box-sub">Tell AI your dream destination, budget & days — it creates day schedules, live weather & expense tracking instantly.</p>
             </div>
           </div>
         ) : (
@@ -820,6 +844,28 @@ export default function Trips() {
               </div>
             </div>
 
+            {/* Active Journeys Switcher Bar */}
+            {journeys.length > 1 && (
+              <div className="itin-trips-switcher-bar">
+                <span className="its-label">My Expeditions:</span>
+                <div className="its-pills">
+                  {journeys.map(j => (
+                    <button
+                      key={j._id}
+                      className={`its-pill ${selectedItineraryTrip?._id === j._id ? 'active' : ''}`}
+                      onClick={() => setSelectedItineraryTrip(j)}
+                    >
+                      <span>{j.dest}</span>
+                      <span className="its-pill-days">{j.days}d</span>
+                    </button>
+                  ))}
+                  <button className="its-add-new-pill" onClick={() => setShowAIPlannerModal(true)}>
+                    + Plan Next Trip
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* 1. Large Hero Banner */}
             <div className="itin-hero-panorama">
               <img
@@ -834,6 +880,11 @@ export default function Trips() {
                 <div className="glass-badge-row">
                   <span className="glass-badge-orange">{selectedItineraryTrip.statusTag}</span>
                   <span className="glass-days-left">{selectedItineraryTrip.days} Days Multi-City</span>
+                  {destWeather && (
+                    <span className="glass-weather-badge">
+                      🌤️ {destWeather.temp}°C ({destWeather.city}) · 💧 {destWeather.humidity}%
+                    </span>
+                  )}
                 </div>
 
                 <h2 className="glass-card-title">{selectedItineraryTrip.dest}</h2>
@@ -1829,6 +1880,13 @@ export default function Trips() {
             trip={selectedItineraryTrip}
             onClose={() => setShowPackingModal(false)}
           />
+        )}
+
+        {/* ═════════════════════════════════════════════════════════════
+            MODAL 9: AI JOURNEY PLANNER MODAL
+        ═════════════════════════════════════════════════════════════ */}
+        {showAIPlannerModal && (
+          <AIJourneyPlannerModal onClose={() => setShowAIPlannerModal(false)} />
         )}
       </main>
     </div>
