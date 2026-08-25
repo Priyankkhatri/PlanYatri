@@ -196,7 +196,7 @@ export default function LoginPage() {
                 <label className="field-label">Full Name</label>
                 <div className="field-wrap">
                   <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  <input type="text" name="name" className={`field-input ${formik.touched.name && formik.errors.name ? 'error' : ''}`} placeholder="Ananya Sharma" {...formik.getFieldProps('name')} />
+                  <input type="text" className={`field-input ${formik.touched.name && formik.errors.name ? 'error' : ''}`} placeholder="Ananya Sharma" {...formik.getFieldProps('name')} />
                 </div>
                 {formik.touched.name && formik.errors.name && <p className="field-error">{formik.errors.name}</p>}
               </div>
@@ -206,7 +206,7 @@ export default function LoginPage() {
               <label className="field-label">Email Address</label>
               <div className="field-wrap">
                 <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <input type="email" name="email" className={`field-input ${formik.touched.email && formik.errors.email ? 'error' : ''}`} placeholder="you@example.com" {...formik.getFieldProps('email')} />
+                <input type="email" className={`field-input ${formik.touched.email && formik.errors.email ? 'error' : ''}`} placeholder="you@example.com" {...formik.getFieldProps('email')} />
               </div>
               {formik.touched.email && formik.errors.email && <p className="field-error">{formik.errors.email}</p>}
             </div>
@@ -215,7 +215,7 @@ export default function LoginPage() {
               <label className="field-label">Password</label>
               <div className="field-wrap">
                 <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <input type={showPass ? 'text' : 'password'} name="password" className={`field-input ${formik.touched.password && formik.errors.password ? 'error' : ''}`} placeholder="••••••••" {...formik.getFieldProps('password')} />
+                <input type={showPass ? 'text' : 'password'} className={`field-input ${formik.touched.password && formik.errors.password ? 'error' : ''}`} placeholder="••••••••" {...formik.getFieldProps('password')} />
                 <button type="button" className="eye-btn" onClick={() => setShowPass(v => !v)} tabIndex={-1}><EyeIcon open={showPass} /></button>
               </div>
               {formik.touched.password && formik.errors.password && <p className="field-error">{formik.errors.password}</p>}
@@ -226,7 +226,7 @@ export default function LoginPage() {
                 <label className="field-label">Confirm Password</label>
                 <div className="field-wrap">
                   <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <input type={showConf ? 'text' : 'password'} name="confirm" className={`field-input ${formik.touched.confirm && formik.errors.confirm ? 'error' : ''}`} placeholder="••••••••" {...formik.getFieldProps('confirm')} />
+                  <input type={showConf ? 'text' : 'password'} className={`field-input ${formik.touched.confirm && formik.errors.confirm ? 'error' : ''}`} placeholder="••••••••" {...formik.getFieldProps('confirm')} />
                   <button type="button" className="eye-btn" onClick={() => setShowConf(v => !v)} tabIndex={-1}><EyeIcon open={showConf} /></button>
                 </div>
                 {formik.touched.confirm && formik.errors.confirm && <p className="field-error">{formik.errors.confirm}</p>}
