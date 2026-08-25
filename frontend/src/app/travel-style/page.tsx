@@ -367,7 +367,7 @@ export default function TravelStyle() {
   }
 
   const handlePlanInTrips = (dest) => {
-    router.push('/trips');
+    router.push('/trips')
   }
 
   return (

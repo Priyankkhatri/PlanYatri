@@ -64,7 +64,7 @@ export default function LoginPage() {
   const [imgLoaded, setImgLoaded] = useState(false)
 
   useEffect(() => {
-    if (userInfo) router.push('/dashboard', { replace: true })
+    if (userInfo) router.push('/dashboard')
   }, [userInfo, navigate])
 
   useEffect(() => {
