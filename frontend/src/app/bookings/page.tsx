@@ -135,7 +135,7 @@ export default function Bookings() {
   }, [bookings, userKey])
   const [activeTab, setActiveTab] = useState('All')
   const [search, setSearch] = useState('')
-  const [selectedBookingForModal, setSelectedBookingForModal] = useState(null)
+  const [selectedBookingForModal, setSelectedBookingForModal] = useState<any>(null)
   const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
@@ -161,7 +161,7 @@ export default function Bookings() {
   const [newPrice, setNewPrice] = useState('₹45,000')
 
   const filteredBookings = useMemo(() => {
-    return bookings.filter((item: any) => {
+    return bookings.filter((item) => {
       const matchesSearch =
         item.title.toLowerCase().includes(search.toLowerCase()) ||
         item.subtitle.toLowerCase().includes(search.toLowerCase()) ||
@@ -177,7 +177,7 @@ export default function Bookings() {
     })
   }, [bookings, search, activeTab])
 
-  const handleCreateBooking = (e: any) => {
+  const handleCreateBooking = (e) => {
     e.preventDefault()
     if (!newTitle.trim()) return
 
@@ -309,7 +309,7 @@ export default function Bookings() {
                 type="text"
                 placeholder="Search bookings or ref #..."
                 value={search}
-                onChange={(e: any) => setSearch(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
                 className="bk-search-input"
               />
             </div>
@@ -317,7 +317,7 @@ export default function Bookings() {
 
           {/* ── 4. BOOKINGS CARDS GRID ── */}
           <div className="bk-grid-layout">
-            {filteredBookings.map((b: any) => (
+            {filteredBookings.map((b) => (
               <div key={b.id} className="bk-editorial-card">
                 <div className="bk-card-media">
                   <img
@@ -378,7 +378,7 @@ export default function Bookings() {
         {/* ── 5. LUXURY DIGITAL VOUCHER & BOARDING PASS MODAL ── */}
         {selectedBookingForModal && (
           <div className="bk-modal-backdrop" onClick={() => setSelectedBookingForModal(null)}>
-            <div className="bk-modal-window" style={{ maxWidth: '640px', padding: 0, overflow: 'hidden', border: '1px solid rgba(212,168,67,0.3)' }} onClick={(e: any) => e.stopPropagation()}>
+            <div className="bk-modal-window" style={{ maxWidth: '640px', padding: 0, overflow: 'hidden', border: '1px solid rgba(212,168,67,0.3)' }} onClick={(e) => e.stopPropagation()}>
               
               {/* Header */}
               <div className="bk-modal-hdr" style={{ background: '#0C1B2A', color: '#FBF9F5', padding: '20px 24px', margin: 0 }}>
@@ -470,7 +470,7 @@ export default function Bookings() {
         {/* ── 6. ADD BOOKING MODAL ── */}
         {showAddModal && (
           <div className="bk-modal-backdrop" onClick={() => setShowAddModal(false)}>
-            <div className="bk-modal-window" onClick={(e: any) => e.stopPropagation()}>
+            <div className="bk-modal-window" onClick={(e) => e.stopPropagation()}>
               <div className="bk-modal-hdr">
                 <h3 className="modal-title">Add Reservation / Booking</h3>
                 <button className="modal-close" onClick={() => setShowAddModal(false)}>
@@ -486,7 +486,7 @@ export default function Bookings() {
                     required
                     placeholder="e.g. Alila Ubud Luxury Resort"
                     value={newTitle}
-                    onChange={(e: any) => setNewTitle(e.target.value)}
+                    onChange={(e) => setNewTitle(e.target.value)}
                   />
                 </div>
 
@@ -496,14 +496,14 @@ export default function Bookings() {
                     type="text"
                     placeholder="e.g. Deluxe Terrace Pool Villa, Bali"
                     value={newSubtitle}
-                    onChange={(e: any) => setNewSubtitle(e.target.value)}
+                    onChange={(e) => setNewSubtitle(e.target.value)}
                   />
                 </div>
 
                 <div className="bm-grid-2">
                   <div className="bm-field">
                     <label>Category</label>
-                    <select value={newType} onChange={(e: any) => setNewType(e.target.value)}>
+                    <select value={newType} onChange={(e) => setNewType(e.target.value)}>
                       <option value="Stay">Luxury Stay</option>
                       <option value="Flight">Flight / Charter</option>
                       <option value="Activity">Experience / Activity</option>
@@ -517,7 +517,7 @@ export default function Bookings() {
                       type="text"
                       placeholder="e.g. ₹55,000"
                       value={newPrice}
-                      onChange={(e: any) => setNewPrice(e.target.value)}
+                      onChange={(e) => setNewPrice(e.target.value)}
                     />
                   </div>
                 </div>
@@ -528,7 +528,7 @@ export default function Bookings() {
                     type="text"
                     placeholder="e.g. 15 Nov — 22 Nov 2024"
                     value={newDates}
-                    onChange={(e: any) => setNewDates(e.target.value)}
+                    onChange={(e) => setNewDates(e.target.value)}
                   />
                 </div>
 

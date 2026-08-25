@@ -2,7 +2,8 @@
 import { useRouter, usePathname } from 'next/navigation';
 
 
-export default function Sidebar({ activeNav, setActiveNav }) {
+export default function Sidebar({ activeNav, setActiveNav }: { activeNav?: any; setActiveNav?: any } = {}) {
+
   const router = useRouter();
 
   return (

@@ -164,7 +164,7 @@ export default function Trips() {
       console.warn('Failed to save journeys:', err)
     }
   }, [journeys, userKey])
-  const [selectedItineraryTrip, setSelectedItineraryTrip] = useState(null)
+  const [selectedItineraryTrip, setSelectedItineraryTrip] = useState<any>(null)
   const [activeItineraryTab, setActiveItineraryTab] = useState('Daily Schedule') // 'Daily Schedule' | 'Calendar' | 'Budget'
   
   // Modals State
@@ -174,7 +174,7 @@ export default function Trips() {
   const [showAddCityModal, setShowAddCityModal] = useState(false)
   const [showAddActivityModal, setShowAddActivityModal] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
-  const [menuOpenId, setMenuOpenId] = useState(null)
+  const [menuOpenId, setMenuOpenId] = useState<any>(null)
 
   // AI Optimizer State
   const [aiTripName, setAiTripName] = useState('My Custom Journey')

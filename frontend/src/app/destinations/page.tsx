@@ -423,13 +423,13 @@ export default function Destinations() {
   const { favorites, toggleFavorite, isFavorite } = useFavorites()
   const [liked, setLiked] = useState({})
   const [showAllJourneys, setShowAllJourneys] = useState(false)
-  const [selectedModalDest, setSelectedModalDest] = useState(null)
+  const [selectedModalDest, setSelectedModalDest] = useState<any>(null)
 
   // ── PlanYatri AI State ──
   const [aiPrompt, setAiPrompt] = useState('')
   const [isGeneratingAI, setIsGeneratingAI] = useState(false)
   const [aiError, setAiError] = useState('')
-  const [aiSpotlight, setAiSpotlight] = useState(null)
+  const [aiSpotlight, setAiSpotlight] = useState<any>(null)
   const [aiSearchTag, setAiSearchTag] = useState('')
   const [chatHistory, setChatHistory] = useState([])
 
