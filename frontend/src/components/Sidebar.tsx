@@ -1,5 +1,5 @@
-import { useRouter, usePathname } from 'next/navigation';
 'use client';
+import { useRouter, usePathname } from 'next/navigation';
 
 
 export default function Sidebar({ activeNav, setActiveNav }) {

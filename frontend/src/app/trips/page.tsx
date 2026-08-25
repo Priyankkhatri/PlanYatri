@@ -1,5 +1,5 @@
-import { useRouter, usePathname } from 'next/navigation';
 'use client';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 

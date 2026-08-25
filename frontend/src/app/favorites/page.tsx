@@ -1,5 +1,5 @@
-import { useRouter, usePathname } from 'next/navigation';
 'use client';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useMemo } from 'react'
 
 import Sidebar from '@/components/Sidebar'
