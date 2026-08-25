@@ -481,7 +481,7 @@ export default function Trips() {
       setShowPaymentModal(false)
       toast.success(`💳 Payment Successful! Confirmed reservations for ${selectedItineraryTrip.dest}`)
 
-      router.push('/bookings')`,
+      router.push('/bookings');`,
               dates: selectedItineraryTrip.dates || 'Upcoming Immersion',
               time: 'Confirmed Booking',
               terminal: 'Terminal 3 • Gate B12',
