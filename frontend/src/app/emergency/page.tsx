@@ -611,16 +611,16 @@ export default function Emergency() {
   }
 
   // 7. Actions & Sharing Helpers
-  const handleCall = (phone) => {
+  const handleCall = (phone: any) => {
     window.location.href = `tel:${phone}`
   }
 
-  const handleWhatsAppBroadcast = (phone) => {
+  const handleWhatsAppBroadcast = (phone: any) => {
     const msg = `🚨 EMERGENCY SOS: I require immediate assistance.\n\n📍 My Live Coordinates:\nhttps://www.google.com/maps?q=${userPos[0]},${userPos[1]}\n\n⏱️ Timestamp: ${new Date().toLocaleString()}`
     window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
-  const handleSMSBroadcast = (phone) => {
+  const handleSMSBroadcast = (phone: any) => {
     const msg = `EMERGENCY SOS: Need assistance. My coordinates: https://www.google.com/maps?q=${userPos[0]},${userPos[1]}`
     window.location.href = `sms:${phone}?body=${encodeURIComponent(msg)}`
   }
