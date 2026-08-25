@@ -923,7 +923,7 @@ export default function Trips() {
                     </div>
 
                     <div className="stops-flow-list">
-                      {(selectedItineraryTrip.cities || []).map((city, idx) => (
+                      {(selectedItineraryTrip.cities || []).map((city: any, idx: any) => (
                         <div key={idx} className="stop-flow-item">
                           <div className="stop-num-circle">{idx + 1}</div>
                           <div className="stop-info">
