@@ -902,7 +902,7 @@ export default function Trips() {
                           <span className="day-total-num">
                             ₹
                             {(day.activities || [])
-                              .reduce((acc, a) => acc + (Number(a.costINR) || 0), 0)
+                              .reduce((acc: any, a: any) => acc + (Number(a.costINR) || 0), 0)
                               .toLocaleString('en-IN')}
                           </span>
                         </div>
@@ -1081,7 +1081,7 @@ export default function Trips() {
 
                       <div className="cdc-footer">
                         <span>Total:</span>
-                        <span>₹{(day.activities || []).reduce((acc, a) => acc + (a.costINR || 0), 0).toLocaleString('en-IN')}</span>
+                        <span>₹{(day.activities || []).reduce((acc: any, a: any) => acc + (a.costINR || 0), 0).toLocaleString('en-IN')}</span>
                       </div>
                     </div>
                   ))}
