@@ -439,7 +439,7 @@ export default function Messages() {
   }
 
   // ── 4. CONNECT WITH DISCOVERED TRAVEL BUDDY ──
-  const handleConnectWithPerson = (person) => {
+  const handleConnectWithPerson = (person: any) => {
     const existingContact = contacts.find((c: any) => c.name === person.name)
     let targetId = existingContact ? existingContact.id : person.id
 
@@ -576,7 +576,7 @@ export default function Messages() {
             /* Left Mini People Summary */
             <div className="msg-left-people-list">
               <p className="people-sidebar-hint">Verified Co-Travelers & Certified Guides</p>
-              {filteredPeople.map((person) => (
+              {filteredPeople.map((person: any) => (
                 <div
                   key={person.id}
                   className="msg-person-mini-card"
@@ -743,7 +743,7 @@ export default function Messages() {
 
             {/* People Grid */}
             <div className="people-cards-grid">
-              {filteredPeople.map((person) => {
+              {filteredPeople.map((person: any) => {
                 const IconComponent = person.icon || CompassIcon
                 return (
                   <div key={person.id} className="person-editorial-card">
