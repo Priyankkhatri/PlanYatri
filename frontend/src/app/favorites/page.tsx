@@ -37,7 +37,7 @@ export default function Favorites() {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
       ['Name,Country,Category']
-        .concat(favorites.map((f) => `"${f.name}","${f.country}","${f.category}"`))
+        .concat(favorites.map((f: any) => `"${f.name}","${f.country}","${f.category}"`))
         .join('\n')
     const encodedUri = encodeURI(csvContent)
     const link = document.createElement('a')
