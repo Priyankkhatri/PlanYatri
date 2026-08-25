@@ -3,8 +3,8 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 export default function InteractiveMap({ lat = 24.5854, lng = 73.7125, zoom = 11, locationName = 'Udaipur, Rajasthan' }) {
-  const mapRef = useRef(null)
-  const mapInstance = useRef(null)
+  const mapRef = useRef<any>(null)
+  const mapInstance = useRef<any>(null)
 
   useEffect(() => {
     if (!mapRef.current) return

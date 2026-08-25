@@ -227,8 +227,8 @@ export default function Messages() {
   const [callDuration, setCallDuration] = useState(0)
   const [showDossierModal, setShowDossierModal] = useState(false)
 
-  const messagesEndRef = useRef(null)
-  const callTimerRef = useRef(null)
+  const messagesEndRef = useRef<any>(null)
+  const callTimerRef = useRef<any>(null)
 
   const activeContact = contacts.find((c) => c.id === activeContactId) || contacts[0]
   const currentMessages = conversations[activeContactId] || []

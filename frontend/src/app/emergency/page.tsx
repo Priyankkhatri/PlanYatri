@@ -367,10 +367,10 @@ export default function Emergency() {
   const [isStrobeActive, setIsStrobeActive] = useState(false)
   const [expandedProtocol, setExpandedProtocol] = useState('ams')
 
-  const mapRef = useRef(null)
-  const mapInstance = useRef(null)
-  const audioCtxRef = useRef(null)
-  const sirenIntervalRef = useRef(null)
+  const mapRef = useRef<any>(null)
+  const mapInstance = useRef<any>(null)
+  const audioCtxRef = useRef<any>(null)
+  const sirenIntervalRef = useRef<any>(null)
 
   const dispatch = useDispatch<any>()
   const { contacts = [], loading } = useSelector((state: any) => state.emergency)

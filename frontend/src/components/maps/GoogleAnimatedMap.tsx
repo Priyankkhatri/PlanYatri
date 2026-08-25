@@ -9,7 +9,7 @@ export default function GoogleAnimatedMap({
 }) {
   const [activeTab, setActiveTab] = useState('animated') // 'animated' | 'google_street' | 'google_sat'
   const [animProgress, setAnimProgress] = useState(0)
-  const animRef = useRef(null)
+  const animRef = useRef<any>(null)
 
   // Smooth 60 FPS Bézier curve animation loop
   useEffect(() => {
