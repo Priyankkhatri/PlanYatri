@@ -1,5 +1,6 @@
 'use client';
-import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useMemo, useEffect } from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
@@ -396,7 +397,7 @@ const INITIAL_DESTINATIONS = [
 
 export default function Destinations() {
   const router = useRouter();
-  const pathname = usePathname();
+  const searchParams = useSearchParams(); const location: any = { state: { search: searchParams?.get("search") || "" } };
 
   // ── Currency State (INR / USD) ──
   const [currency, setCurrency] = useState('INR') // Default INR as requested
@@ -421,7 +422,7 @@ export default function Destinations() {
   const [guestRating, setGuestRating] = useState('4.5+')
   const [sortOption, setSortOption] = useState('Recommended')
   const { favorites, toggleFavorite, isFavorite } = useFavorites()
-  const [liked, setLiked] = useState({})
+  const [liked, setLiked] = useState<Record<string, any>>({})
   const [showAllJourneys, setShowAllJourneys] = useState(false)
   const [selectedModalDest, setSelectedModalDest] = useState<any>(null)
 
@@ -431,10 +432,10 @@ export default function Destinations() {
   const [aiError, setAiError] = useState('')
   const [aiSpotlight, setAiSpotlight] = useState<any>(null)
   const [aiSearchTag, setAiSearchTag] = useState('')
-  const [chatHistory, setChatHistory] = useState([])
+  const [chatHistory, setChatHistory] = useState<any[]>([])
 
   // Format price helper according to chosen currency
-  const formatPrice = (dest) => {
+  const formatPrice = (dest: any) => {
     if (!dest) return '₹0'
     const pINR = dest.priceINR ?? dest.priceInINR
     const pUSD = dest.priceUSD ?? dest.priceInUSD
@@ -448,23 +449,23 @@ export default function Destinations() {
   }
 
   // Toggle active filter tag
-  const removeTag = (tag) => {
-    setActiveTags((prev) => prev.filter((t: any) => t !== tag))
+  const removeTag = (tag: any) => {
+    setActiveTags((prev: any) => prev.filter((t: any) => t !== tag))
   }
 
-  const toggleActivity = (act) => {
-    setActivities((prev) => ({ ...prev, [act]: !prev[act] }))
+  const toggleActivity = (act: any) => {
+    setActivities((prev: any) => ({ ...prev, [act]: !prev[act] }))
   }
 
-  const toggleHeart = (e, dest) => {
+  const toggleHeart = (e: any, dest: any) => {
     e.stopPropagation()
     toggleFavorite(dest)
-    setLiked((prev) => ({ ...prev, [dest.id]: !prev[dest.id] }))
+    setLiked((prev: any) => ({ ...prev, [dest.id]: !prev[dest.id] }))
   }
 
   // ── PlanYatri AI Destination Generator Handler ──
   // ── Smart Travel Intent Detection ──
-  const isTravelQuery = (text) => {
+  const isTravelQuery = (text: any) => {
     const t = text.toLowerCase().trim()
 
     // Pure greetings & casual non-travel messages — return false
@@ -486,7 +487,7 @@ export default function Destinations() {
   }
 
   // ── Concierge-style fallback reply for casual/greeting messages ──
-  const getCasualReply = (text) => {
+  const getCasualReply = (text: any) => {
     const t = text.toLowerCase().trim()
     if (['hey','heyy','heyyy','hi','hii','hiii','hello'].some(g => t.startsWith(g))) {
       return `Hello! I'm your PlanYatri AI Concierge. Where would you like to travel? Tell me a destination, your budget, and number of days — I'll curate a bespoke itinerary for you.`
@@ -500,7 +501,7 @@ export default function Destinations() {
     return `I'm your luxury travel concierge — share a destination, budget, or trip idea and I'll curate a personalized plan just for you!`
   }
 
-  const handleGenerateAI = async (e) => {
+  const handleGenerateAI = async (e: any) => {
     e?.preventDefault()
     if (!aiPrompt.trim()) return
 
@@ -509,14 +510,14 @@ export default function Destinations() {
 
     // Add user message to conversation history immediately
     const userMsg = { id: Date.now(), sender: 'user', text: currentPrompt }
-    setChatHistory((prev) => [...prev, userMsg])
+    setChatHistory((prev: any) => [...prev, userMsg])
     setAiPrompt('')
 
     // ── INTENT CHECK: Is this a real travel query? ──
     if (!isTravelQuery(currentPrompt)) {
       const casualReply = getCasualReply(currentPrompt)
       setTimeout(() => {
-        setChatHistory((prev) => [
+        setChatHistory((prev: any) => [
           ...prev,
           { id: Date.now() + 1, sender: 'ai', text: casualReply },
         ])
@@ -616,12 +617,12 @@ export default function Destinations() {
 
     setAiSpotlight(spotlightItem)
     setAiSearchTag(currentPrompt)
-    setDestList((prev) => [
+    setDestList((prev: any) => [
       ...generatedDests,
       ...prev.filter((p) => !generatedDests.some((n) => n.id === p.id)),
     ])
 
-    setChatHistory((prev) => [
+    setChatHistory((prev: any) => [
       ...prev,
       {
         id: Date.now() + 1,
@@ -700,7 +701,7 @@ export default function Destinations() {
   // Visible card slices (initial 6 or all)
   const visibleDestinations = showAllJourneys ? filtered : filtered.slice(0, 6)
 
-  const handlePlanJourney = (dest) => {
+  const handlePlanJourney = (dest: any) => {
     router.push('/trips', {
       state: {
         initialDest: dest.name,
@@ -935,7 +936,7 @@ export default function Destinations() {
                       <span className="refine-tag-x">✕</span>
                     </button>
                   )}
-                  {activeTags.map((tag) => (
+                  {activeTags.map((tag: any) => (
                     <button key={tag} className="refine-tag-pill" onClick={() => removeTag(tag)}>
                       <span>{tag}</span>
                       <span className="refine-tag-x">✕</span>
@@ -984,7 +985,7 @@ export default function Destinations() {
               <div className="refine-section">
                 <span className="refine-label">ACTIVITY STYLE</span>
                 <div className="refine-checkbox-list">
-                  {Object.keys(activities).map((act) => {
+                  {Object.keys(activities).map((act: any) => {
                     const checked = activities[act]
                     return (
                       <label key={act} className="refine-check-item" onClick={() => toggleActivity(act)}>
@@ -1038,7 +1039,7 @@ export default function Destinations() {
               {/* ── AI SPOTLIGHT HERO SHOWCASE (When AI generates tailored itinerary) ── */}
               <AnimatePresence>
               {aiSpotlight && (
-                <motion.section className="ai-spotlight-card" variants={spotlightEnter as any} initial="initial" animate="animate" exit="exit">
+                <motion.section className="ai-spotlight-card" variants={spotlightEnter} initial="initial" animate="animate" exit="exit">
                   <div className="asc-img-wrap">
                     <img src={aiSpotlight.img} alt={aiSpotlight.name} className="asc-img" />
                     <div className="asc-badge-floating">
@@ -1154,15 +1155,15 @@ export default function Destinations() {
               {/* Destination Cards 3-Column Grid */}
               <motion.div
                 className="curated-grid"
-                variants={staggerGrid as any}
+                variants={staggerGrid}
                 initial="animate"
                 animate="animate"
                 key={activeCategory + activeTags.join('') + sortOption}
               >
-                {visibleDestinations.map((dest) => {
+                {visibleDestinations.map((dest: any) => {
                   const isHearted = isFavorite(dest.id) || liked[dest.id]
                   return (
-                    <motion.article key={dest.id} className="escape-card" variants={cardEnter as any} whileHover={{ y: -7, scale: 1.015 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 340, damping: 22 }} onClick={() => setSelectedModalDest(dest)}>
+                    <motion.article key={dest.id} className="escape-card" variants={cardEnter} whileHover={{ y: -7, scale: 1.015 }} whileTap={{ scale: 0.98 }} transition={{ type: 'spring', stiffness: 340, damping: 22 }} onClick={() => setSelectedModalDest(dest)}>
                       {/* Image Frame */}
                       <div className="escape-img-container">
                         <img
@@ -1170,7 +1171,7 @@ export default function Destinations() {
                           alt={dest.name}
                           className="escape-img"
                           loading="lazy"
-                          onError={(e) => {
+                          onError={(e: any) => {
                             e.currentTarget.onerror = null
                             e.currentTarget.src = 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=900&h=1100&q=85&auto=format&fit=crop'
                           }}
