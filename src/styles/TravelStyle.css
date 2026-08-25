@@ -1,5 +1,0 @@
-/* Travel Style Quiz Cards */
-.travel-style-container { padding: 32px 44px; display: flex; flex-direction: column; gap: 28px; text-align: center; }
-.style-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-.style-card { background: #FFFFFF; border: 2px solid #EFEAE2; border-radius: 16px; padding: 24px; cursor: pointer; transition: all 0.25s ease; }
-.style-card.selected { border-color: #18181B; background: #FAF8F5; }

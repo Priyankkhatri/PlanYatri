@@ -1,5 +1,0 @@
-/* PlanYatri Favorites Gallery Styles */
-.favorites-container { padding: 32px 44px; display: flex; flex-direction: column; gap: 24px; }
-.fav-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-.fav-item { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid #EFEAE2; background: #FFFFFF; }
-.fav-remove-btn { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); color: #FFF; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; }

@@ -1,6 +1,0 @@
-/* PlanYatri Experiences Styles */
-.experiences-container { padding: 32px 44px; display: flex; flex-direction: column; gap: 24px; }
-.exp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
-.exp-card { background: #FFFFFF; border: 1px solid #EFEAE2; border-radius: 12px; overflow: hidden; }
-.exp-card img { width: 100%; height: 220px; object-fit: cover; }
-.exp-card-body { padding: 20px; }

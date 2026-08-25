@@ -1,8 +1,0 @@
-/* PlanYatri Destinations Discovery Styles */
-.destinations-container { padding: 32px 44px; display: flex; flex-direction: column; gap: 28px; }
-.destinations-hero { text-align: center; max-width: 600px; margin: 0 auto; }
-.dest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-.dest-card { background: #FFFFFF; border-radius: 12px; overflow: hidden; border: 1px solid #EFEAE2; transition: all 0.3s ease; }
-.dest-card:hover { transform: translateY(-6px); box-shadow: 0 16px 32px rgba(0,0,0,0.1); }
-.dest-card img { width: 100%; height: 200px; object-fit: cover; }
-.dest-info { padding: 16px 20px; }
