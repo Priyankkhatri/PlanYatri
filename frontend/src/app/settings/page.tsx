@@ -194,7 +194,7 @@ export default function Settings() {
                           <p className="settings-list-label">{item.label}</p>
                           <p className="settings-list-sub">{item.sub}</p>
                         </div>
-                        <Toggle checked={notifPrefs[item.key]} onChange={() => setNotifPrefs(p=>({...p,[item.key]:!p[item.key]}))} />
+                        <Toggle checked={(notifPrefs as any)[item.key]} onChange={() => setNotifPrefs(p=>({...p,[item.key]:!p[item.key]}))} />
                       </div>
                     ))}
                   </div>
