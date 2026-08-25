@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VelocityPulse from "@/components/VelocityPulse";
@@ -85,13 +86,13 @@ export default function WizardComfort() {
             </div>
 
             <div className="flex flex-col gap-6 pt-10 border-t border-outline-variant/20">
-              <button className="w-full py-6 rounded-full bg-gradient-to-r from-primary to-primary-container text-white font-black text-xl shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all tracking-tight capitalize">
+              <Link href="/wizard/loading" className="w-full py-6 rounded-full bg-gradient-to-r from-primary to-primary-container text-white font-black text-xl shadow-2xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all tracking-tight capitalize text-center block">
                 Generate My Custom Plan
-              </button>
-              <button className="w-full py-4 text-on-surface-variant font-bold hover:text-primary transition-colors flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
+              </Link>
+              <Link href="/wizard/travelers" className="w-full py-4 text-on-surface-variant font-bold hover:text-primary transition-colors flex items-center justify-center gap-3 text-sm uppercase tracking-widest">
                 <span className="material-symbols-outlined text-lg">arrow_back</span>
                 Step 03: Travelers
-              </button>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import VelocityPulse from '@/components/VelocityPulse';
@@ -19,7 +20,7 @@ export default function TransportSelection() {
           </div>
           <div className="flex gap-4">
             <button className="bg-surface-container-high px-6 py-3 rounded-full font-label text-sm font-semibold hover:bg-surface-container-highest transition-all">Filter</button>
-            <button className="bg-primary text-white px-6 py-3 rounded-full font-label text-sm font-semibold shadow-lg shadow-primary/20 hover:scale-105 transition-transform">Edit Route</button>
+            <Link href="/wizard/destination" className="bg-primary text-white px-6 py-3 rounded-full font-label text-sm font-semibold shadow-lg shadow-primary/20 hover:scale-105 transition-transform">Edit Route</Link>
           </div>
         </div>
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VelocityPulse from "@/components/VelocityPulse";
@@ -19,12 +20,12 @@ export default function Home() {
                 Expertly curated itineraries blending AI precision with local heritage soul. Experience the real India, exactly your way.
               </p>
               <div className="flex flex-col sm:flex-row gap-6">
-                <button className="px-12 py-5 rounded-full bg-gradient-to-r from-primary to-primary-container text-white text-lg font-bold hover:opacity-90 transition-all shadow-2xl shadow-primary/20">
+                <Link href="/wizard/destination" className="px-12 py-5 rounded-full bg-gradient-to-r from-primary to-primary-container text-white text-lg font-bold hover:opacity-90 transition-all shadow-2xl shadow-primary/20 text-center">
                   Plan My Trip Free
-                </button>
-                <button className="px-12 py-5 rounded-full bg-white text-on-surface text-lg font-bold hover:bg-surface-container-low transition-all border border-outline-variant/20">
+                </Link>
+                <Link href="/dashboard" className="px-12 py-5 rounded-full bg-white text-on-surface text-lg font-bold hover:bg-surface-container-low transition-all border border-outline-variant/20 text-center">
                   View Curated Maps
-                </button>
+                </Link>
               </div>
             </div>
             {/* ... (rest of hero images remain the same) */}

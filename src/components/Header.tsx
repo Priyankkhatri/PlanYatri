@@ -1,15 +1,17 @@
+import Link from 'next/link';
+
 export default function Header() {
   return (
     <header className="bg-[#F9F9F9]/80 backdrop-blur-xl w-full top-0 sticky z-50">
       <nav className="flex justify-between items-center w-full px-6 py-4 max-w-screen-2xl mx-auto">
-        <div className="text-2xl font-black tracking-tighter text-primary">
+        <Link href="/" className="text-2xl font-black tracking-tighter text-primary">
           PlanYatri
-        </div>
+        </Link>
         <div className="hidden md:flex gap-8">
-          <a className="text-primary font-bold border-b-2 border-primary transition-colors duration-300" href="#">Discover</a>
-          <a className="text-slate-600 font-medium hover:text-primary transition-colors duration-300" href="#">Trips</a>
-          <a className="text-slate-600 font-medium hover:text-primary transition-colors duration-300" href="#">Saved</a>
-          <a className="text-slate-600 font-medium hover:text-primary transition-colors duration-300" href="#">Profile</a>
+          <Link className="text-primary font-bold border-b-2 border-primary transition-colors duration-300" href="/">Discover</Link>
+          <Link className="text-slate-600 font-medium hover:text-primary transition-colors duration-300" href="/dashboard">Trips</Link>
+          <Link className="text-slate-600 font-medium hover:text-primary transition-colors duration-300" href="/dashboard">Saved</Link>
+          <Link className="text-slate-600 font-medium hover:text-primary transition-colors duration-300" href="/dashboard/analytics">Profile</Link>
         </div>
         <div className="flex items-center gap-4">
           <span className="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">tune</span>

@@ -10,7 +10,7 @@ export default function Sidebar() {
     { name: 'My Trips', icon: 'map', path: '/dashboard' },
     { name: 'Comparison', icon: 'compare_arrows', path: '/wizard/comparison' },
     { name: 'Cost Tracking', icon: 'payments', path: '/dashboard/analytics' },
-    { name: 'Travel Docs', icon: 'description', path: '/dashboard/docs' },
+    { name: 'Stays', icon: 'hotel', path: '/wizard/stays' },
   ];
 
   return (

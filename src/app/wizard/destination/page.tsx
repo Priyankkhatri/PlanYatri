@@ -1,5 +1,7 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import VelocityPulse from "@/components/VelocityPulse";
 
 export default function WizardDestination() {
   return (
@@ -95,13 +97,14 @@ export default function WizardDestination() {
             <div className="h-2 w-2 rounded-full bg-surface-container-highest"></div>
             <div className="h-2 w-2 rounded-full bg-surface-container-highest"></div>
           </div>
-          <button className="group flex items-center gap-4 bg-gradient-to-r from-primary to-primary-container text-white px-10 py-5 rounded-full font-bold shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+          <Link href="/wizard/dates" className="group flex items-center gap-4 bg-gradient-to-r from-primary to-primary-container text-white px-10 py-5 rounded-full font-bold shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
             <span className="text-lg">Continue Journey</span>
             <span className="material-symbols-outlined text-xl transition-transform group-hover:translate-x-1">arrow_forward</span>
-          </button>
+          </Link>
         </div>
       </main>
       <Footer />
+      <VelocityPulse />
     </>
   );
 }

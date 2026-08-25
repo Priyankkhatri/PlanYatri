@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VelocityPulse from "@/components/VelocityPulse";
@@ -69,13 +70,13 @@ export default function WizardTravelers() {
 
               {/* Actions */}
               <div className="flex items-center justify-between pt-12 border-t border-outline-variant/20">
-                <button className="text-primary font-bold flex items-center gap-3 hover:translate-x-[-6px] transition-transform text-lg">
+                <Link href="/wizard/dates" className="text-primary font-bold flex items-center gap-3 hover:translate-x-[-6px] transition-transform text-lg">
                   <span className="material-symbols-outlined">arrow_back</span>
                   Back to Dates
-                </button>
-                <button className="bg-gradient-to-r from-primary to-primary-container text-white px-12 py-5 rounded-full font-bold shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all text-lg tracking-tight">
+                </Link>
+                <Link href="/wizard/comfort" className="bg-gradient-to-r from-primary to-primary-container text-white px-12 py-5 rounded-full font-bold shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all text-lg tracking-tight text-center">
                   Continue to Comfort
-                </button>
+                </Link>
               </div>
             </div>
 

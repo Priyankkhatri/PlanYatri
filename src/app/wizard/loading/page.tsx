@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import VelocityPulse from '@/components/VelocityPulse';
 
 export default function WizardLoading() {
   return (
@@ -93,6 +95,7 @@ export default function WizardLoading() {
       </main>
 
       <Footer />
+      <VelocityPulse />
     </div>
   );
 }

@@ -1,11 +1,10 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    turbo: {
-      root: 'C:/Users/priya/Desktop/PlanYatri'
-    }
-  }
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
 };
 
 export default nextConfig;

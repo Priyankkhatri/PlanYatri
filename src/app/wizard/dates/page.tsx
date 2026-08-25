@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import VelocityPulse from "@/components/VelocityPulse";
@@ -75,9 +76,15 @@ export default function WizardDates() {
                   <p className="text-2xl font-headline font-bold tracking-tight">Oct 17, Thu</p>
                 </div>
               </div>
-              <button className="w-full md:w-auto px-12 py-5 bg-gradient-to-r from-primary to-primary-container text-white rounded-full font-bold shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                Confirm Dates
-              </button>
+              <div className="flex items-center gap-4">
+                <Link href="/wizard/destination" className="text-primary font-bold flex items-center gap-2 hover:translate-x-[-4px] transition-transform">
+                  <span className="material-symbols-outlined">arrow_back</span>
+                  Back
+                </Link>
+                <Link href="/wizard/travelers" className="w-full md:w-auto px-12 py-5 bg-gradient-to-r from-primary to-primary-container text-white rounded-full font-bold shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all text-center">
+                  Confirm Dates
+                </Link>
+              </div>
             </div>
           </div>
         </div>
