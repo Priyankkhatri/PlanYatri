@@ -868,7 +868,7 @@ export default function Trips() {
 
                         {/* Activities List */}
                         <div className="day-events-list">
-                          {(day.activities || []).map((act, actIdx) => (
+                          {(day.activities || []).map((act: any, actIdx: any) => (
                             <div key={actIdx} className="day-event-item">
                               <div className="event-icon-box" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 {act.category === 'Food' ? <UtensilsIcon size={15} color="#D4A843" /> : act.category === 'Culture' ? <CultureIcon size={15} color="#D4A843" /> : act.category === 'Adventure' ? <MountainIcon size={15} color="#D4A843" /> : <CompassIcon size={15} color="#D4A843" />}
