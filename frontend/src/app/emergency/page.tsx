@@ -467,7 +467,7 @@ export default function Emergency() {
         iconAnchor: [15, 15],
       })
 
-      L.marker(fac.pos, { icon: facIcon })
+      L.marker(fac.pos as any, { icon: facIcon })
         .addTo(map)
         .bindPopup(
           `<div class="em-map-popup">
