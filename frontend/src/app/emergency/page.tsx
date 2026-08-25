@@ -491,7 +491,7 @@ export default function Emergency() {
 
   // 3. Tactile Press & Hold SOS
   useEffect(() => {
-    let interval
+    let interval: any
     if (isHolding && !isSOSActive) {
       interval = setInterval(() => {
         setHoldProgress((prev: any) => {
