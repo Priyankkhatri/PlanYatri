@@ -585,6 +585,56 @@
   color: #8C867A;
   max-width: 600px;
   line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.people-actions-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.people-action-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #D4A843;
+  color: #18181B;
+  border: none;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(212, 168, 67, 0.2);
+}
+
+.people-action-btn-primary:hover {
+  background: #C49833;
+  transform: translateY(-1px);
+}
+
+.people-action-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #FFFFFF;
+  color: #18181B;
+  border: 1.5px solid #EFEAE2;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.people-action-btn-secondary:hover {
+  border-color: #D4A843;
+  background: #FAF8F5;
+  transform: translateY(-1px);
 }
 
 .people-filter-chips {

@@ -52,6 +52,20 @@ export const profileService = {
     await profileService.upsert(userId, { avatar_url: urlData.publicUrl })
     return urlData.publicUrl
   },
+
+  /** Fetch registered community profiles */
+  async getAllProfiles(limit = 30) {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .limit(limit)
+      if (error) return []
+      return data || []
+    } catch {
+      return []
+    }
+  },
 }
 
 // ─────────────────────────────────────────────────────────────────────

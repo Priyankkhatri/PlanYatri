@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import Sidebar from '../components/Sidebar'
 import api from '../services/api'
-import { messageService } from '../services/supabaseService'
+import { messageService, profileService } from '../services/supabaseService'
 import { connectSocket, disconnectSocket } from '../services/socket'
+import { useToast } from '../context/ToastContext'
 import {
   SparkleIcon,
   UsersIcon,
@@ -180,11 +181,17 @@ const PEOPLE_DIRECTORY = [
 ]
 
 export default function Messages() {
+  const toast = useToast()
   const { userInfo } = useSelector((state) => state.auth)
   const userName = userInfo?.name ? userInfo.name.split(' ')[0] : 'Explorer'
+  const userKey = userInfo?.id || userInfo?._id || userInfo?.email || 'guest'
 
   const [activeTab, setActiveTab] = useState('chats') // 'chats' | 'people'
   const [contacts, setContacts] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`planyatri_contacts_${userKey}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
     return [
       {
         id: 1,
@@ -204,6 +211,10 @@ export default function Messages() {
   const [activeContactId, setActiveContactId] = useState(1)
 
   const [conversations, setConversations] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`planyatri_conversations_${userKey}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
     return {
       1: [
         {
@@ -215,6 +226,79 @@ export default function Messages() {
       ],
     }
   })
+
+  // People & Community Directory
+  const [peopleDirectory, setPeopleDirectory] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`planyatri_community_people_${userKey}`)
+      return saved ? JSON.parse(saved) : PEOPLE_DIRECTORY
+    } catch {
+      return PEOPLE_DIRECTORY
+    }
+  })
+
+  // Companion & Invite Modals State
+  const [showAddPersonModal, setShowAddPersonModal] = useState(false)
+  const [showPostRequestModal, setShowPostRequestModal] = useState(false)
+  const [newPerson, setNewPerson] = useState({
+    name: '',
+    emailOrPhone: '',
+    location: '',
+    travelStyle: 'Adventure & Trekking',
+    bio: '',
+    trips: '',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&q=80&auto=format&fit=crop',
+    initialMsg: '',
+  })
+
+  const [newPost, setNewPost] = useState({
+    destination: '',
+    month: 'Upcoming Season',
+    style: 'Adventure & Trekking',
+    description: '',
+  })
+
+  // Save contacts & conversations to local storage
+  useEffect(() => {
+    try {
+      localStorage.setItem(`planyatri_contacts_${userKey}`, JSON.stringify(contacts))
+      localStorage.setItem(`planyatri_conversations_${userKey}`, JSON.stringify(conversations))
+      localStorage.setItem(`planyatri_community_people_${userKey}`, JSON.stringify(peopleDirectory))
+    } catch (e) {
+      console.warn('Failed to save chat data:', e)
+    }
+  }, [contacts, conversations, peopleDirectory, userKey])
+
+  // Sync real registered users from Supabase profiles
+  useEffect(() => {
+    profileService.getAllProfiles().then((profiles) => {
+      if (profiles && profiles.length > 0) {
+        const formatted = profiles
+          .filter(p => p.id !== userInfo?.id)
+          .map(p => ({
+            id: p.id,
+            name: p.full_name || p.username || 'PlanYatri Explorer',
+            location: p.location || 'Global Explorer',
+            travelStyle: p.travel_style || 'Curated Wanderer',
+            badge: 'REGISTERED MEMBER',
+            avatar: p.avatar_url || `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&q=80&auto=format&fit=crop`,
+            bio: p.bio || 'Passionate traveler on PlanYatri.',
+            trips: p.upcoming_trip || 'Exploring New Horizons',
+            icon: LeafIcon,
+            safetyScore: '10/10',
+            online: true,
+            isRealUser: true,
+          }))
+
+        if (formatted.length > 0) {
+          setPeopleDirectory((prev) => {
+            const combined = [...formatted, ...prev.filter(p => !formatted.some(f => f.id === p.id))]
+            return combined
+          })
+        }
+      }
+    }).catch(() => {})
+  }, [userInfo?.id])
 
   const [messageInput, setMessageInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
@@ -518,6 +602,120 @@ export default function Messages() {
 
     setActiveContactId(targetId)
     setActiveTab('chats')
+    toast.success(`💬 Chat opened with ${person.name}`)
+  }
+
+  // ── 5. ADD CUSTOM COMPANION / CO-TRAVELER ──
+  const handleAddPersonSubmit = (e) => {
+    e.preventDefault()
+    if (!newPerson.name.trim() || !newPerson.location.trim()) {
+      toast.error('Please enter a companion name and planned destination.')
+      return
+    }
+
+    const createdPerson = {
+      id: `custom_${Date.now()}`,
+      name: newPerson.name.trim(),
+      location: newPerson.location.trim(),
+      travelStyle: newPerson.travelStyle,
+      badge: 'TRAVEL COMPANION',
+      avatar: newPerson.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&q=80&auto=format&fit=crop',
+      bio: newPerson.bio.trim() || `Exploring ${newPerson.location} with fellow travelers.`,
+      trips: newPerson.trips.trim() || `${newPerson.location} Expedition`,
+      safetyScore: '10/10',
+      online: true,
+      emailOrPhone: newPerson.emailOrPhone,
+      isCustom: true,
+    }
+
+    setPeopleDirectory((prev) => [createdPerson, ...prev])
+
+    // Also auto-create active chat contact
+    const newContact = {
+      id: createdPerson.id,
+      name: createdPerson.name,
+      role: `Co-Traveler · ${createdPerson.location.split(',')[0]}`,
+      badge: createdPerson.badge,
+      avatar: createdPerson.avatar,
+      lastMsg: newPerson.initialMsg.trim() || `Connected regarding ${createdPerson.trips}`,
+      time: 'Just now',
+      unread: 0,
+      online: true,
+      category: 'Buddy',
+    }
+
+    setContacts((prev) => [newContact, ...prev.filter((c) => c.id !== createdPerson.id)])
+    setConversations((prev) => ({
+      ...prev,
+      [createdPerson.id]: [
+        {
+          id: Date.now(),
+          from: 'me',
+          text: newPerson.initialMsg.trim() || `Hey ${createdPerson.name}! Glad to connect on PlanYatri for our trip to ${createdPerson.location}.`,
+          time: 'Just now',
+        },
+        {
+          id: Date.now() + 1,
+          from: 'them',
+          text: `Hey ${userName}! Great to connect! Let's synchronize our itinerary and planned dates.`,
+          time: 'Just now',
+        },
+      ],
+    }))
+
+    setActiveContactId(createdPerson.id)
+    setActiveTab('chats')
+    setShowAddPersonModal(false)
+    setNewPerson({
+      name: '',
+      emailOrPhone: '',
+      location: '',
+      travelStyle: 'Adventure & Trekking',
+      bio: '',
+      trips: '',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&q=80&auto=format&fit=crop',
+      initialMsg: '',
+    })
+    toast.success(`✨ Added ${createdPerson.name} to your travel companions!`)
+  }
+
+  // ── 6. BROADCAST TRAVEL REQUEST TO COMMUNITY ──
+  const handlePostRequestSubmit = (e) => {
+    e.preventDefault()
+    if (!newPost.destination.trim()) {
+      toast.error('Please specify the destination.')
+      return
+    }
+
+    const myBroadcast = {
+      id: `broadcast_${Date.now()}`,
+      name: userInfo?.name || 'Explorer (You)',
+      location: newPost.destination.trim(),
+      travelStyle: newPost.style,
+      badge: 'OPEN FOR COMPANIONS',
+      avatar: userInfo?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&h=150&q=80&auto=format&fit=crop',
+      bio: newPost.description.trim() || `Looking for companions to explore ${newPost.destination} together!`,
+      trips: `${newPost.destination} (${newPost.month})`,
+      safetyScore: '10/10',
+      online: true,
+      isSelfBroadcast: true,
+    }
+
+    setPeopleDirectory((prev) => [myBroadcast, ...prev])
+    setShowPostRequestModal(false)
+    setNewPost({ destination: '', month: 'Upcoming Season', style: 'Adventure & Trekking', description: '' })
+    toast.success('🚀 Companion request published to community board!')
+  }
+
+  // ── 7. INVITE VIA SHAREABLE LINK ──
+  const handleCopyInviteLink = () => {
+    const inviteUrl = `${window.location.origin}/join/companion_${userInfo?.id || 'traveler'}`
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(inviteUrl)
+      toast.success('🔗 Personal companion invite link copied to clipboard!')
+    } else {
+      toast.success('🔗 Invite link ready!')
+    }
   }
 
   // Filter contacts by search
@@ -528,17 +726,17 @@ export default function Messages() {
   )
 
   // Filter people directory
-  const filteredPeople = PEOPLE_DIRECTORY.filter((p) => {
+  const filteredPeople = peopleDirectory.filter((p) => {
     const matchesSearch =
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.travelStyle.toLowerCase().includes(searchQuery.toLowerCase())
+      (p.travelStyle || '').toLowerCase().includes(searchQuery.toLowerCase())
     if (!matchesSearch) return false
 
-    if (peopleFilter === 'Adventure') return p.travelStyle.includes('Trek') || p.travelStyle.includes('Adventure')
-    if (peopleFilter === 'Heritage') return p.travelStyle.includes('Heritage')
-    if (peopleFilter === 'Wellness') return p.travelStyle.includes('Wellness')
-    if (peopleFilter === 'Coastal') return p.travelStyle.includes('Coastal')
+    if (peopleFilter === 'Adventure') return (p.travelStyle || '').includes('Trek') || (p.travelStyle || '').includes('Adventure')
+    if (peopleFilter === 'Heritage') return (p.travelStyle || '').includes('Heritage')
+    if (peopleFilter === 'Wellness') return (p.travelStyle || '').includes('Wellness')
+    if (peopleFilter === 'Coastal') return (p.travelStyle || '').includes('Coastal')
     return true
   })
 
@@ -770,6 +968,28 @@ export default function Messages() {
                 <p className="people-dir-sub">
                   Connect with verified solo travelers, certified alpine guides, and boutique hosts sharing your destination itinerary.
                 </p>
+
+                <div className="people-actions-bar">
+                  <button
+                    className="people-action-btn-primary"
+                    onClick={() => setShowAddPersonModal(true)}
+                  >
+                    <span>+ Add Co-Traveler</span>
+                  </button>
+                  <button
+                    className="people-action-btn-secondary"
+                    onClick={() => setShowPostRequestModal(true)}
+                  >
+                    <span>📢 Post Companion Search</span>
+                  </button>
+                  <button
+                    className="people-action-btn-secondary"
+                    onClick={handleCopyInviteLink}
+                    title="Copy your personal companion invite link"
+                  >
+                    <span>🔗 Invite Friends</span>
+                  </button>
+                </div>
               </div>
 
               {/* Filter Tabs */}
@@ -788,53 +1008,270 @@ export default function Messages() {
 
             {/* People Grid */}
             <div className="people-cards-grid">
-              {filteredPeople.map((person) => {
-                const IconComponent = person.icon || CompassIcon
-                return (
-                  <div key={person.id} className="person-editorial-card">
-                    <div className="pec-header-row">
-                      <div className="pec-avatar-wrap">
-                        <img src={person.avatar} alt={person.name} className="pec-avatar" />
-                        {person.online && <span className="msg-online-badge" />}
-                      </div>
-                      <div>
-                        <div className="pec-name-badge">
-                          <h3 className="pec-name">{person.name}</h3>
-                          <span className="pec-badge">{person.badge}</span>
-                        </div>
-                        <span className="pec-loc" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                          <MapPinIcon size={11} color="#D4A843" /> {person.location}
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="pec-bio">{person.bio}</p>
-
-                    <div className="pec-meta-box">
-                      <div className="pec-meta-item">
-                        <span className="pmi-lbl">UPCOMING ESCAPE</span>
-                        <span className="pmi-val">{person.trips}</span>
-                      </div>
-                      <div className="pec-meta-item">
-                        <span className="pmi-lbl">STYLE & SAFETY</span>
-                        <span className="pmi-val" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                          <IconComponent size={12} color="#D4A843" /> {person.travelStyle} · {person.safetyScore}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      className="pec-connect-btn"
-                      onClick={() => handleConnectWithPerson(person)}
-                    >
-                      <span>Connect & Message</span>
-                      <span>→</span>
+              {filteredPeople.length === 0 ? (
+                <div className="people-empty-box" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 24px', background: '#FFFFFF', borderRadius: 20, border: '1px solid #EFEAE2' }}>
+                  <span style={{ fontSize: 40, display: 'block', marginBottom: 12 }}>🧭</span>
+                  <h3 style={{ fontFamily: 'var(--font-display, serif)', fontSize: 22, fontWeight: 700, margin: '0 0 8px', color: '#18181B' }}>No Co-Travelers Found</h3>
+                  <p style={{ fontSize: 14, color: '#8C867A', maxWidth: 440, margin: '0 auto 20px' }}>
+                    Be the first to add a travel buddy or broadcast your planned destination to connect with fellow travelers!
+                  </p>
+                  <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+                    <button className="people-action-btn-primary" onClick={() => setShowAddPersonModal(true)}>
+                      + Add First Co-Traveler
+                    </button>
+                    <button className="people-action-btn-secondary" onClick={() => setShowPostRequestModal(true)}>
+                      📢 Post Trip Request
                     </button>
                   </div>
-                )
-              })}
+                </div>
+              ) : (
+                filteredPeople.map((person) => {
+                  const IconComponent = person.icon || CompassIcon
+                  return (
+                    <div key={person.id} className="person-editorial-card">
+                      <div className="pec-header-row">
+                        <div className="pec-avatar-wrap">
+                          <img src={person.avatar} alt={person.name} className="pec-avatar" />
+                          {person.online && <span className="msg-online-badge" />}
+                        </div>
+                        <div>
+                          <div className="pec-name-badge">
+                            <h3 className="pec-name">{person.name}</h3>
+                            <span className="pec-badge">{person.badge}</span>
+                          </div>
+                          <span className="pec-loc" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <MapPinIcon size={11} color="#D4A843" /> {person.location}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="pec-bio">{person.bio}</p>
+
+                      <div className="pec-meta-box">
+                        <div className="pec-meta-item">
+                          <span className="pmi-lbl">UPCOMING ESCAPE</span>
+                          <span className="pmi-val">{person.trips}</span>
+                        </div>
+                        <div className="pec-meta-item">
+                          <span className="pmi-lbl">STYLE & SAFETY</span>
+                          <span className="pmi-val" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                            <IconComponent size={12} color="#D4A843" /> {person.travelStyle} · {person.safetyScore}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        className="pec-connect-btn"
+                        onClick={() => handleConnectWithPerson(person)}
+                      >
+                        <span>Connect & Message</span>
+                        <span>→</span>
+                      </button>
+                    </div>
+                  )
+                })
+              )}
             </div>
           </main>
+        )}
+
+        {/* ═════════════════════════════════════════════════════════════
+            MODAL: ADD NEW CO-TRAVELER / COMPANION
+        ═════════════════════════════════════════════════════════════ */}
+        {showAddPersonModal && (
+          <div className="custom-modal-backdrop" onClick={() => setShowAddPersonModal(false)}>
+            <div className="custom-modal-window" style={{ maxWidth: 520 }} onClick={(e) => e.stopPropagation()}>
+              <div className="cm-header">
+                <div>
+                  <span className="cm-badge-ai" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <UsersIcon size={12} color="#D4A843" /> NEW TRAVEL COMPANION
+                  </span>
+                  <h3 className="cm-title">Add Co-Traveler to PlanYatri</h3>
+                </div>
+                <button className="cm-close" onClick={() => setShowAddPersonModal(false)}>✕</button>
+              </div>
+
+              <form onSubmit={handleAddPersonSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>FULL NAME *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Aarav Mehta"
+                    value={newPerson.name}
+                    onChange={(e) => setNewPerson({ ...newPerson, name: e.target.value })}
+                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>PLANNED DESTINATION *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Ladakh & Spiti"
+                      value={newPerson.location}
+                      onChange={(e) => setNewPerson({ ...newPerson, location: e.target.value })}
+                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>TRAVEL STYLE</label>
+                    <select
+                      value={newPerson.travelStyle}
+                      onChange={(e) => setNewPerson({ ...newPerson, travelStyle: e.target.value })}
+                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, background: '#FFFFFF' }}
+                    >
+                      <option>Adventure & Trekking</option>
+                      <option>Royal Heritage</option>
+                      <option>Wellness & Yoga</option>
+                      <option>Beach & Coastal</option>
+                      <option>Luxury & Gastronomy</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>EMAIL OR PHONE (OPTIONAL)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. aarav@example.com or +91 98765 43210"
+                    value={newPerson.emailOrPhone}
+                    onChange={(e) => setNewPerson({ ...newPerson, emailOrPhone: e.target.value })}
+                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>ABOUT / TRAVEL BIO</label>
+                  <textarea
+                    rows={2}
+                    placeholder="e.g. Wildlife photographer planning a 7-day trip to Ranthambore."
+                    value={newPerson.bio}
+                    onChange={(e) => setNewPerson({ ...newPerson, bio: e.target.value })}
+                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, resize: 'none' }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>FIRST MESSAGE / NOTE</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Hey! Let's coordinate our itinerary and travel dates."
+                    value={newPerson.initialMsg}
+                    onChange={(e) => setNewPerson({ ...newPerson, initialMsg: e.target.value })}
+                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddPersonModal(false)}
+                    style={{ padding: '10px 18px', background: 'transparent', border: '1px solid #EFEAE2', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{ padding: '10px 22px', background: '#D4A843', color: '#18181B', border: 'none', borderRadius: 10, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    Add Companion & Start Chatting →
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ═════════════════════════════════════════════════════════════
+            MODAL: BROADCAST TRAVEL REQUEST TO COMMUNITY
+        ═════════════════════════════════════════════════════════════ */}
+        {showPostRequestModal && (
+          <div className="custom-modal-backdrop" onClick={() => setShowPostRequestModal(false)}>
+            <div className="custom-modal-window" style={{ maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
+              <div className="cm-header">
+                <div>
+                  <span className="cm-badge-ai" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <SparkleIcon size={12} color="#D4A843" /> COMMUNITY BROADCAST
+                  </span>
+                  <h3 className="cm-title">Post Companion Search</h3>
+                </div>
+                <button className="cm-close" onClick={() => setShowPostRequestModal(false)}>✕</button>
+              </div>
+
+              <form onSubmit={handlePostRequestSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>WHERE ARE YOU HEADING? *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Spiti Valley Expedition or Bali Yoga Retreat"
+                    value={newPost.destination}
+                    onChange={(e) => setNewPost({ ...newPost, destination: e.target.value })}
+                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>TRAVEL TIMELINE</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Oct 2026 or Next Month"
+                      value={newPost.month}
+                      onChange={(e) => setNewPost({ ...newPost, month: e.target.value })}
+                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5 }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>EXPEDITION STYLE</label>
+                    <select
+                      value={newPost.style}
+                      onChange={(e) => setNewPost({ ...newPost, style: e.target.value })}
+                      style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, background: '#FFFFFF' }}
+                    >
+                      <option>Adventure & Trekking</option>
+                      <option>Royal Heritage</option>
+                      <option>Wellness & Yoga</option>
+                      <option>Beach & Coastal</option>
+                      <option>Luxury & Gastronomy</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#18181B' }}>DETAILS & WHAT YOU'RE LOOKING FOR</label>
+                  <textarea
+                    rows={3}
+                    placeholder="e.g. Planning a road trip from Manali to Leh. Looking for 2 co-travelers to share cab and homestay expenses!"
+                    value={newPost.description}
+                    onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
+                    style={{ padding: '10px 14px', borderRadius: 10, border: '1px solid #EFEAE2', fontSize: 13.5, resize: 'none' }}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowPostRequestModal(false)}
+                    style={{ padding: '10px 18px', background: 'transparent', border: '1px solid #EFEAE2', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    style={{ padding: '10px 22px', background: '#D4A843', color: '#18181B', border: 'none', borderRadius: 10, fontSize: 13.5, fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    Publish to Community Board 🚀
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
 
         {/* ═════════════════════════════════════════════════════════════
