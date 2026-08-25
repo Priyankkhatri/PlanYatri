@@ -1,7 +1,9 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Sidebar from '../components/Sidebar'
+import api from '../services/api'
 import { useToast } from '../context/ToastContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import './TravelStyle.css'
@@ -354,6 +356,9 @@ export default function TravelStyle() {
     }
   })
 
+  const [aiPersona, setAiPersona] = useState(null)
+  const [loadingAiPersona, setLoadingAiPersona] = useState(false)
+
   useEffect(() => {
     try {
       const storageKey = `planyatri_style_${userKey}`
@@ -362,6 +367,20 @@ export default function TravelStyle() {
       console.warn('Failed to save travel style:', err)
     }
   }, [answers, userKey])
+
+  useEffect(() => {
+    if (step === 5 || step === 0) {
+      setLoadingAiPersona(true)
+      api.post('/gemini/persona-manifesto', answers)
+        .then((res) => {
+          if (res.data?.success && res.data.data) {
+            setAiPersona(res.data.data)
+          }
+        })
+        .catch((err) => console.warn('AI Persona fallback:', err))
+        .finally(() => setLoadingAiPersona(false))
+    }
+  }, [step, answers])
 
   const activeArchetype = useMemo(() => {
     const primary = answers.landscape || 'mountain'
@@ -374,7 +393,7 @@ export default function TravelStyle() {
       setStep((prev) => prev + 1)
     } else {
       setStep(5)
-      toast.success('✨ Your Travel Style Archetype & Curated Matches are ready!')
+      toast.success('Your Travel Style Archetype & Curated Matches are ready!')
     }
   }
 
@@ -554,10 +573,23 @@ export default function TravelStyle() {
               {/* Archetype Summary Hero */}
               <div className="ts-results-archetype-card">
                 <div className="rac-left">
-                  <span className="rac-badge">{activeArchetype.badge}</span>
-                  <h2 className="rac-title">{activeArchetype.title}</h2>
-                  <p className="rac-tagline">"{activeArchetype.tagline}"</p>
-                  <p className="rac-desc">{activeArchetype.description}</p>
+                  <span className="rac-badge">{aiPersona?.badge || activeArchetype.badge}</span>
+                  <h2 className="rac-title">{aiPersona?.archetypeTitle || activeArchetype.title}</h2>
+                  <p className="rac-tagline">"{aiPersona?.tagline || activeArchetype.tagline}"</p>
+                  <p className="rac-desc">{aiPersona?.description || activeArchetype.description}</p>
+
+                  {aiPersona?.manifesto && (
+                    <div style={{ marginTop: 14, marginBottom: 16 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', color: '#D4A843', display: 'block', marginBottom: 6 }}>
+                        AI TRAVEL PHILOSOPHY & MANIFESTO:
+                      </span>
+                      <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: '#C5BEB3', lineHeight: 1.6 }}>
+                        {aiPersona.manifesto.map((m, idx) => (
+                          <li key={idx} style={{ marginBottom: 4 }}>{m}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   <div className="rac-actions-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                     <button className="rac-btn-retake" onClick={() => setStep(1)}>
@@ -570,7 +602,7 @@ export default function TravelStyle() {
                       onClick={() =>
                         navigate('/messages', {
                           state: {
-                            prompt: `I am aligned with the "${activeArchetype.title}" archetype (${activeArchetype.tagline}). What bespoke luxury destinations, packing tips, and hidden trails do you recommend for my travel persona?`,
+                            prompt: `I am aligned with the "${aiPersona?.archetypeTitle || activeArchetype.title}" archetype (${aiPersona?.tagline || activeArchetype.tagline}). What bespoke luxury destinations, packing tips, and hidden trails do you recommend for my travel persona?`,
                           },
                         })
                       }
@@ -588,7 +620,7 @@ export default function TravelStyle() {
                         gap: 6,
                       }}
                     >
-                      <span>✨ Consult AI on My Persona</span>
+                      <span>Consult AI on My Persona</span>
                     </button>
                   </div>
                 </div>

@@ -803,9 +803,10 @@ export default function Emergency() {
                         },
                       })
                     }
-                    style={{ background: '#1C1917', color: '#D4A843', borderColor: 'rgba(212, 168, 67, 0.4)' }}
+                    style={{ background: '#1C1917', color: '#D4A843', borderColor: 'rgba(212, 168, 67, 0.4)', display: 'inline-flex', alignItems: 'center', gap: 6 }}
                   >
-                    <span>✨ AI Safety Concierge</span>
+                    <ShieldSafeIcon size={14} color="#D4A843" />
+                    <span>AI Safety Concierge</span>
                   </button>
 
                   <button
@@ -813,7 +814,7 @@ export default function Emergency() {
                     onClick={() => navigate('/settings')}
                     title="Manage ICE Contacts in Settings"
                   >
-                    <span>⚙️ Settings Profile</span>
+                    <span>Settings Profile</span>
                   </button>
                 </div>
               </div>

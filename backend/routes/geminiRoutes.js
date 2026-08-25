@@ -124,23 +124,27 @@ async function callGroq(systemPrompt, userPrompt) {
 // callAI — tries Gemini first (rate-limited), falls back to Groq
 // rateLimitKey: unique string per route, cap: max calls/min
 // ─────────────────────────────────────────────────────────────────────────────
-async function callAI(systemPrompt, userPrompt, rateLimitKey = 'default', cap = 20) {
-  // Try Gemini if available and not rate-limited
+async function callAI(systemPrompt, userPrompt, rateLimitKey = 'default', cap = 30) {
+  // 1. Primary Ultra-Fast Engine: Groq Multi-Model (gpt-oss-120b, qwen3.6-27b, gpt-oss-20b)
+  if (GROQ_API_KEY) {
+    try {
+      const result = await callGroq(systemPrompt, userPrompt);
+      console.log(`[AI] Groq OK — ${rateLimitKey}`);
+      return result;
+    } catch (e) {
+      console.warn(`[AI] Groq failed (${e.message}), trying Gemini fallback…`);
+    }
+  }
+
+  // 2. Secondary Engine: Google Gemini 2.0 Flash
   if (GEMINI_API_KEY && rateLimiter.check(`gemini:${rateLimitKey}`, cap)) {
     try {
       const result = await callGemini(systemPrompt, userPrompt);
       console.log(`[AI] Gemini OK — ${rateLimitKey}`);
       return result;
     } catch (e) {
-      console.warn(`[AI] Gemini failed (${e.message}), trying Groq…`);
+      console.warn(`[AI] Gemini failed: ${e.message}`);
     }
-  }
-
-  // Fallback: Groq
-  if (GROQ_API_KEY) {
-    const result = await callGroq(systemPrompt, userPrompt);
-    console.log(`[AI] Groq OK — ${rateLimitKey}`);
-    return result;
   }
 
   throw new Error('No AI provider available');
@@ -479,6 +483,147 @@ Guidance Guidelines:
   } catch (error) {
     console.error('[concierge-reply] Fatal:', error);
     res.status(500).json({ message: 'Failed to generate concierge response', error: error.message });
+  }
+});
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ROUTE 4: POST /api/gemini/persona-manifesto
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/persona-manifesto', async (req, res) => {
+  try {
+    const { landscape = 'heritage', pace = 'luxury', budget = 'luxury', companion = 'solo', priority = 'culture' } = req.body;
+
+    const systemPrompt = `You are PlanYatri's Master Travel Persona Architect AI.
+Analyze the traveler's quiz choices and return a JSON object representing their bespoke luxury Travel Persona Manifesto.
+JSON structure:
+{
+  "archetypeTitle": "e.g. The Royal Heritage Connoisseur",
+  "badge": "e.g. BESPOKE HERITAGE ARCHETYPE",
+  "tagline": "1-sentence poetic luxury travel philosophy",
+  "description": "2-3 sentences of deep, evocative analysis of why they travel and what fuels their soul.",
+  "manifesto": [
+    "Principle 1",
+    "Principle 2",
+    "Principle 3"
+  ],
+  "traits": [
+    { "name": "Trait 1", "pct": 98 },
+    { "name": "Trait 2", "pct": 94 },
+    { "name": "Trait 3", "pct": 92 }
+  ],
+  "recommendedDestinations": ["Destination 1", "Destination 2", "Destination 3"]
+}
+Return ONLY valid JSON — zero markdown fences or extra text.`;
+
+    const userPrompt = `Choices: Landscape=${landscape}, Pace=${pace}, Budget Tier=${budget}, Companion=${companion}, Priority=${priority}. Generate Manifesto JSON.`;
+
+    try {
+      const result = await callAI(systemPrompt, userPrompt, 'persona', 20);
+      if (result && result.archetypeTitle) {
+        return res.json({ success: true, source: 'groq-ai', data: result });
+      }
+    } catch (aiErr) {
+      console.warn('[persona-manifesto] AI failed:', aiErr.message);
+    }
+
+    res.json({
+      success: true,
+      source: 'fallback',
+      data: {
+        archetypeTitle: 'The Bespoke Global Explorer',
+        badge: 'CURATED LUXURY ARCHETYPE',
+        tagline: 'You travel not to escape life, but for life not to escape you.',
+        description: 'You appreciate authentic architectural heritage, mindful immersion, and private sanctuaries that elevate every single journey.',
+        manifesto: [
+          'Seek authentic cultural resonance over commercial tourist trails.',
+          'Value private local culinary discoveries and certified safety.',
+          'Immerse deeply in each destination with zero transit fatigue.'
+        ],
+        traits: [
+          { name: 'Cultural Immersion', pct: 98 },
+          { name: 'Architectural Curiosity', pct: 95 },
+          { name: 'Mindful Pacing', pct: 92 }
+        ],
+        recommendedDestinations: ['Udaipur Royal Palaces', 'Leh Ladakh High-Pass', 'Kerala Ayurvedic Backwaters']
+      }
+    });
+  } catch (error) {
+    console.error('[persona-manifesto] Fatal:', error);
+    res.status(500).json({ message: 'Failed to generate persona', error: error.message });
+  }
+});
+
+
+// ═════════════════════════════════════════════════════════════════════════════
+// ROUTE 5: POST /api/gemini/emergency-safety-advice
+// ═════════════════════════════════════════════════════════════════════════════
+router.post('/emergency-safety-advice', async (req, res) => {
+  try {
+    const { city = 'New Delhi', situation = 'General Safety Consultation', userLocation = null } = req.body;
+
+    const systemPrompt = `You are PlanYatri's Master Safety Concierge & Emergency Response AI.
+Provide immediate, calm, highly precise safety and tactical advisory for a traveler in distress or seeking safety guidance in ${city}, India / worldwide.
+
+Return ONLY JSON:
+{
+  "safetyRating": "9.8 / 10 (Verified Safe)",
+  "immediateActionSteps": [
+    "Step 1: Calm, verified tactical action",
+    "Step 2: Communication and location sharing",
+    "Step 3: Immediate safe transit recommendation"
+  ],
+  "emergencyContacts": [
+    { "name": "National Police Emergency", "number": "112" },
+    { "name": "Tourist Helpline (24x7)", "number": "1363" },
+    { "name": "Women Safety Rapid Response", "number": "1091" },
+    { "name": "Ambulance / Medical Response", "number": "108" }
+  ],
+  "safeZones": [
+    "Nearest 5-Star Hotel Lobby (24/7 Security)",
+    "Official Tourist Police Booth",
+    "International Airport / Major Transit Hub"
+  ],
+  "tacticalAdvice": "Clear, concise guidance on navigating the current situation with zero panic."
+}`;
+
+    const userPrompt = `City: "${city}". Situation / Inquiry: "${situation}". Coordinates: ${JSON.stringify(userLocation)}. Generate verified safety advisory JSON.`;
+
+    try {
+      const result = await callAI(systemPrompt, userPrompt, 'safety', 40);
+      if (result && result.immediateActionSteps) {
+        return res.json({ success: true, source: 'groq-ai', data: result });
+      }
+    } catch (aiErr) {
+      console.warn('[emergency-safety-advice] AI failed:', aiErr.message);
+    }
+
+    res.json({
+      success: true,
+      source: 'fallback',
+      data: {
+        safetyRating: '9.8 / 10 (Solo Safe)',
+        immediateActionSteps: [
+          'Move to a well-lit, populated public establishment or certified hotel reception.',
+          'Share your live GPS coordinates with your Emergency ICE contacts via WhatsApp/SMS.',
+          'Contact local tourist police via 112 or the 24/7 Tourist Helpline (1363).'
+        ],
+        emergencyContacts: [
+          { name: 'National Emergency', number: '112' },
+          { name: 'Tourist Helpline', number: '1363' },
+          { name: 'Women Safety Helpline', number: '1091' },
+          { name: 'Ambulance Services', number: '108' }
+        ],
+        safeZones: [
+          'Certified Heritage Hotel Lobby / Front Desk',
+          'Nearest Metro Station / Rail Terminal Police Post',
+          'Government General Hospital Emergency Ward'
+        ],
+        tacticalAdvice: 'Stay in populated areas, keep phone charged, and rely exclusively on certified app-based transport or hotel private sedans.'
+      }
+    });
+  } catch (error) {
+    console.error('[emergency-safety-advice] Fatal:', error);
+    res.status(500).json({ message: 'Failed to generate emergency advice', error: error.message });
   }
 });
 
