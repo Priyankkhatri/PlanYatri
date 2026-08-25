@@ -111,7 +111,7 @@ export default function Favorites() {
             </div>
           ) : (
             <div className="fav-editorial-grid">
-              {filteredFavorites.map((item, index) => {
+              {filteredFavorites.map((item: any, index: any) => {
                 const isFirst = index === 0
                 return (
                   <div
