@@ -4,102 +4,9 @@ import { useSelector } from 'react-redux'
 import Sidebar from '../components/Sidebar'
 import { useToast } from '../context/ToastContext'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { PlaneIcon, HotelIcon, ShieldIcon, WaveIcon, MountainIcon, CompassIcon } from '../components/icons/LuxuryIcons'
+import { PlaneIcon, HotelIcon, ShieldIcon, WaveIcon, MountainIcon, CompassIcon, SparkleIcon } from '../components/icons/LuxuryIcons'
 import { WIKIMEDIA_REAL_IMAGES } from '../services/placeImageService'
 import './Bookings.css'
-
-const INITIAL_BOOKINGS = [
-  {
-    id: 'bk-bali-flight',
-    type: 'Flight',
-    title: 'Flight MH-842',
-    subtitle: 'Kuala Lumpur (KUL) → Denpasar Bali (DPS)',
-    dates: '24 Oct 2024',
-    time: '02:45 PM (Arrival)',
-    terminal: 'Terminal 3 • Gate B12',
-    status: 'Confirmed',
-    isCompleted: false,
-    price: '₹38,500',
-    ref: 'MH-842-DPS',
-    img: WIKIMEDIA_REAL_IMAGES['bali'],
-    icon: '✈️',
-  },
-  {
-    id: 'bk-mandapa-resort',
-    type: 'Stay',
-    title: 'Mandapa, Ritz-Carlton Reserve',
-    subtitle: 'Riverfront Pool Villa • Ubud, Gianyar, Bali',
-    dates: '24 Oct — 30 Oct 2024 (6 Nights)',
-    time: 'Check-in 03:00 PM',
-    terminal: '★ LUXURY RESIDENCE',
-    status: 'Confirmed',
-    isCompleted: false,
-    price: '₹1,62,000',
-    ref: 'MNDP-7749-BALI',
-    img: WIKIMEDIA_REAL_IMAGES['bali'],
-    icon: '🏨',
-  },
-  {
-    id: 'bk-insurance',
-    type: 'Insurance',
-    title: 'NomadCare Platinum Global Cover',
-    subtitle: 'Comprehensive Medical & Trip Cancellation Coverage',
-    dates: '24 Oct — 05 Nov 2024',
-    time: '24/7 Global SOS Support',
-    terminal: 'Policy #NC-789210-BL',
-    status: 'Confirmed',
-    isCompleted: false,
-    price: '₹7,200',
-    ref: 'NC-789210-BL',
-    img: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&q=85&auto=format&fit=crop',
-    icon: '🛡️',
-  },
-  {
-    id: 'bk-taj-agra',
-    type: 'Stay',
-    title: 'The Oberoi Amarvilas, Agra',
-    subtitle: 'Premier Taj Mahal View Suite • Uttar Pradesh, India',
-    dates: '12 Oct — 16 Oct 2024 (Completed)',
-    time: 'Completed Journey',
-    terminal: '★ PALACE HERITAGE',
-    status: 'Completed',
-    isCompleted: true,
-    price: '₹95,000',
-    ref: 'OBR-AGR-4410',
-    img: WIKIMEDIA_REAL_IMAGES['taj mahal'],
-    icon: '🏨',
-  },
-  {
-    id: 'bk-capri-yacht',
-    type: 'Activity',
-    title: 'Capri & Amalfi Coast Private Yacht',
-    subtitle: 'Riva Dolceriva Sunset Charter • Blue Grotto & Faraglioni',
-    dates: '15 Aug — 18 Aug 2024 (Completed)',
-    time: 'Completed Journey',
-    terminal: 'PRIVATE SKIPPER & SOMMELIER',
-    status: 'Completed',
-    isCompleted: true,
-    price: '₹1,20,000',
-    ref: 'RIVA-CAP-892',
-    img: WIKIMEDIA_REAL_IMAGES['amalfi'],
-    icon: '⛵',
-  },
-  {
-    id: 'bk-swiss-chalet',
-    type: 'Stay',
-    title: 'The Omnia Alpine Luxury Lodge, Zermatt',
-    subtitle: 'Matterhorn Panorama Chalet • Valais, Switzerland',
-    dates: '05 July — 12 July 2024 (Completed)',
-    time: 'Completed Journey',
-    terminal: '★ ALPINE WELLNESS',
-    status: 'Completed',
-    isCompleted: true,
-    price: '₹2,80,000',
-    ref: 'OMN-ZRM-1029',
-    img: WIKIMEDIA_REAL_IMAGES['switzerland'],
-    icon: '🏔️',
-  },
-]
 
 export default function Bookings() {
   const navigate = useNavigate()
@@ -108,6 +15,7 @@ export default function Bookings() {
   usePageTitle('Travel Bookings & Logistics — PlanYatri')
 
   const { userInfo } = useSelector((state) => state.auth)
+  const { trips = [] } = useSelector((state) => state.trips)
   const userKey = userInfo?.id || userInfo?._id || userInfo?.email || 'guest'
 
   const [bookings, setBookings] = useState(() => {
@@ -128,10 +36,14 @@ export default function Bookings() {
       console.warn('Failed to save bookings:', err)
     }
   }, [bookings, userKey])
+
   const [activeTab, setActiveTab] = useState('All')
   const [search, setSearch] = useState('')
   const [selectedBookingForModal, setSelectedBookingForModal] = useState(null)
   const [showAddModal, setShowAddModal] = useState(false)
+
+  const upcomingTrip = trips.length > 0 ? trips[0] : null
+  const upcomingBooking = bookings.find((b) => !b.isCompleted) || (bookings.length > 0 ? bookings[0] : null)
 
   useEffect(() => {
     if (location.state?.newBooking) {
@@ -181,7 +93,7 @@ export default function Bookings() {
       type: newType,
       title: newTitle.trim(),
       subtitle: newSubtitle || 'Confirmed travel reservation',
-      dates: newDates || 'Nov 20 — Nov 27 2024',
+      dates: newDates || 'Nov 20 — Nov 27 2026',
       time: 'Confirmed Booking',
       terminal: '★ CONFIRMED RESERVATION',
       status: 'Confirmed',
@@ -221,26 +133,50 @@ export default function Bookings() {
             </div>
           </header>
 
-          {/* ── 2. LOGISTICS BANNER (Matching Image 1) ── */}
+          {/* ── 2. LOGISTICS BANNER (DYNAMIC BASED ON REAL TRIPS / BOOKINGS) ── */}
           <section className="bk-hero-logistics-banner">
             <div className="bhl-left-info">
-              <span className="bhl-tag">UPCOMING IMMERSION • 12 DAYS TO GO</span>
-              <h2 className="bhl-title">Bali Itinerary & Logistics</h2>
+              <span className="bhl-tag">
+                {upcomingBooking || upcomingTrip
+                  ? `UPCOMING IMMERSION • ${upcomingBooking?.dates || upcomingTrip?.dates || 'CONFIRMED'}`
+                  : 'PLANYATRI DIGITAL CONCIERGE'}
+              </span>
+              <h2 className="bhl-title">
+                {upcomingTrip ? `${upcomingTrip.dest} Itinerary & Logistics` : upcomingBooking ? `${upcomingBooking.title} Logistics` : 'Smart Travel Bookings & Flight Passes'}
+              </h2>
               <p className="bhl-desc">
-                Your spiritual journey through the heart of Ubud begins with seamless flight coordination and private Mandapa Reserve sanctuary check-in.
+                {upcomingTrip
+                  ? `Your curated journey (${upcomingTrip.subtitle || upcomingTrip.dest}) is actively tracked with verified digital vouchers, flight gates, and stay check-ins.`
+                  : upcomingBooking
+                  ? `Active reservation for ${upcomingBooking.subtitle}. Access high-resolution boarding passes and fast-track check-in vouchers.`
+                  : 'Keep all your verified flight e-tickets, boutique luxury hotel reservations, and travel insurance policies organized in one unified digital vault.'}
               </p>
-              
+
               <div className="bhl-actions">
-                <button
-                  className="bhl-btn-primary"
-                  onClick={() => toast.success('Digital Travel Vouchers downloaded!')}
-                >
-                  <span>Download Vouchers</span>
-                  <span>→</span>
-                </button>
+                {upcomingBooking ? (
+                  <button
+                    className="bhl-btn-primary"
+                    onClick={() => {
+                      setSelectedBookingForModal(upcomingBooking)
+                      toast.success('Opening digital voucher!')
+                    }}
+                  >
+                    <span>View Digital Voucher</span>
+                    <span>→</span>
+                  </button>
+                ) : (
+                  <button
+                    className="bhl-btn-primary"
+                    onClick={() => navigate('/destinations')}
+                  >
+                    <SparkleIcon size={14} color="#18181B" />
+                    <span>Explore Destinations</span>
+                    <span>→</span>
+                  </button>
+                )}
                 <button
                   className="bhl-btn-secondary"
-                  onClick={() => navigate('/messages')}
+                  onClick={() => navigate('/messages', { state: { prompt: upcomingTrip ? `Help me with flight transfers and hotel logistics for my ${upcomingTrip.dest} trip.` : 'Help me arrange flight and hotel bookings.' } })}
                 >
                   <CompassIcon size={14} color="currentColor" />
                   <span>Travel Concierge</span>
@@ -249,33 +185,23 @@ export default function Bookings() {
             </div>
 
             <div className="bhl-right-quick-pills">
-              <div className="bhl-quick-card">
+              <div className="bhl-quick-card" onClick={() => navigate('/trips')} style={{ cursor: 'pointer' }}>
                 <div className="bqc-icon-box dark">
                   <PlaneIcon size={16} color="#FFFFFF" />
                 </div>
                 <div>
-                  <span className="bqc-label">FLIGHT MH-842</span>
-                  <p className="bqc-val">Arr: 02:45 PM • Terminal 3</p>
+                  <span className="bqc-label">{upcomingTrip ? upcomingTrip.dest : 'MULTI-CITY STUDIO'}</span>
+                  <p className="bqc-val">{upcomingTrip ? `${upcomingTrip.days || 7} Days Journey →` : 'Build Custom Itinerary →'}</p>
                 </div>
               </div>
 
-              <div className="bhl-quick-card">
+              <div className="bhl-quick-card" onClick={() => navigate('/emergency')} style={{ cursor: 'pointer' }}>
                 <div className="bqc-icon-box gold">
-                  <HotelIcon size={16} color="#D4A843" />
+                  <ShieldIcon size={16} color="#D4A843" />
                 </div>
                 <div>
-                  <span className="bqc-label">MANDAPA RESERVE</span>
-                  <p className="bqc-val">Ubud, Bali • Check-in 03:00 PM</p>
-                </div>
-              </div>
-
-              <div className="bhl-quick-card">
-                <div className="bqc-icon-box blue">
-                  <ShieldIcon size={16} color="#60A5FA" />
-                </div>
-                <div>
-                  <span className="bqc-label">NOMADCARE ACTIVE</span>
-                  <p className="bqc-val">Policy #NC-789210-BL</p>
+                  <span className="bqc-label">SOLO SAFE PROTECTION</span>
+                  <p className="bqc-val">24/7 Global SOS Active →</p>
                 </div>
               </div>
             </div>
