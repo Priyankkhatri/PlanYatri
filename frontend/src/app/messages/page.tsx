@@ -271,7 +271,7 @@ export default function Messages() {
             return merged
           })
         }
-      } catch (e) {
+      } catch (e: any) {
         console.warn('Supabase messages load fallback:', e.message)
       }
     }
@@ -413,7 +413,7 @@ export default function Messages() {
                 text: replyContent,
               },
             ])
-          } catch (e) {
+          } catch (e: any) {
             // fallback
           }
         }, 1200)
