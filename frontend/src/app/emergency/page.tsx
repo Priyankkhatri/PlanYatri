@@ -410,7 +410,7 @@ export default function Emergency() {
     const map = L.map(mapRef.current, {
       zoomControl: true,
       attributionControl: false,
-    }).setView(userPos, 14)
+    }).setView(userPos as any, 14)
 
     mapInstance.current = map
 
@@ -431,7 +431,7 @@ export default function Emergency() {
       iconAnchor: [18, 18],
     })
 
-    L.marker(userPos, { icon: userIcon })
+    L.marker(userPos as any, { icon: userIcon })
       .addTo(map)
       .bindPopup(
         `<div class="em-map-popup">
