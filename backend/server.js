@@ -146,4 +146,15 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`[PlanYatri] Server + Socket.io on port ${PORT}`));
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`[PlanYatri] Port ${PORT} is already in use. Please terminate existing node process or specify a different PORT in .env`);
+  } else {
+    console.error('[PlanYatri] Server listener error:', err);
+  }
+});
+
+server.listen(PORT, () => {
+  console.log(`[PlanYatri] Server + Socket.io running on http://localhost:${PORT}`);
+});

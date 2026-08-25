@@ -1,0 +1,17 @@
+{
+  "name": "planyatri",
+  "version": "1.0.0",
+  "description": "PlanYatri - Modern Collaborative Travel Platform",
+  "private": true,
+  "scripts": {
+    "dev": "npm run start",
+    "start": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
