@@ -1,196 +1,299 @@
-/* ═══════════════════════════════════════════════════════════════════
-   PACKING CHECKLIST MODAL
-   ═══════════════════════════════════════════════════════════════════ */
-
+/* ── Packing Checklist Modal Styling ── */
 .pack-modal-window {
-  max-width: 560px !important;
-  background: #18191E !important;
-  color: #FAF8F5 !important;
-  border: 1px solid rgba(212, 168, 67, 0.3) !important;
-  border-radius: 24px !important;
+  max-width: 680px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  overflow: hidden;
+  padding: 0;
 }
 
-.pack-progress-row {
-  margin: 16px 0 20px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 14px 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.pack-progress-text {
+.pack-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(212, 168, 67, 0.15);
+  border: 1px solid rgba(212, 168, 67, 0.3);
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+}
+
+.pack-progress-banner {
+  padding: 16px 24px;
+  background: #F8FAFC;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.pack-count-badge {
   font-size: 13px;
-  margin-bottom: 8px;
-}
-
-.pack-pct {
-  color: #D4A843;
-  font-weight: 700;
-}
-
-.pack-bar-bg {
-  width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  font-weight: 800;
+  color: #0F172A;
+  background: #E2E8F0;
+  padding: 3px 8px;
   border-radius: 6px;
+}
+
+.pack-pct-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #D4A843;
+  background: rgba(212, 168, 67, 0.12);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.pack-pct-badge.complete {
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.pack-bar-track {
+  width: 100%;
+  height: 6px;
+  background: #E2E8F0;
+  border-radius: 999px;
   overflow: hidden;
 }
 
 .pack-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #D4A843, #22C55E);
-  border-radius: 6px;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(90deg, #D4A843 0%, #10B981 100%);
+  border-radius: 999px;
+}
+
+.pack-controls-row {
+  padding: 14px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.pack-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pack-search-wrap svg {
+  position: absolute;
+  left: 12px;
+  pointer-events: none;
+}
+
+.pack-search-input {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #0F172A;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.pack-search-input:focus {
+  background: #ffffff;
+  border-color: #D4A843;
+  box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.12);
+}
+
+.pack-cat-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.pack-cat-chip {
+  padding: 4px 10px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #64748B;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.pack-cat-chip:hover {
+  background: #F1F5F9;
+}
+
+.pack-cat-chip.active {
+  background: #0F172A;
+  color: #ffffff;
+  border-color: #0F172A;
 }
 
 .pack-add-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  padding: 14px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #E2E8F0;
 }
 
 .pack-input {
   flex: 1;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 10px;
   padding: 10px 14px;
-  color: #FFF;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
   font-size: 13px;
+  outline: none;
+}
+
+.pack-input:focus {
+  border-color: #D4A843;
+  background: #ffffff;
 }
 
 .pack-select {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 10px;
   padding: 10px 12px;
-  color: #FFF;
-  font-size: 13px;
+  background: #F8FAFC;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: #334155;
+  outline: none;
 }
 
 .pack-add-btn {
-  background: #D4A843;
-  color: #121316;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 16px;
+  background: #0F172A;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
   border: none;
   border-radius: 10px;
-  padding: 0 16px;
-  font-weight: 700;
-  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s;
 }
 
 .pack-add-btn:hover {
-  background: #E2B955;
+  background: #1E293B;
 }
 
 .pack-items-list {
+  padding: 16px 24px;
+  max-height: 340px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 320px;
-  overflow-y: auto;
-  padding-right: 4px;
 }
 
 .pack-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 10px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
   border-radius: 12px;
-  padding: 12px 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
 }
 
 .pack-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: #F1F5F9;
+  border-color: #CBD5E1;
 }
 
 .pack-item.packed {
-  opacity: 0.65;
-  background: rgba(34, 197, 94, 0.05);
-  border-color: rgba(34, 197, 94, 0.2);
+  background: #F0FDF4;
+  border-color: #BBF7D0;
 }
 
 .pack-checkbox {
   width: 20px;
   height: 20px;
   border-radius: 6px;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border: 1.5px solid #CBD5E1;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  flex-shrink: 0;
+  transition: all 0.15s;
 }
 
 .pack-checkbox.checked {
-  background: #D4A843;
-  border-color: #D4A843;
+  background: #10B981;
+  border-color: #10B981;
 }
 
 .pack-item-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 
 .pack-item-name {
   font-size: 13px;
   font-weight: 600;
-  color: #FAF8F5;
+  color: #1E293B;
 }
 
 .pack-item.packed .pack-item-name {
   text-decoration: line-through;
-  color: rgba(250, 248, 245, 0.5);
+  color: #64748B;
 }
 
 .pack-item-cat {
-  font-size: 10px;
-  color: rgba(212, 168, 67, 0.8);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 10.5px;
+  color: #94A3B8;
+  font-weight: 500;
 }
 
 .pack-del-btn {
-  background: none;
+  background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
   padding: 4px;
-  font-size: 12px;
-  border-radius: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.pack-del-btn:hover {
-  color: #EF4444;
+.pack-empty-state {
+  text-align: center;
+  padding: 30px 0;
 }
 
 .pack-footer {
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 24px;
+  background: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
 }
 
 .pack-done-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   padding: 12px;
-  background: #D4A843;
-  color: #121316;
+  background: #0F172A;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
   border: none;
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.15s;
 }
 
 .pack-done-btn:hover {
-  background: #E2B955;
+  background: #1E293B;
 }
